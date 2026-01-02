@@ -1,3 +1,9 @@
+// Updated scheduled-poller-cron edge function
+// Includes cannabis-hemp-poller running every 6 hours at 0, 6, 12, 18 UTC
+// 
+// To deploy manually:
+// supabase functions deploy scheduled-poller-cron --project-ref kruwbjaszdwzttblxqwr
+
 export const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
@@ -12,13 +18,12 @@ Deno.serve(async (req) => {
     const startTime = Date.now();
     const now = new Date();
     const hour = now.getUTCHours();
-    const dayOfWeek = now.getUTCDay(); // 0 = Sunday, 1 = Monday, etc.
     
     const results = {
       federalRegister: { success: false, message: '', recordsAdded: 0 },
       regulationsGov: { success: false, message: '', recordsAdded: 0 },
-      commentReminders: { success: false, message: '', remindersSent: 0 },
-      urlValidation: { success: false, message: '', brokenLinks: 0 }
+      cannabisHempPoller: { success: false, message: '', recordsAdded: 0 },
+      commentReminders: { success: false, message: '', remindersSent: 0 }
     };
 
     // Trigger Federal Register Poller
@@ -67,6 +72,34 @@ Deno.serve(async (req) => {
       results.regulationsGov.message = `Error: ${error.message}`;
     }
 
+    // Trigger Cannabis/Hemp Poller every 6 hours (0, 6, 12, 18 UTC)
+    if (hour === 0 || hour === 6 || hour === 12 || hour === 18) {
+      try {
+        const chResponse = await fetch(
+          `${Deno.env.get('SUPABASE_URL')}/functions/v1/cannabis-hemp-poller`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`
+            },
+            body: JSON.stringify({ pollAll: true })
+          }
+        );
+        
+        const chData = await chResponse.json();
+        results.cannabisHempPoller = {
+          success: chResponse.ok,
+          message: chData.message || 'Completed',
+          recordsAdded: chData.totalRecords || chData.recordsAdded || 0
+        };
+      } catch (error) {
+        results.cannabisHempPoller.message = `Error: ${error.message}`;
+      }
+    } else {
+      results.cannabisHempPoller.message = `Skipped - runs every 6 hours at 0, 6, 12, 18 UTC (current hour: ${hour})`;
+    }
+
     // Process comment deadline reminders daily at 9 AM UTC
     if (hour === 9) {
       try {
@@ -94,40 +127,13 @@ Deno.serve(async (req) => {
       results.commentReminders.message = `Skipped - only runs at 9 AM UTC (current hour: ${hour})`;
     }
 
-    // Validate URLs weekly on Mondays at 10 AM UTC
-    if (dayOfWeek === 1 && hour === 10) {
-      try {
-        const urlValidationResponse = await fetch(
-          `${Deno.env.get('SUPABASE_URL')}/functions/v1/validate-regulation-urls`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`
-            }
-          }
-        );
-        
-        const urlData = await urlValidationResponse.json();
-        results.urlValidation = {
-          success: urlValidationResponse.ok,
-          message: urlData.results?.message || 'Completed',
-          brokenLinks: urlData.results?.invalid || 0
-        };
-      } catch (error) {
-        results.urlValidation.message = `Error: ${error.message}`;
-      }
-    } else {
-      results.urlValidation.message = `Skipped - only runs Mondays at 10 AM UTC (current: ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dayOfWeek]} ${hour}:00)`;
-    }
-
     const duration = Date.now() - startTime;
 
     return new Response(JSON.stringify({
       success: true,
       executionTime: duration,
       currentHour: hour,
-      currentDay: dayOfWeek,
+      timestamp: now.toISOString(),
       results
     }), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders }

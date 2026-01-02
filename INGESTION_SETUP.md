@@ -68,14 +68,15 @@ Access the Source Management interface at `/admin/sources` to:
 You can manually trigger polling by calling the edge functions:
 
 ```bash
+# IMPORTANT: Use service_role key for write operations, NOT anon key
 curl -X POST https://YOUR_PROJECT.supabase.co/functions/v1/federal-register-poller \
-  -H "Authorization: Bearer YOUR_ANON_KEY"
+  -H "Authorization: Bearer YOUR_SERVICE_ROLE_KEY"
 ```
 
 Test an RSS feed:
 ```bash
 curl -X POST https://YOUR_PROJECT.supabase.co/functions/v1/rss-feed-poller \
-  -H "Authorization: Bearer YOUR_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_SERVICE_ROLE_KEY" \
   -H "Content-Type: application/json" \
   -d '{"sourceId": "SOURCE_UUID", "feedUrl": "https://example.gov/feed.xml"}'
 ```
@@ -100,20 +101,27 @@ jobs:
     steps:
       - name: Poll Federal Register
         run: |
+          # CRITICAL: Use service_role key for write operations
           curl -X POST ${{ secrets.SUPABASE_URL }}/functions/v1/federal-register-poller \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
       
       - name: Poll Regulations.gov
         run: |
+          # CRITICAL: Use service_role key for write operations
           curl -X POST ${{ secrets.SUPABASE_URL }}/functions/v1/regulations-gov-poller \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
 ```
+
+**⚠️ IMPORTANT**: Always use `SUPABASE_SERVICE_ROLE_KEY` for polling operations that write to the database. The anon key respects RLS and will cause silent write failures.
 
 #### Option B: Cron Job Service
 Use services like cron-job.org or EasyCron to hit your edge function URLs every 15 minutes.
+**Note**: Configure the service to use the service_role key in the Authorization header.
 
 #### Option C: Supabase pg_cron
 Enable pg_cron extension and schedule function calls directly in Postgres.
+
+
 
 ### 4. Webhook Configuration
 

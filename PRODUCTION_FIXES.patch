@@ -1,0 +1,79 @@
+# Production Fixes Patch
+# Apply with: git apply PRODUCTION_FIXES.patch
+# Or import into GitHub Desktop
+
+This patch includes the following production-ready changes:
+
+## Summary of Changes
+
+### 1. Removed All Mock Data
+- `src/data/regulations.ts` - Cleared MOCK_REGULATIONS array
+- `src/data/extendedRegulations.ts` - Cleared EXTENDED_REGULATIONS array  
+- `src/data/moreRegulations.ts` - Cleared ADDITIONAL_REGULATIONS array
+- `src/components/LatestUpdates.tsx` - Removed fallback mock data
+- `src/pages/Dashboard.tsx` - Fetches real favorites/alerts from Supabase
+- `src/components/ProviderCard.tsx` - Fetches providers from Supabase
+- `src/pages/SourceManagement.tsx` - Shows live database stats only
+
+### 2. Supabase Configuration with Service Role
+- `src/lib/supabase.ts` - Updated to use environment variables:
+  - VITE_SUPABASE_URL
+  - VITE_SUPABASE_ANON_KEY (for production)
+  - VITE_SUPABASE_SERVICE_ROLE_KEY (for preview mode)
+  - VITE_PREVIEW_MODE flag
+
+### 3. Preview Mode Authentication
+- `src/components/PreviewAuthGuard.tsx` - New component that:
+  - Requires authentication when VITE_PREVIEW_MODE=true
+  - Validates @thynk.guru email domain for beta access
+  - Shows access denied for unauthorized users
+- `src/App.tsx` - Wrapped routes with PreviewAuthGuard
+- `vite.config.ts` - Added __PREVIEW_AUTH_REQUIRED__ define
+
+## Environment Variables Required
+
+Create a `.env` file with:
+
+```env
+VITE_SUPABASE_URL=https://kruwbjaszdwzttblxqwr.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key
+VITE_SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+VITE_PREVIEW_MODE=false
+```
+
+For preview/staging environments:
+```env
+VITE_PREVIEW_MODE=true
+```
+
+## GitHub Desktop Instructions
+
+1. Open GitHub Desktop
+2. Go to Repository > Repository Settings
+3. Click "Open in Terminal" or navigate to the repo folder
+4. Copy the changed files from this update
+5. Stage all changes
+6. Commit with message: "Remove mock data, add preview auth, use live Supabase"
+7. Push to your branch
+
+## Security Notes
+
+- The service_role key bypasses RLS - only use in trusted environments
+- In production, always use the anon key for client-side operations
+- Preview mode requires @thynk.guru email for access
+- All data now comes exclusively from the live Supabase database
+
+## Files Changed
+
+- src/lib/supabase.ts
+- src/components/PreviewAuthGuard.tsx (new)
+- src/components/LatestUpdates.tsx
+- src/components/ProviderCard.tsx
+- src/components/RegulationModal.tsx
+- src/pages/Dashboard.tsx
+- src/pages/SourceManagement.tsx
+- src/data/regulations.ts
+- src/data/extendedRegulations.ts
+- src/data/moreRegulations.ts
+- src/App.tsx
+- vite.config.ts
