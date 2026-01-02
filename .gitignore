@@ -1,19 +1,41 @@
 # Dependencies
 node_modules/
+#.pnp
+.pnp.js
 
-# Build output
+# Build output (Next.js specific — critical!)
+.next/
+out/
 dist/
 build/
-out/
 
-# Environment / secrets
+# Environment / secrets (expanded for safety)
 .env
 .env.*
 *.env
+!.env.example    # Allow a template file if you create one
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # OS junk
 .DS_Store
 Thumbs.db
+
+# Vercel
+.vercel
+
+# TypeScript (if your famous.ai export uses it — common)
+*.tsbuildinfo
+next-env.d.ts
+
+# Misc
+*.pem
+/coverage
