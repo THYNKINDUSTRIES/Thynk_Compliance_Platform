@@ -86,7 +86,7 @@ export const EnhancedStatsSection: React.FC = () => {
          console.warn('[EnhancedStatsSection] last poller run lookup failed:', lastJobError);
 }
 
-         const lastJob = lastJobs?.[0] ?? null;
+        const lastJob = lastJobs?.[0] ?? null;
 
 
         setStats({
