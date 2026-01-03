@@ -22,18 +22,22 @@ export function PollingHealthDashboard() {
 
   const fetchLogs = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('job_execution_log')
-      .select('*')
-      .order('executed_at', { ascending: false })
-      .limit(50)
-      .maybeSingle();
+  
+  const { data, error } = await supabase
+  .from('job_execution_log')
+  .select('*')
+  .order('executed_at', { ascending: false })
+  .limit(50);
 
-    if (!error && data) {
-      setLogs(data);
-      calculateStats(data);
-    }
-    setLoading(false);
+if (!error) {
+  setLogs(data || []);
+  calculateStats(data || []);
+} else {
+  console.error('[PollingHealthDashboard] Error fetching logs:', error);
+  setLogs([]);
+  calculateStats([]);
+}
+   setLoading(false);
   };
 
   const calculateStats = (data: ExecutionLog[]) => {

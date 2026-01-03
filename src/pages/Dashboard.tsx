@@ -159,15 +159,21 @@ export default function Dashboard() {
           let title = `Regulation ${item.instrument_id}`;
           
           // Try to get the instrument title
-          const { data: instrument } = await supabase
-            .from('instrument')
-            .select('title')
-            .eq('id', item.instrument_id)
-            .single();
-          
-          if (instrument?.title) {
-            title = instrument.title;
-          }
+          // Try to get the instrument title (may not exist; do not hard-fail)
+          const { data: instrument, error: instError } = await supabase
+         .from('instrument')
+         .select('title')
+         .eq('id', item.instrument_id)
+         .maybeSingle();
+
+       if (instError) {
+        console.warn('[Dashboard] instrument title lookup failed:', instError);
+}
+
+if (instrument?.title) {
+  title = instrument.title;
+}
+
           
           return {
             id: item.id,

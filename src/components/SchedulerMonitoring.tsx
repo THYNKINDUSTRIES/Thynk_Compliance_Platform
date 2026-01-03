@@ -34,80 +34,34 @@ export default function SchedulerMonitoring() {
   const [triggering, setTriggering] = useState(false);
   const { toast } = useToast();
 
-
-
-  useEffect(() => {
-    fetchJobStats();
-    
-    // Auto-refresh stats every 30 seconds
-    const statsInterval = setInterval(fetchJobStats, 30000);
-    
-    // Auto-trigger pollers every 6 hours
-    const pollingInterval = setInterval(() => {
-      triggerAllPollers();
-    }, 6 * 60 * 60 * 1000); // 6 hours in milliseconds
-    
-    // Trigger pollers on initial load if they haven't run recently
-    const checkAndTrigger = async () => {
-      const { data } = await supabase
-        .from('job_execution_log')
-        .select('completed_at, execution_time_ms')
-        .order('completed_at.desc')
-  ``````.limit(1)
-        .maybeSingle(); 
-      
-      if (!logs || logs.length === 0) {
-        // No logs exist, trigger initial polling
-        setTimeout(() => triggerAllPollers(), 2000);
-      } else {
-        const lastRun = new Date(logs[0].started_at);
-        const hoursSinceLastRun = (Date.now() - lastRun.getTime()) / (1000 * 60 * 60);
-        
-        if (hoursSinceLastRun > 6) {
-          // Last run was more than 6 hours ago, trigger polling
-          setTimeout(() => triggerAllPollers(), 2000);
-        }
-      }
-    };
-    
-    checkAndTrigger();
-    
-    return () => {
-      clearInterval(statsInterval);
-      clearInterval(pollingInterval);
-    };
-  }, []);
-
-
   const fetchJobStats = async () => {
     try {
+      setLoading(true);
+
       const { data: logs, error } = await supabase
         .from('job_execution_log')
         .select('*')
         .order('started_at', { ascending: false })
-        .limit(100)
-        .maybeSingle;
-
-        if (data) {
-  // Show normal stats
-     setLastRun(new Date(data.completed_at));
-     setDuration(data.execution_time_ms);
-} else {
-  // Table empty or no runs yet
-     setLastRun(null);
-     setMessage('No completed runs yet');
-}
+        .limit(100);
 
       if (error) throw error;
 
-      // Calculate stats per job
+      const safeLogs: JobLog[] = (logs ?? []) as JobLog[];
+
       const jobNames = ['federal-register-poller', 'regulations-gov-poller', 'rss-feed-poller'];
-      const stats = jobNames.map(name => {
-        const jobLogs = logs?.filter(l => l.job_name === name) || [];
-        const successCount = jobLogs.filter(l => l.status === 'success').length;
+
+      const stats: JobStats[] = jobNames.map((name) => {
+        const jobLogs = safeLogs.filter((l) => l.job_name === name);
+        const successCount = jobLogs.filter((l) => l.status === 'success').length;
         const totalRuns = jobLogs.length;
+
         const successRate = totalRuns > 0 ? (successCount / totalRuns) * 100 : 0;
-        const avgTime = jobLogs.reduce((sum, l) => sum + (l.execution_time_ms || 0), 0) / (totalRuns || 1);
+
+        const avgTime =
+          totalRuns > 0
+            ? jobLogs.reduce((sum, l) => sum + (l.execution_time_ms || 0), 0) / totalRuns
+            : 0;
+
         const totalRecords = jobLogs.reduce((sum, l) => sum + (l.records_processed || 0), 0);
 
         return {
@@ -117,19 +71,65 @@ export default function SchedulerMonitoring() {
           successRate,
           avgExecutionTime: Math.round(avgTime),
           totalRuns,
-          recordsProcessed: totalRecords
+          recordsProcessed: totalRecords,
         };
       });
 
       setJobStats(stats);
-      setRecentLogs(logs?.slice(0, 10) || []);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching job stats:', error);
+      setRecentLogs(safeLogs.slice(0, 10));
+    } catch (err) {
+      console.error('[SchedulerMonitoring] Error fetching job stats:', err);
+      setJobStats([]);
+      setRecentLogs([]);
+    } finally {
       setLoading(false);
     }
   };
 
+  const checkAndTrigger = async () => {
+    const { data: rows, error } = await supabase
+      .from('job_execution_log')
+      .select('started_at, completed_at')
+      .order('completed_at', { ascending: false })
+      .limit(1);
+
+    if (error) {
+      console.warn('[SchedulerMonitoring] job_execution_log lookup failed:', error);
+      setTimeout(() => triggerAllPollers(), 2000);
+      return;
+    }
+
+    const last = rows?.[0] ?? null;
+
+    if (!last?.started_at) {
+      setTimeout(() => triggerAllPollers(), 2000);
+      return;
+    }
+
+    const lastRun = new Date(last.started_at);
+    const hoursSinceLastRun = (Date.now() - lastRun.getTime()) / (1000 * 60 * 60);
+
+    if (hoursSinceLastRun > 6) {
+      setTimeout(() => triggerAllPollers(), 2000);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobStats();
+    checkAndTrigger();
+
+    const statsInterval = setInterval(fetchJobStats, 30000);
+
+    const pollingInterval = setInterval(() => {
+      triggerAllPollers();
+    }, 6 * 60 * 60 * 1000);
+
+    return () => {
+      clearInterval(statsInterval);
+      clearInterval(pollingInterval);
+    };
+  }, []);
+  
   const triggerAllPollers = async () => {
     setTriggering(true);
     try {
