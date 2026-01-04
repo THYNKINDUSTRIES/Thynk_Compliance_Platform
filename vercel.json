@@ -61,10 +61,6 @@
       "permanent": true
     }
   ],
-  "env": {
-    "VITE_BETA_MODE": "true",
-    "VITE_ALLOWED_EMAIL_DOMAIN": "@thynk.guru"
-  },
   "crons": [
     {
       "path": "/api/scheduled-polling",
