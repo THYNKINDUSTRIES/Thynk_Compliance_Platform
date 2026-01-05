@@ -45,7 +45,7 @@ END $$;
 CREATE TABLE IF NOT EXISTS public.user_favorites (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    instrument_id UUID NOT NULL REFERENCES instrument(id) ON DELETE CASCADE,
+    instrument_id UUID NOT NULL, -- Removed foreign key constraint for now
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
 
