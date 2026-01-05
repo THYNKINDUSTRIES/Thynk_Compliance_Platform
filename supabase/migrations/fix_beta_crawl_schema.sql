@@ -1,127 +1,175 @@
--- ============================================
--- FIX BETA CRAWL SCHEMA ISSUES
--- ============================================
--- This migration fixes the database schema issues
--- discovered during beta testing
--- ============================================
+-- Migration: fix beta crawl schema issues
+BEGIN;
 
--- Add missing columns to user_profiles table
-DO $$
-BEGIN
-    -- Add email_verified column if missing
-    IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                   WHERE table_schema = 'public'
-                   AND table_name = 'user_profiles'
-                   AND column_name = 'email_verified') THEN
-        ALTER TABLE public.user_profiles ADD COLUMN email_verified BOOLEAN DEFAULT false;
-    END IF;
+-- 1) user_profiles: add missing columns idempotently
+ALTER TABLE public.user_profiles
+  ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS onboarding_completed_at TIMESTAMPTZ;
 
-    -- Add saved_searches column if missing
-    IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                   WHERE table_schema = 'public'
-                   AND table_name = 'user_profiles'
-                   AND column_name = 'saved_searches') THEN
-        ALTER TABLE public.user_profiles ADD COLUMN saved_searches JSONB DEFAULT '[]'::jsonb;
-    END IF;
+-- 2) user_favorites: ensure instrument_id exists (nullable initially)
+ALTER TABLE public.user_favorites
+  ADD COLUMN IF NOT EXISTS instrument_id UUID,
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 
-    -- Add onboarding_completed column if missing
-    IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                   WHERE table_schema = 'public'
-                   AND table_name = 'user_profiles'
-                   AND column_name = 'onboarding_completed') THEN
-        ALTER TABLE public.user_profiles ADD COLUMN onboarding_completed BOOLEAN DEFAULT false;
-    END IF;
+-- 2a) Backfill instrument_id from regulation_id -> instrument.external_id
+-- Assumption: user_favorites.regulation_id (text) matches instrument.external_id (text).
+-- If this assumption is incorrect, replace the join condition appropriately.
+-- Only update rows where instrument_id IS NULL and regulation_id IS NOT NULL.
+WITH to_update AS (
+  SELECT uf.id AS uf_id, i.id AS instrument_id
+  FROM public.user_favorites uf
+  JOIN public.instrument i ON i.external_id = uf.regulation_id
+  WHERE uf.instrument_id IS NULL AND uf.regulation_id IS NOT NULL
+)
+UPDATE public.user_favorites uf
+SET instrument_id = t.instrument_id
+FROM to_update t
+WHERE uf.id = t.uf_id;
 
-    -- Add onboarding_completed_at column if missing
-    IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                   WHERE table_schema = 'public'
-                   AND table_name = 'user_profiles'
-                   AND column_name = 'onboarding_completed_at') THEN
-        ALTER TABLE public.user_profiles ADD COLUMN onboarding_completed_at TIMESTAMPTZ;
-    END IF;
-END $$;
+-- 2b) Deduplicate rows that would violate UNIQUE(user_id, instrument_id)
+-- Strategy:
+--  - Find duplicates (same user_id + instrument_id non-null).
+--  - Keep the earliest created_at row, delete others.
+-- Do nothing if there are no duplicates.
+WITH ranked AS (
+  SELECT id, user_id, instrument_id,
+         ROW_NUMBER() OVER (PARTITION BY user_id, instrument_id ORDER BY created_at NULLS FIRST, id) AS rn
+  FROM public.user_favorites
+  WHERE instrument_id IS NOT NULL
+)
+DELETE FROM public.user_favorites u
+USING ranked r
+WHERE u.id = r.id AND r.rn > 1;
 
--- Create user_favorites table if it doesn't exist
-CREATE TABLE IF NOT EXISTS public.user_favorites (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    instrument_id UUID NOT NULL, -- Removed foreign key constraint for now
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
+-- 2c) Optional: if you want to remove regulation_id after confirm, you can drop it.
+-- This migration preserves regulation_id. If you want to drop it uncomment below after verifying backfill.
+-- ALTER TABLE public.user_favorites DROP COLUMN IF EXISTS regulation_id;
 
-    -- Ensure one favorite per user per instrument
-    UNIQUE(user_id, instrument_id)
-);
+-- 2d) Make instrument_id NOT NULL once backfill and dedupe are complete.
+-- This will fail if any instrument_id IS NULL; run the SELECT below to verify before executing.
+-- Verification (manual step suggestion):
+--   SELECT COUNT(*) FROM public.user_favorites WHERE instrument_id IS NULL;
+-- If zero, run the ALTER below. For safety we attempt it and if it fails the migration will stop.
+ALTER TABLE public.user_favorites
+  ALTER COLUMN instrument_id SET NOT NULL;
 
--- Enable RLS on user_favorites
+-- 2e) Add unique constraint (index) on (user_id, instrument_id) concurrently where possible.
+-- CREATE UNIQUE INDEX CONCURRENTLY is not allowed inside a transaction block, so create normally if transaction fails.
+-- We try to create using IF NOT EXISTS via index name; if the index already exists it's a no-op.
+CREATE UNIQUE INDEX IF NOT EXISTS user_favorites_user_instrument_unique
+  ON public.user_favorites (user_id, instrument_id);
+
+-- 3) Ensure RLS is enabled (no-op if already enabled)
 ALTER TABLE public.user_favorites ENABLE ROW LEVEL SECURITY;
 
--- Create policies for user_favorites
+-- 3a) Drop/recreate policies for user_favorites using best-practice auth.uid() wrapper
 DROP POLICY IF EXISTS "user_favorites_select" ON public.user_favorites;
 DROP POLICY IF EXISTS "user_favorites_insert" ON public.user_favorites;
+DROP POLICY IF EXISTS "user_favorites_update" ON public.user_favorites;
 DROP POLICY IF EXISTS "user_favorites_delete" ON public.user_favorites;
 
 CREATE POLICY "user_favorites_select"
-ON public.user_favorites FOR SELECT
-TO authenticated
-USING (auth.uid() = user_id);
+  ON public.user_favorites FOR SELECT
+  TO authenticated
+  USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "user_favorites_insert"
-ON public.user_favorites FOR INSERT
-TO authenticated
-WITH CHECK (auth.uid() = user_id);
+  ON public.user_favorites FOR INSERT
+  TO authenticated
+  WITH CHECK ((SELECT auth.uid()) = user_id);
+
+CREATE POLICY "user_favorites_update"
+  ON public.user_favorites FOR UPDATE
+  TO authenticated
+  USING ((SELECT auth.uid()) = user_id)
+  WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "user_favorites_delete"
-ON public.user_favorites FOR DELETE
-TO authenticated
-USING (auth.uid() = user_id);
+  ON public.user_favorites FOR DELETE
+  TO authenticated
+  USING ((SELECT auth.uid()) = user_id);
 
--- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_user_favorites_user_id ON user_favorites(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_favorites_instrument_id ON user_favorites(instrument_id);
-CREATE INDEX IF NOT EXISTS idx_user_favorites_created_at ON user_favorites(created_at);
+-- 4) user_alerts: add missing columns idempotently and harmonize names
+-- We preserve existing columns and add 'name' and 'criteria' if missing.
+ALTER TABLE public.user_alerts
+  ADD COLUMN IF NOT EXISTS name TEXT,
+  ADD COLUMN IF NOT EXISTS criteria JSONB DEFAULT '{}'::jsonb,
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 
--- Create user_alerts table if it doesn't exist (referenced in dashboard)
-CREATE TABLE IF NOT EXISTS public.user_alerts (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    name TEXT NOT NULL,
-    criteria JSONB DEFAULT '{}'::jsonb,
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- If existing schema uses alert_name, copy data into name if name is null
+UPDATE public.user_alerts
+SET name = COALESCE(name, alert_name)
+WHERE (name IS NULL OR name = '') AND alert_name IS NOT NULL;
 
--- Enable RLS on user_alerts
+-- 4a) Enable RLS and recreate policies for user_alerts
 ALTER TABLE public.user_alerts ENABLE ROW LEVEL SECURITY;
 
--- Create policies for user_alerts
 DROP POLICY IF EXISTS "user_alerts_select" ON public.user_alerts;
 DROP POLICY IF EXISTS "user_alerts_insert" ON public.user_alerts;
 DROP POLICY IF EXISTS "user_alerts_update" ON public.user_alerts;
 DROP POLICY IF EXISTS "user_alerts_delete" ON public.user_alerts;
 
 CREATE POLICY "user_alerts_select"
-ON public.user_alerts FOR SELECT
-TO authenticated
-USING (auth.uid() = user_id);
+  ON public.user_alerts FOR SELECT
+  TO authenticated
+  USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "user_alerts_insert"
-ON public.user_alerts FOR INSERT
-TO authenticated
-WITH CHECK (auth.uid() = user_id);
+  ON public.user_alerts FOR INSERT
+  TO authenticated
+  WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "user_alerts_update"
-ON public.user_alerts FOR UPDATE
-TO authenticated
-USING (auth.uid() = user_id);
+  ON public.user_alerts FOR UPDATE
+  TO authenticated
+  USING ((SELECT auth.uid()) = user_id)
+  WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "user_alerts_delete"
-ON public.user_alerts FOR DELETE
-TO authenticated
-USING (auth.uid() = user_id);
+  ON public.user_alerts FOR DELETE
+  TO authenticated
+  USING ((SELECT auth.uid()) = user_id);
 
--- Create indexes for user_alerts
-CREATE INDEX IF NOT EXISTS idx_user_alerts_user_id ON user_alerts(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_alerts_is_active ON user_alerts(is_active);
-CREATE INDEX IF NOT EXISTS idx_user_alerts_created_at ON user_alerts(created_at);
+-- 5) Indexes (schema-qualified, idempotent)
+CREATE INDEX IF NOT EXISTS idx_user_favorites_user_id ON public.user_favorites(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_favorites_instrument_id ON public.user_favorites(instrument_id);
+CREATE INDEX IF NOT EXISTS idx_user_favorites_created_at ON public.user_favorites(created_at);
+
+CREATE INDEX IF NOT EXISTS idx_user_alerts_user_id ON public.user_alerts(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_alerts_is_active ON public.user_alerts(is_active);
+CREATE INDEX IF NOT EXISTS idx_user_alerts_created_at ON public.user_alerts(created_at);
+
+-- 6) Ensure updated_at auto-update trigger exists and attach to tables
+CREATE OR REPLACE FUNCTION public.set_updated_at()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$;
+
+-- Attach trigger to user_favorites
+DROP TRIGGER IF EXISTS set_updated_at_on_user_favorites ON public.user_favorites;
+CREATE TRIGGER set_updated_at_on_user_favorites
+  BEFORE UPDATE ON public.user_favorites
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+
+-- Attach trigger to user_alerts
+DROP TRIGGER IF EXISTS set_updated_at_on_user_alerts ON public.user_alerts;
+CREATE TRIGGER set_updated_at_on_user_alerts
+  BEFORE UPDATE ON public.user_alerts
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+
+-- 7) user_profiles: ensure email_verified and saved_searches defaults exist (if someone runs older DB)
+ALTER TABLE public.user_profiles
+  ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS saved_searches JSONB DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+
+-- If email_verified or saved_searches exist but lack defaults, set defaults (Postgres preserves existing defaults when using IF NOT EXISTS)
+-- (No-op if defaults already set.)
+
+-- 8) Good practice: ensure indexes for user_profiles (if you query by email or id)
+CREATE INDEX IF NOT EXISTS idx_user_profiles_email ON public.user_profiles (email);
+
+COMMIT;
