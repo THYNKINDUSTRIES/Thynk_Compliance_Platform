@@ -32,7 +32,7 @@ export function CommentReminderPreferences() {
         .from('user_profiles')
         .select('comment_reminders_enabled, comment_reminder_7_days, comment_reminder_3_days, comment_reminder_1_day')
         .eq('id', user.id)
-        .single();
+        .limit (1);
 
       if (error) throw error;
       if (data) setPreferences(data);

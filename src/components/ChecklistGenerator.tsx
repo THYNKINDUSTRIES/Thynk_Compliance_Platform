@@ -56,8 +56,10 @@ export function ChecklistGenerator({ onChecklistCreated }: { onChecklistCreated:
           total_items: aiData.items.length
         })
         .select()
-        .single();
+        .limit(1);
 
+
+      const lastUpdated = rows?.[0]?.created_at ?? null;
 
       if (clError) throw clError;
 

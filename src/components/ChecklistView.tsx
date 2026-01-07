@@ -75,7 +75,7 @@ export function ChecklistView({ checklistId }: { checklistId: string }) {
         .from('compliance_checklists')
         .select('completed_items')
         .eq('id', checklistId)
-        .single();
+        .limit(1);
       
       if (checklist) {
         await supabase

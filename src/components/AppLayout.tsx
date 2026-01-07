@@ -26,7 +26,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { CacheStatusIndicator } from './CacheStatusIndicator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-
+import { Analytics } from "@vercel/analytics/next"
 
 
 
@@ -215,9 +215,6 @@ const AppLayout: React.FC = () => {
   };
 
 
-
-
-
   useEffect(() => {
     const fetchStats = async () => {
       console.log('🔍 Fetching platform statistics...');
@@ -351,18 +348,19 @@ const AppLayout: React.FC = () => {
               .eq('jurisdiction_id', j.id);
 
             // Get latest instrument - handle empty results gracefully
-            let lastUpdated = null;
-            try {
-              const { data: latestInstruments } = await supabase
-                .from('instrument')
-                .select('created_at')
-                .eq('jurisdiction_id', j.id)
-                .order('created_at', { ascending: false })
-                .limit(1);
-              
-              if (latestInstruments && latestInstruments.length > 0) {
-                lastUpdated = latestInstruments[0].created_at;
-              }
+            let lastUpdated: string | null = null;
+
+            const { data: latest, error: latestErr } = await supabase
+            .from('instrument')
+              .select('created_at')
+              .eq('jurisdiction_id', j.id)
+              .order('created_at', { ascending: false })
+              .limit(1);  
+
+if (!latestErr && latest && latest.length > 0) {
+  lastUpdated = latest[0].created_at;
+}
+
             } catch (e) {
               // Ignore errors for individual state lookups
             }

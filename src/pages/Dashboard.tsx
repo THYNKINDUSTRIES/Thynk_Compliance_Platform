@@ -160,15 +160,16 @@ export default function Dashboard() {
           
           // Try to get the instrument title
           // Try to get the instrument title (may not exist; do not hard-fail)
-          const { data: instrument, error: instError } = await supabase
+         const { data: instruments, error: instErr } = await supabase
          .from('instrument')
          .select('title')
          .eq('id', item.instrument_id)
-         .maybeSingle();
+         .limit(1);
 
-       if (instError) {
-        console.warn('[Dashboard] instrument title lookup failed:', instError);
+          if (!instErr && instruments && instruments.length > 0 && instruments[0]?.title) {
+          title = instruments[0].title;
 }
+
 
 if (instrument?.title) {
   title = instrument.title;
