@@ -77,21 +77,30 @@ export default function TemplateLibrary() {
 
   const handleGenerate = async (template: any) => {
     try {
+      console.log('Attempting to retrieve session...');
       const { data: { session } } = await supabase.auth.getSession();
+      console.log('Session:', session);
+
       if (!session) {
         toast({ title: 'Error', description: 'Please sign in to generate checklists', variant: 'destructive' });
         return;
       }
 
+      console.log('Invoking generate-checklist-from-template with templateId:', template.id);
       const { data, error } = await supabase.functions.invoke('generate-checklist-from-template', {
         body: { templateId: template.id }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error invoking function:', error);
+        throw error;
+      }
 
+      console.log('Function response:', data);
       toast({ title: 'Success', description: 'Checklist created from template!' });
       navigate('/checklists');
     } catch (error: any) {
+      console.error('Error in handleGenerate:', error);
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
     }
   };
