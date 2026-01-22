@@ -115,12 +115,13 @@ export const pollingAdmin = {
         })
         .eq('id', regulationId)
         .select()
-        .single();
+        .limit(1);
 
       if (error) throw error;
-      return data;
+      return data?.[0] || null;
     });
   },
+
 
   /**
    * Log polling activity

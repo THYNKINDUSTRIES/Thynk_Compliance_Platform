@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ChevronRight, Download, Phone, Mail, Globe, MapPin, ArrowLeft, Building2, Users, ExternalLink } from 'lucide-react';
+import { ChevronRight, Download, Phone, Mail, Globe, MapPin, ArrowLeft, Building2, Users, ExternalLink, AlertCircle } from 'lucide-react';
 import { californiaDetail } from '@/data/caData';
 import { texasDetail } from '@/data/txData';
 import { floridaDetail } from '@/data/flData';
@@ -61,8 +61,21 @@ const StateDetail = () => {
     'massachusetts': massachusettsDetail, 'new-jersey': newJerseyDetail, 'virginia': virginiaDetail
   };
   
-  const stateData = stateDataMap[stateSlug || ''] || californiaDetail;
-
+  // Get state data - if not in map, create a basic structure from currentState
+  const stateData = stateDataMap[stateSlug || ''] || (currentState ? {
+    id: currentState.id,
+    name: currentState.name,
+    slug: currentState.slug,
+    summary: `${currentState.name} regulatory information. This state has ${currentState.recentUpdates} recent regulatory updates and ${currentState.activeDeadlines} active compliance deadlines.`,
+    lastUpdated: new Date().toISOString().split('T')[0],
+    timeline: [],
+    deadlines: [],
+    authorities: [],
+    licensing: [],
+    testing: [],
+    packaging: [],
+    legalStatus: currentState.legalStatus
+  } : null);
 
 
 
@@ -89,7 +102,7 @@ const StateDetail = () => {
     });
   };
 
-  if (!currentState) {
+  if (!currentState || !stateData) {
     return (
       <div className="min-h-screen bg-[#FAF8F5]">
         <Header />
@@ -109,7 +122,8 @@ const StateDetail = () => {
     );
   }
 
-
+  // Check if this state has detailed data or just basic info
+  const hasDetailedData = stateDataMap[stateSlug || ''] !== undefined;
 
   return (
     <div className="min-h-screen bg-[#FAF8F5]">
@@ -129,7 +143,7 @@ const StateDetail = () => {
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">{stateData.name}</h1>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">{currentState.name}</h1>
               <div className="flex items-center gap-4">
                 <p className="text-gray-600">
                   Last updated: {formatLastUpdated(stateFreshness?.last_updated)}
@@ -158,7 +172,11 @@ const StateDetail = () => {
                 </Button>
               )}
               <Button 
-                onClick={() => generateStatePDF({ ...stateData, slug: stateSlug })} 
+                onClick={() => generateStatePDF({ 
+                  ...stateData, 
+                  slug: stateSlug,
+                  legalStatus: currentState.legalStatus 
+                })} 
                 className="flex items-center gap-2"
               >
                 <Download className="w-4 h-4" /> Download PDF
@@ -167,6 +185,20 @@ const StateDetail = () => {
 
           </div>
           <p className="text-lg text-gray-700 mb-6">{stateData.summary}</p>
+
+          {/* Notice for states without detailed data */}
+          {!hasDetailedData && (
+            <div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold text-amber-800">Limited Data Available</h3>
+                <p className="text-sm text-amber-700">
+                  We're still building out detailed regulatory information for {currentState.name}. 
+                  Check back soon for comprehensive licensing, testing, and packaging requirements.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Agency Profile Quick Card */}
           {agencyProfile && (
@@ -227,7 +259,7 @@ const StateDetail = () => {
             {Object.entries(currentState.legalStatus).map(([key, value]) => (
               <div key={key} className="text-center p-4 bg-gray-50 rounded-lg">
                 <div className="text-xs text-gray-500 uppercase mb-1">{key}</div>
-                <Badge variant={value === 'Legal' ? 'default' : 'destructive'}>{value}</Badge>
+                <Badge variant={value === 'Legal' ? 'default' : value === 'Illegal' || value === 'Banned' ? 'destructive' : 'secondary'}>{value}</Badge>
               </div>
             ))}
           </div>
@@ -250,10 +282,10 @@ const StateDetail = () => {
         <Tabs defaultValue="regulations" className="space-y-6">
           <TabsList className="bg-white p-1 rounded-lg shadow">
             <TabsTrigger value="regulations">Regulations ({regulations.length})</TabsTrigger>
-            <TabsTrigger value="timeline">Timeline</TabsTrigger>
-            <TabsTrigger value="deadlines">Deadlines</TabsTrigger>
+            <TabsTrigger value="timeline">Timeline ({stateData.timeline?.length || 0})</TabsTrigger>
+            <TabsTrigger value="deadlines">Deadlines ({stateData.deadlines?.length || 0})</TabsTrigger>
             <TabsTrigger value="requirements">Requirements</TabsTrigger>
-            <TabsTrigger value="authorities">Authorities</TabsTrigger>
+            <TabsTrigger value="authorities">Authorities ({stateData.authorities?.length || 0})</TabsTrigger>
           </TabsList>
           <TabsContent value="regulations">
             <Card className="p-6">
@@ -265,7 +297,8 @@ const StateDetail = () => {
                 </div>
               ) : regulations.length === 0 ? (
                 <div className="text-center py-8 bg-gray-50 rounded-lg">
-                  <p className="text-gray-600">No regulations found in database for this state yet.</p>
+                  <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-gray-600 font-medium">No regulations found in database for this state yet.</p>
                   <p className="text-sm text-gray-500 mt-2">Check back soon as we continuously update our database.</p>
                 </div>
               ) : (
@@ -289,19 +322,47 @@ const StateDetail = () => {
           </TabsContent>
 
           <TabsContent value="timeline">
-            <Card className="p-6"><h2 className="text-2xl font-bold mb-6">Recent Changes</h2><StateTimeline timeline={stateData.timeline} /></Card>
+            <Card className="p-6">
+              <h2 className="text-2xl font-bold mb-6">Recent Changes</h2>
+              {stateData.timeline && stateData.timeline.length > 0 ? (
+                <StateTimeline timeline={stateData.timeline} />
+              ) : (
+                <div className="text-center py-8 bg-gray-50 rounded-lg">
+                  <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-gray-600">No timeline data available for this state yet.</p>
+                </div>
+              )}
+            </Card>
           </TabsContent>
           <TabsContent value="deadlines">
-            <Card className="p-6"><h2 className="text-2xl font-bold mb-6">Compliance Deadlines</h2><ComplianceCalendar deadlines={stateData.deadlines} /></Card>
+            <Card className="p-6">
+              <h2 className="text-2xl font-bold mb-6">Compliance Deadlines</h2>
+              {stateData.deadlines && stateData.deadlines.length > 0 ? (
+                <ComplianceCalendar deadlines={stateData.deadlines} />
+              ) : (
+                <div className="text-center py-8 bg-gray-50 rounded-lg">
+                  <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-gray-600">No upcoming deadlines for this state.</p>
+                </div>
+              )}
+            </Card>
           </TabsContent>
           <TabsContent value="requirements">
             <Card className="p-6">
               <h2 className="text-2xl font-bold mb-6">Regulatory Requirements</h2>
-              <RequirementsDisplay 
-                licensing={stateData.licensing} 
-                testing={stateData.testing} 
-                packaging={stateData.packaging} 
-              />
+              {(stateData.licensing?.length > 0 || stateData.testing?.length > 0 || stateData.packaging?.length > 0) ? (
+                <RequirementsDisplay 
+                  licensing={stateData.licensing || []} 
+                  testing={stateData.testing || []} 
+                  packaging={stateData.packaging || []} 
+                />
+              ) : (
+                <div className="text-center py-8 bg-gray-50 rounded-lg">
+                  <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-gray-600">Detailed requirements data is being compiled for this state.</p>
+                  <p className="text-sm text-gray-500 mt-2">Check back soon for licensing, testing, and packaging requirements.</p>
+                </div>
+              )}
             </Card>
           </TabsContent>
           <TabsContent value="authorities">
@@ -321,19 +382,26 @@ const StateDetail = () => {
                 </div>
               )}
               
-              <div className="grid md:grid-cols-2 gap-6">
-                {stateData.authorities.map((auth: any) => (
-                  <div key={auth.acronym} className="border rounded-lg p-6 bg-white shadow-sm">
-                    <h3 className="text-xl font-semibold mb-2">{auth.name} ({auth.acronym})</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2"><Phone className="w-4 h-4" /><span>{auth.phone}</span></div>
-                      <div className="flex items-center gap-2"><Mail className="w-4 h-4" /><a href={`mailto:${auth.email}`} className="text-blue-600 hover:underline">{auth.email}</a></div>
-                      <div className="flex items-center gap-2"><Globe className="w-4 h-4" /><a href={auth.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Website</a></div>
-                      <div className="flex items-start gap-2"><MapPin className="w-4 h-4 mt-1" /><span>{auth.address}</span></div>
+              {stateData.authorities && stateData.authorities.length > 0 ? (
+                <div className="grid md:grid-cols-2 gap-6">
+                  {stateData.authorities.map((auth: any) => (
+                    <div key={auth.acronym} className="border rounded-lg p-6 bg-white shadow-sm">
+                      <h3 className="text-xl font-semibold mb-2">{auth.name} ({auth.acronym})</h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2"><Phone className="w-4 h-4" /><span>{auth.phone}</span></div>
+                        <div className="flex items-center gap-2"><Mail className="w-4 h-4" /><a href={`mailto:${auth.email}`} className="text-blue-600 hover:underline">{auth.email}</a></div>
+                        <div className="flex items-center gap-2"><Globe className="w-4 h-4" /><a href={auth.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Website</a></div>
+                        <div className="flex items-start gap-2"><MapPin className="w-4 h-4 mt-1" /><span>{auth.address}</span></div>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 bg-gray-50 rounded-lg">
+                  <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-gray-600">Regulatory authority information is being compiled for this state.</p>
+                </div>
+              )}
             </Card>
           </TabsContent>
 

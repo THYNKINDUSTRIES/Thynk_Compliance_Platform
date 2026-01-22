@@ -32,16 +32,17 @@ export function CommentReminderPreferences() {
         .from('user_profiles')
         .select('comment_reminders_enabled, comment_reminder_7_days, comment_reminder_3_days, comment_reminder_1_day')
         .eq('id', user.id)
-        .limit (1);
+        .limit(1);
 
       if (error) throw error;
-      if (data) setPreferences(data);
+      if (data && data.length > 0) setPreferences(data[0]);
     } catch (error) {
       console.error('Error loading preferences:', error);
     } finally {
       setLoading(false);
     }
   };
+
 
   const savePreferences = async () => {
     if (!user) return;

@@ -1,6 +1,6 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import ExcelJS from 'exceljs';
+import * as XLSX from 'xlsx';
 
 export const exportToCSV = (data: any[], filename: string) => {
   const headers = Object.keys(data[0] || {});
@@ -16,21 +16,11 @@ export const exportToCSV = (data: any[], filename: string) => {
   link.click();
 };
 
-export const exportToExcel = async (data: any[], filename: string, sheetName: string = 'Sheet1') => {
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet(sheetName);
-  
-  if (data.length > 0) {
-    worksheet.columns = Object.keys(data[0]).map(key => ({ header: key, key }));
-    data.forEach(row => worksheet.addRow(row));
-  }
-  
-  const buffer = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `${filename}.xlsx`;
-  link.click();
+export const exportToExcel = (data: any[], filename: string, sheetName: string = 'Sheet1') => {
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  XLSX.writeFile(wb, `${filename}.xlsx`);
 };
 
 export const exportChartToPNG = async (elementId: string, filename: string) => {

@@ -15,14 +15,16 @@ export async function migrateRegulations() {
   for (const reg of allRegulations) {
     try {
       // Get or create jurisdiction
-      let { data: jurisdiction } = await supabase
+      let { data: jurisdictionData } = await supabase
         .from('jurisdiction')
         .select('id')
         .eq('name', reg.jurisdiction)
-        .single();
+        .limit(1);
+
+      let jurisdiction = jurisdictionData?.[0];
 
       if (!jurisdiction) {
-        const { data: newJuris, error: jurisError } = await supabase
+        const { data: newJurisData, error: jurisError } = await supabase
           .from('jurisdiction')
           .insert({
             name: reg.jurisdiction,
@@ -30,21 +32,23 @@ export async function migrateRegulations() {
             slug: reg.jurisdiction.toLowerCase().replace(/\s+/g, '-'),
           })
           .select('id')
-          .single();
+          .limit(1);
 
         if (jurisError) throw jurisError;
-        jurisdiction = newJuris;
+        jurisdiction = newJurisData?.[0];
       }
 
       // Get or create authority
-      let { data: authority } = await supabase
+      let { data: authorityData } = await supabase
         .from('authority')
         .select('id')
         .eq('acronym', reg.authority)
-        .single();
+        .limit(1);
+
+      let authority = authorityData?.[0];
 
       if (!authority) {
-        const { data: newAuth, error: authError } = await supabase
+        const { data: newAuthData, error: authError } = await supabase
           .from('authority')
           .insert({
             name: reg.authority,
@@ -52,10 +56,10 @@ export async function migrateRegulations() {
             jurisdiction_id: jurisdiction?.id,
           })
           .select('id')
-          .single();
+          .limit(1);
 
         if (authError) throw authError;
-        authority = newAuth;
+        authority = newAuthData?.[0];
       }
 
       // Insert regulation

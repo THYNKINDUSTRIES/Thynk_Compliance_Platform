@@ -36,15 +36,21 @@ const categoryLabels: Record<string, string> = {
 };
 
 export default function TemplateCard({ template, onPreview, onGenerate }: TemplateCardProps) {
+  // Ensure template_items is always an array
+  const templateItems = Array.isArray(template.template_items) ? template.template_items : [];
+  const averageRating = template.average_rating || 0;
+  const ratingCount = template.rating_count || 0;
+  const usageCount = template.usage_count || 0;
+
   return (
     <Card className="hover:shadow-lg transition-shadow">
       <CardHeader>
         <div className="flex justify-between items-start mb-2">
-          <Badge variant="outline">{categoryLabels[template.category]}</Badge>
+          <Badge variant="outline">{categoryLabels[template.category] || template.category}</Badge>
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span className="font-medium">{template.average_rating.toFixed(1)}</span>
-            <span>({template.rating_count})</span>
+            <span className="font-medium">{averageRating.toFixed(1)}</span>
+            <span>({ratingCount})</span>
           </div>
         </div>
         <CardTitle className="text-lg">{template.name}</CardTitle>
@@ -53,14 +59,14 @@ export default function TemplateCard({ template, onPreview, onGenerate }: Templa
       <CardContent>
         <div className="space-y-4">
           <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary">{businessTypeLabels[template.business_type]}</Badge>
+            <Badge variant="secondary">{businessTypeLabels[template.business_type] || template.business_type}</Badge>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Users className="h-4 w-4" />
-              <span>{template.usage_count} uses</span>
+              <span>{usageCount} uses</span>
             </div>
           </div>
           <div className="text-sm text-muted-foreground">
-            {template.template_items.length} checklist items
+            {templateItems.length} checklist items
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => onPreview(template)} className="flex-1">

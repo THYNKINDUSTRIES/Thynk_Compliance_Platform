@@ -6,16 +6,26 @@ export const Footer: React.FC = () => {
     <footer className="bg-[#794108] text-gray-100 py-12 px-4">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
-          <img 
-            src="https://d64gsuwffb70l.cloudfront.net/68f945cb086e2661e0d9d180_1761192248656_591339cc.webp"
-            alt="Thynk Industries" 
-            className="h-10 mb-4 brightness-0 invert"
-          />
+          {/* SVG Logo - inline to ensure it always renders */}
+          <div className="h-10 w-10 mb-4 bg-white rounded flex items-center justify-center">
+            <svg 
+              viewBox="0 0 24 24" 
+              className="h-6 w-6 text-[#794108]"
+              fill="currentColor"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                    fill="none"/>
+            </svg>
+          </div>
           <p className="text-sm mb-4">
             Authoritative regulatory intelligence for the hemp, cannabinoid, kratom, psychedelics, and alternative wellness industries.
           </p>
           <div className="text-xs text-[#E89C5C]">
-            © 2025 Thynk Industries
+            © {new Date().getFullYear()} Thynk Industries
           </div>
         </div>
 

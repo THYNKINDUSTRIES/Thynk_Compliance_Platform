@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Settings as SettingsIcon, Mail, Cookie, Shield, BarChart3, Target, RefreshCw, Check } from 'lucide-react';
+import { Settings as SettingsIcon, Mail, Cookie, Shield, BarChart3, Target, RefreshCw, Check, Database } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import DigestTestButton from '@/components/DigestTestButton';
 import DigestMonitoring from '@/components/DigestMonitoring';
+import RLSTestPanel from '@/components/RLSTestPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { getCookiePreferences, clearCookiePreferences, CookiePreferences } from '@/components/CookieConsent';
@@ -67,6 +68,24 @@ export default function Settings() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600">Settings are managed at the system level.</p>
+            </CardContent>
+          </Card>
+
+          {/* RLS Test Panel */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <Database className="h-6 w-6 text-[#794108]" />
+                <div>
+                  <CardTitle>Database Security (RLS)</CardTitle>
+                  <CardDescription>
+                    Test Row Level Security policies and data isolation
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <RLSTestPanel />
             </CardContent>
           </Card>
 

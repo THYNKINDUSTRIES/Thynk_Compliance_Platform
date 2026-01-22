@@ -34,22 +34,26 @@ export function SupportTicketForm({ onSuccess }: SupportTicketFormProps) {
       if (!user) throw new Error('You must be logged in to submit a ticket');
 
       // Insert ticket
-      const { data: ticket, error: dbError } = await supabase
+      const { data: ticketData, error: dbError } = await supabase
         .from('support_tickets')
         .insert([{
           user_id: user.id,
           ...formData
         }])
         .select()
-        .single();
+        .limit(1);
 
       if (dbError) throw dbError;
+      
+      const ticket = ticketData?.[0];
+      if (!ticket) throw new Error('Failed to create ticket');
 
       setTicketNumber(ticket.ticket_number);
       setStatus('success');
       setFormData({ subject: '', description: '', priority: 'medium', category: 'technical' });
       
       if (onSuccess) onSuccess(ticket.ticket_number);
+
 
       // Send email notification using direct fetch
       const functionUrl = 'https://kruwbjaszdwzttblxqwr.supabase.co/functions/v1/send-contact-email';

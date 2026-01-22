@@ -12,6 +12,16 @@ const Information = () => {
   const navigate = useNavigate();
   const agencyProfiles = getAllAgencyProfiles();
 
+  const handleBookDemo = () => {
+    // Navigate to contact page with sales tab pre-selected
+    navigate('/contact?tab=sales');
+  };
+
+  const handleExploreMap = () => {
+    // Navigate to the public regulatory map (not dashboard which requires auth)
+    navigate('/app');
+  };
+
   return (
     <>
       <Header />
@@ -22,8 +32,21 @@ const Information = () => {
           <h1 className="text-5xl font-bold mb-4">Thynk Compliance Platform for Alternative Wellness</h1>
           <p className="text-xl mb-8 text-gray-300">Real-time regulatory intelligence for hemp, cannabinoids, kratom, psychedelics, nicotine/vapes, and more—built for legal, compliance, and operations teams who can't afford to be wrong.</p>
           <div className="flex gap-4 justify-center mb-4">
-            <Button size="lg" className="bg-white text-black hover:bg-gray-200">Book a Demo</Button>
-            <Button size="lg" variant="outline" className="border-white text-black hover:bg-white/10" onClick={() => navigate('/dashboard')}>Explore the Map</Button>
+            <Button 
+              size="lg" 
+              className="bg-white text-black hover:bg-gray-200"
+              onClick={handleBookDemo}
+            >
+              Book a Demo
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-white text-white hover:bg-white/10" 
+              onClick={handleExploreMap}
+            >
+              Explore the Map
+            </Button>
           </div>
           <p className="text-sm text-gray-400">Track federal and state regulations across all 50 states + DC, by product category and supply chain stage.</p>
         </div>
@@ -80,9 +103,9 @@ const Information = () => {
           <h2 className="text-3xl font-bold mb-4 text-center">Your Single Source of Truth for Hemp, Cannabinoid, Kratom, and Psychedelic Regulations</h2>
           <p className="text-lg mb-12 text-center text-gray-700 max-w-4xl mx-auto">TCP centralizes regulatory data across 50 states + DC for hemp, cannabinoids, kratom, psychedelics, nicotine/vapes, and kava. Search by product, state, supply chain stage, and instrument type to get clear, actionable answers in seconds.</p>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-6 hover:shadow-lg transition-shadow"><Map className="w-12 h-12 text-black mb-4" /><h3 className="text-xl font-bold mb-2">U.S. Regulatory Map</h3><p className="text-gray-600">Click any state to see current laws, rules, and guidance by product category and supply chain stage.</p></Card>
-            <Card className="p-6 hover:shadow-lg transition-shadow"><Rss className="w-12 h-12 text-black mb-4" /><h3 className="text-xl font-bold mb-2">Regulatory Feed</h3><p className="text-gray-600">Monitor new bills, rules, and enforcement actions with filters for product type, jurisdiction, and more.</p></Card>
-            <Card className="p-6 hover:shadow-lg transition-shadow"><Code2 className="w-12 h-12 text-black mb-4" /><h3 className="text-xl font-bold mb-2">API Access</h3><p className="text-gray-600">Integrate TCP data directly into your internal tools, client dashboards, or compliance workflows.</p></Card>
+            <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={handleExploreMap}><Map className="w-12 h-12 text-black mb-4" /><h3 className="text-xl font-bold mb-2">U.S. Regulatory Map</h3><p className="text-gray-600">Click any state to see current laws, rules, and guidance by product category and supply chain stage.</p></Card>
+            <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/app')}><Rss className="w-12 h-12 text-black mb-4" /><h3 className="text-xl font-bold mb-2">Regulatory Feed</h3><p className="text-gray-600">Monitor new bills, rules, and enforcement actions with filters for product type, jurisdiction, and more.</p></Card>
+            <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={handleBookDemo}><Code2 className="w-12 h-12 text-black mb-4" /><h3 className="text-xl font-bold mb-2">API Access</h3><p className="text-gray-600">Integrate TCP data directly into your internal tools, client dashboards, or compliance workflows.</p></Card>
           </div>
         </div>
       </section>
@@ -138,7 +161,7 @@ const Information = () => {
           
           <div className="text-center">
             <p className="text-gray-600 mb-4">More state agency profiles coming soon. Currently covering major cannabis markets.</p>
-            <Button variant="outline" onClick={() => navigate('/app')}>
+            <Button variant="outline" onClick={handleExploreMap}>
               Explore All States <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
@@ -155,8 +178,21 @@ const Information = () => {
           <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
           <p className="text-xl mb-8 text-gray-300">Join legal and compliance teams who trust TCP for regulatory intelligence.</p>
           <div className="flex gap-4 justify-center">
-            <Button size="lg" className="bg-white text-black hover:bg-gray-200">Book a Demo</Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" onClick={() => navigate('/dashboard')}>Start Exploring</Button>
+            <Button 
+              size="lg" 
+              className="bg-white text-black hover:bg-gray-200"
+              onClick={handleBookDemo}
+            >
+              Book a Demo
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-white text-white hover:bg-white/10" 
+              onClick={handleExploreMap}
+            >
+              Start Exploring
+            </Button>
           </div>
         </div>
       </section>
@@ -168,3 +204,4 @@ const Information = () => {
 };
 
 export default Information;
+

@@ -39,6 +39,8 @@ import DeploymentDashboard from "./pages/DeploymentDashboard";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import BetaInvites from "./pages/BetaInvites";
+import LegislatureBills from "./pages/LegislatureBills";
+
 
 const queryClient = new QueryClient();
 
@@ -69,6 +71,8 @@ const App = () => (
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="/states/:state1/compare/:state2" element={<StateComparison />} />
+                <Route path="/legislature-bills" element={<LegislatureBills />} />
+
 
                 {/* Protected routes - require authentication */}
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

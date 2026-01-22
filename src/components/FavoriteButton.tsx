@@ -28,10 +28,11 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({ regulationId, co
       .select('id')
       .eq('user_id', user.id)
       .eq('instrument_id', regulationId)
-      .single();
+      .limit(1);
 
-    setIsFavorite(!!data);
+    setIsFavorite(data && data.length > 0);
   };
+
 
   const toggleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();

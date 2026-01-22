@@ -76,18 +76,12 @@ export const EnhancedStatsSection: React.FC = () => {
           .gte('timestamp', today);
 
         // Last poller run
-        const { data: lastJobs, error: lastJobError } = await supabase
-         .from('job_execution_log')
-         .select('completed_at, execution_time_ms')
-         .order('completed_at', { ascending: false })
-         .limit(1);
-
-         if (lastJobError) {
-         console.warn('[EnhancedStatsSection] last poller run lookup failed:', lastJobError);
-}
-
-        const lastJob = lastJobs?.[0] ?? null;
-
+        const { data: lastJob } = await supabase
+          .from('job_execution_log')
+          .select('completed_at, execution_time_ms')
+          .order('completed_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
 
         setStats({
           totalRegulations: regCount || 0,

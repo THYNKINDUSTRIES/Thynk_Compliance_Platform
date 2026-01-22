@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ContactForm } from '@/components/ContactForm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +8,16 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 
 export default function Contact() {
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('general');
+
+  // Handle URL query parameter for tab selection (e.g., /contact?tab=sales)
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && ['general', 'sales', 'pricing'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
 
   return (
     <>
@@ -128,7 +138,7 @@ export default function Contact() {
                   </TabsTrigger>
                   <TabsTrigger value="sales" className="flex items-center gap-2">
                     <MessageSquare className="h-4 w-4" />
-                    <span className="hidden sm:inline">Sales</span>
+                    <span className="hidden sm:inline">Sales / Demo</span>
                   </TabsTrigger>
                   <TabsTrigger value="pricing" className="flex items-center gap-2">
                     <DollarSign className="h-4 w-4" />
@@ -146,7 +156,7 @@ export default function Contact() {
                 <TabsContent value="sales" className="mt-6">
                   <ContactForm
                     formType="sales"
-                    description="Interested in Thynk Compliance Platform? Let's talk about how we can help your organization."
+                    description="Interested in a demo of Thynk Compliance Platform? Let's schedule a call to show you how we can help your organization."
                   />
                 </TabsContent>
 

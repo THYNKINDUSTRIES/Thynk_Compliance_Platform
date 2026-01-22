@@ -1,145 +1,82 @@
-# Thynk Compliance Platform
+# Thynk Compliance Platform (TCP)
 
-A comprehensive real-time regulatory intelligence platform for tracking cannabis, hemp, kratom, nicotine, and psychedelic regulations across all 50 US states and federal agencies.
+A comprehensive real-time regulatory intelligence platform for tracking cannabis, hemp, kratom, nicotine/vapes, psychedelics, and other alternative wellness regulations across all 50 US states, DC, and federal agencies.
 
+**Live Site:** [https://www.thynkflow.io](https://www.thynkflow.io)
 
-## Features
+## Overview
 
-### 🗺️ Interactive State Map
-- Visual representation of regulatory status across all US states
-- Color-coded by legal status (Legal, Medical, Decriminalized, Illegal)
-- Click any state to view detailed regulatory information
-- Real-time data freshness indicators
+TCP (Thynk Compliance Platform) is a B2B SaaS platform designed for legal, compliance, and operations teams in the alternative wellness industry. It provides:
 
-### 📊 State Detail Pages
-- Comprehensive regulatory summaries for each product category
-- Timeline of recent regulatory changes (12+ entries per state)
-- Compliance deadline calendar with priority indicators
-- Requirement matrices (licensing, testing, packaging)
-- Authority contact information with direct links
-- State comparison tool for side-by-side analysis
-- Breadcrumb navigation and deep-linking support
-
-### 🔄 Real-Time Data Ingestion
-- **Federal Register API**: Polls every 15 minutes for federal regulations
-- **Regulations.gov API**: Tracks dockets and public comments
-- **State Agency RSS Feeds**: Monitors 15+ state cannabis agencies
-- **Webhook Support**: Instant updates when available
-- Automatic NLP-based document parsing and tagging
-- Live data freshness indicators on all pages
-
-### 🛠️ Source Management Interface
-- Admin panel at `/admin/sources` for managing data sources
-- Add/edit/test RSS feed URLs
-- Configure polling intervals per source
-- Monitor feed health status in real-time
-- View last polled timestamps
-- Test feed parsing before deployment
-
-### 📱 Modern UI/UX
-- Responsive design for desktop, tablet, and mobile
-- Dark mode support
-- Real-time Supabase subscriptions
-- Loading states and error handling
-- Toast notifications for user feedback
+- Real-time regulatory monitoring across 50+ jurisdictions
+- Automated data ingestion from Federal Register, Regulations.gov, and state agencies
+- NLP-powered document analysis and tagging
+- Custom alerts and notification systems
+- Compliance checklists and workflow management
+- Public comment tracking and bulk submission tools
 
 ## Tech Stack
 
-- **Frontend**: React 18 + TypeScript + Vite
-- **Styling**: Tailwind CSS + shadcn/ui components
-- **Backend**: Supabase (PostgreSQL + Edge Functions)
-- **APIs**: Federal Register, Regulations.gov, State RSS feeds
-- **Deployment**: Vercel/Netlify compatible
+- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS + shadcn/ui
+- **Backend**: Supabase (PostgreSQL + Edge Functions + Auth)
+- **Hosting**: Vercel
+- **CI/CD**: GitHub Actions
 
 ## Getting Started
 
-### Prerequisites
-- Node.js 18+ and npm
-- Supabase account
-- API keys for Regulations.gov (optional: Federal Register, GovInfo)
-
-### Installation
-
-1. Clone the repository
 ```bash
-git clone <repository-url>
-cd integrated-regulatory-platform
-```
-
-2. Install dependencies
-```bash
+# Install dependencies
 npm install
-```
 
-3. Set up Supabase
-- Create a new Supabase project
-- Run the database migrations (see INGESTION_SETUP.md)
-- Add API keys as Supabase secrets
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your Supabase credentials
 
-4. Start development server
-```bash
+# Start development server
 npm run dev
 ```
 
-## Data Ingestion Setup
+## Deployment
 
-See [INGESTION_SETUP.md](./INGESTION_SETUP.md) for detailed instructions on:
-- Configuring edge functions
-- Setting up automated polling
-- Managing RSS feeds
-- Monitoring data freshness
-- Troubleshooting common issues
+Deployed on Vercel with automatic deployments from GitHub:
+- Framework: Vite
+- Build Command: `npm run build`
+- Output Directory: `dist`
 
-## Project Structure
+## Environment Variables
 
-```
-src/
-├── components/          # React components
-│   ├── ui/             # shadcn/ui base components
-│   ├── Header.tsx      # Navigation header
-│   ├── StateMap.tsx    # Interactive US map
-│   ├── StateTimeline.tsx # Regulatory timeline
-│   └── ...
-├── pages/              # Route pages
-│   ├── Index.tsx       # Home page
-│   ├── StateDetail.tsx # State detail view
-│   └── SourceManagement.tsx # Admin panel
-├── hooks/              # Custom React hooks
-│   ├── useRegulations.ts
-│   └── useJurisdictionFreshness.ts
-├── lib/                # Utilities
-│   ├── supabase.ts     # Supabase client
-│   └── utils.ts
-└── data/               # Static data files
-```
+| Variable | Description |
+|----------|-------------|
+| `VITE_SUPABASE_URL` | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anonymous key |
 
-## API Documentation
+## Database
 
-### Edge Functions
+Run migrations from `supabase/migrations/` folder. Key tables:
+- `instrument` - Regulatory documents
+- `jurisdiction` - States and federal jurisdictions
+- `user_profiles` - User data
+- `user_alerts` - User notification preferences
+- `user_favorites` - Saved regulations
 
-All edge functions are deployed to Supabase and can be invoked via:
-```
-https://YOUR_PROJECT.supabase.co/functions/v1/FUNCTION_NAME
-```
+## Known Issues & Fixes
 
-- `federal-register-poller`: Polls Federal Register API
-- `regulations-gov-poller`: Polls Regulations.gov API
-- `rss-feed-poller`: Generic RSS/Atom feed parser
-- `webhook-receiver`: Receives instant updates
+### HTTP 400 Errors on user_alerts Table
+Run the migration in `supabase/migrations/create_user_alerts_table.sql`. The Dashboard gracefully handles cases where this table doesn't exist.
 
-## Contributing
-
-Contributions are welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
-
-## License
-
-MIT License - see LICENSE file for details
+### Button Functionality
+- "Book a Demo" → navigates to `/contact?tab=sales`
+- "Explore the Map" → navigates to `/app` (public regulatory map)
 
 ## Support
 
-For issues, questions, or feature requests, please open an issue on GitHub.
+- **Email**: support@thynk.guru
+- **Phone**: 1 (800) 99-THYNK
+
+## License
+
+Proprietary - All rights reserved by Thynk Industries.
+
+---
+
+Built by [Thynk Industries](https://thynk.guru)

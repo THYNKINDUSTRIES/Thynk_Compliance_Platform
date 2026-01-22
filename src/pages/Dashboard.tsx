@@ -98,16 +98,25 @@ export default function Dashboard() {
       }
 
       // Fetch active alerts count for current user
+      // Note: user_alerts table may not exist in all environments
       let alertCount = 0;
       if (user) {
-        const { count, error: alertError } = await supabase
-          .from('user_alerts')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id)
-          .eq('is_active', true);
-        
-        if (!alertError) {
-          alertCount = count || 0;
+        try {
+          const { count, error: alertError } = await supabase
+            .from('user_alerts')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', user.id)
+            .eq('is_active', true);
+          
+          if (!alertError) {
+            alertCount = count || 0;
+          } else {
+            // Table might not exist - this is expected in some environments
+            console.log('[Dashboard] user_alerts table not available:', alertError.message);
+          }
+        } catch (e) {
+          // Silently handle - table may not exist
+          console.log('[Dashboard] Could not fetch alerts count');
         }
       }
 
@@ -128,6 +137,7 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+
 
   const fetchFavorites = async () => {
     if (!user) return;
@@ -154,27 +164,21 @@ export default function Dashboard() {
       }
 
       // Now fetch the instrument titles separately to avoid foreign key issues
+      // Now fetch the instrument titles separately to avoid foreign key issues
       const formattedFavorites: Favorite[] = await Promise.all(
         (data || []).map(async (item) => {
           let title = `Regulation ${item.instrument_id}`;
           
-          // Try to get the instrument title
-          // Try to get the instrument title (may not exist; do not hard-fail)
-         const { data: instruments, error: instErr } = await supabase
-         .from('instrument')
-         .select('title')
-         .eq('id', item.instrument_id)
-         .limit(1);
-
-          if (!instErr && instruments && instruments.length > 0 && instruments[0]?.title) {
-          title = instruments[0].title;
-}
-
-
-if (instrument?.title) {
-  title = instrument.title;
-}
-
+          // Try to get the instrument title - use limit(1) instead of single()
+          const { data: instruments } = await supabase
+            .from('instrument')
+            .select('title')
+            .eq('id', item.instrument_id)
+            .limit(1);
+          
+          if (instruments && instruments.length > 0 && instruments[0].title) {
+            title = instruments[0].title;
+          }
           
           return {
             id: item.id,
@@ -184,6 +188,7 @@ if (instrument?.title) {
           };
         })
       );
+
 
       setFavorites(formattedFavorites);
     } catch (err) {
@@ -208,8 +213,10 @@ if (instrument?.title) {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('[Dashboard] Error fetching alerts:', error);
-        throw error;
+        // Table might not exist - this is expected in some environments
+        console.log('[Dashboard] user_alerts table not available:', error.message);
+        setAlerts([]);
+        return;
       }
 
       setAlerts(data || []);
@@ -220,6 +227,7 @@ if (instrument?.title) {
       setAlertsLoading(false);
     }
   };
+
 
   const deleteFavorite = async (id: string) => {
     try {

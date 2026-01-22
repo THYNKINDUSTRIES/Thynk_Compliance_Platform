@@ -45,8 +45,11 @@ export function ChecklistView({ checklistId }: { checklistId: string }) {
       if (itemsRes.data) {
         setItems(itemsRes.data);
         const completed = itemsRes.data.filter(i => i.is_completed).length;
-        setProgress((completed / itemsRes.data.length) * 100);
+        const total = itemsRes.data.length;
+        // Prevent NaN by checking for zero items
+        setProgress(total > 0 ? (completed / total) * 100 : 0);
       }
+
       if (workflowsRes.data) setWorkflows(workflowsRes.data);
     } catch (error: any) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
@@ -77,11 +80,11 @@ export function ChecklistView({ checklistId }: { checklistId: string }) {
         .eq('id', checklistId)
         .limit(1);
       
-      if (checklist) {
+      if (checklist && checklist.length > 0) {
         await supabase
           .from('compliance_checklists')
           .update({ 
-            completed_items: (checklist.completed_items || 0) + (completed ? 1 : -1),
+            completed_items: (checklist[0].completed_items || 0) + (completed ? 1 : -1),
             updated_at: new Date().toISOString()
           })
           .eq('id', checklistId);
@@ -126,6 +129,14 @@ export function ChecklistView({ checklistId }: { checklistId: string }) {
           <Progress value={progress} />
         </CardContent>
       </Card>
+
+      {items.length === 0 && (
+        <Card>
+          <CardContent className="flex items-center justify-center h-32">
+            <p className="text-muted-foreground">No checklist items yet. Generate items from a template or add them manually.</p>
+          </CardContent>
+        </Card>
+      )}
 
       {items.map(item => (
         <Card key={item.id} className={item.is_completed ? 'opacity-60' : ''}>

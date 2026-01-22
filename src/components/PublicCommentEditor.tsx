@@ -62,16 +62,18 @@ export function PublicCommentEditor({
       .from('public_comments')
       .select('*')
       .eq('id', existingCommentId)
-      .single();
+      .limit(1);
 
-    if (data) {
-      setTitle(data.comment_title);
-      setBody(data.comment_body);
-      setStatus(data.status);
-      setSubmissionMethod(data.submission_method || '');
-      setConfirmationNumber(data.confirmation_number || '');
+    if (data && data[0]) {
+      const comment = data[0];
+      setTitle(comment.comment_title);
+      setBody(comment.comment_body);
+      setStatus(comment.status);
+      setSubmissionMethod(comment.submission_method || '');
+      setConfirmationNumber(comment.confirmation_number || '');
     }
   };
+
 
   const handleSave = async (newStatus: 'draft' | 'submitted') => {
     if (!title.trim() || !body.trim()) {
@@ -87,37 +89,82 @@ export function PublicCommentEditor({
         return;
       }
 
+      const commentPayload = {
+        commentId: existingCommentId,
+        regulationId,
+        regulationTitle,
+        regulationType,
+        jurisdictionCode,
+        agencyName,
+        agencyContactEmail,
+        commentPeriodEnd,
+        commentTitle: title,
+        commentBody: body,
+        status: newStatus,
+        submissionMethod: newStatus === 'submitted' ? submissionMethod : null,
+        confirmationNumber: newStatus === 'submitted' ? confirmationNumber : null,
+        regulationUrl,
+        submissionUrl
+      };
+
+      // Try edge function first
       const { data, error } = await supabase.functions.invoke('save-public-comment', {
-        body: {
-          commentId: existingCommentId,
-          regulationId,
-          regulationTitle,
-          regulationType,
-          jurisdictionCode,
-          agencyName,
-          agencyContactEmail,
-          commentPeriodEnd,
-          commentTitle: title,
-          commentBody: body,
-          status: newStatus,
-          submissionMethod: newStatus === 'submitted' ? submissionMethod : null,
-          confirmationNumber: newStatus === 'submitted' ? confirmationNumber : null,
-          regulationUrl,
-          submissionUrl
-        }
+        body: commentPayload
       });
 
-      if (error) throw error;
+      if (error) {
+        // Fallback to direct database operation if edge function fails
+        console.error('Edge function error, using fallback:', error);
+        
+        const commentData = {
+          user_id: session.user.id,
+          regulation_id: regulationId,
+          regulation_title: regulationTitle,
+          regulation_type: regulationType,
+          jurisdiction_code: jurisdictionCode,
+          agency_name: agencyName,
+          agency_contact_email: agencyContactEmail,
+          comment_period_end: commentPeriodEnd,
+          comment_title: title,
+          comment_body: body,
+          status: newStatus,
+          submission_method: newStatus === 'submitted' ? submissionMethod : null,
+          confirmation_number: newStatus === 'submitted' ? confirmationNumber : null,
+          regulation_url: regulationUrl,
+          submission_url: submissionUrl,
+          updated_at: new Date().toISOString()
+        };
+
+        if (existingCommentId) {
+          // Update existing comment
+          const { error: updateError } = await supabase
+            .from('public_comments')
+            .update(commentData)
+            .eq('id', existingCommentId)
+            .eq('user_id', session.user.id);
+
+          if (updateError) throw updateError;
+        } else {
+          // Create new comment
+          const { error: insertError } = await supabase
+            .from('public_comments')
+            .insert(commentData);
+
+          if (insertError) throw insertError;
+        }
+      }
 
       toast.success(newStatus === 'draft' ? 'Comment saved as draft' : 'Comment marked as submitted');
       setStatus(newStatus);
       onSave?.();
     } catch (error: any) {
-      toast.error(error.message);
+      console.error('Save comment error:', error);
+      toast.error(error.message || 'Failed to save comment');
     } finally {
       setSaving(false);
     }
   };
+
 
   const daysUntilDeadline = commentPeriodEnd 
     ? Math.ceil((new Date(commentPeriodEnd).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))

@@ -35,28 +35,32 @@ const RegulationDetail = () => {
           authority:authority_id(acronym, name)
         `)
         .eq('id', id)
-        .single();
+        .limit(1);
 
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Not found');
 
+      const item = data[0];
       const reg: Regulation = {
-        id: data.id,
-        title: data.title,
-        summary: data.summary || '',
-        jurisdiction: data.jurisdiction?.name || 'Unknown',
-        authority: data.authority?.acronym || 'Unknown',
-        status: data.status || 'unknown',
-        products: data.products || [],
-        stages: data.stages || [],
-        instrumentType: data.instrument_type || 'Unknown',
-        publishedAt: data.published_at?.split('T')[0] || '',
-        effectiveAt: data.effective_at?.split('T')[0],
-        citation: data.citation,
-        url: data.url || '#',
-        impact: data.impact || 'medium',
+        id: item.id,
+        title: item.title,
+        summary: item.summary || '',
+        jurisdiction: item.jurisdiction?.name || 'Unknown',
+        authority: item.authority?.acronym || 'Unknown',
+        status: item.status || 'unknown',
+        products: item.products || [],
+        stages: item.stages || [],
+        instrumentType: item.instrument_type || 'Unknown',
+        publishedAt: item.published_at?.split('T')[0] || '',
+        effectiveAt: item.effective_at?.split('T')[0],
+        citation: item.citation,
+        url: item.url || '#',
+        impact: item.impact || 'medium',
       };
 
       setRegulation(reg);
+
+
 
       // Fetch related regulations
       const { data: related } = await supabase

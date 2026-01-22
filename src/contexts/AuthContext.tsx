@@ -98,10 +98,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .from('user_profiles')
         .select('id, email, full_name, role, email_verified, saved_searches, onboarding_completed, onboarding_completed_at, created_at, updated_at')
         .eq('id', userId)
-        .limit(1); 
+        .maybeSingle(); // Use maybeSingle to avoid errors on empty results
 
-        const profile = rows?.[0] ?? null;
-        
       if (error) {
         // Check if it's an RLS recursion error
         if (error.code === '42P17' || error.message?.includes('infinite recursion')) {

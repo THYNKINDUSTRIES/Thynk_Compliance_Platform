@@ -45,7 +45,7 @@ export function ChecklistGenerator({ onChecklistCreated }: { onChecklistCreated:
 
       if (aiError) throw aiError;
 
-      const { data: checklist, error: clError } = await supabase
+      const { data: checklistData, error: clError } = await supabase
         .from('compliance_checklists')
         .insert({
           user_id: userId,
@@ -59,9 +59,11 @@ export function ChecklistGenerator({ onChecklistCreated }: { onChecklistCreated:
         .limit(1);
 
 
-      const lastUpdated = rows?.[0]?.created_at ?? null;
-
       if (clError) throw clError;
+      
+      const checklist = checklistData?.[0];
+      if (!checklist) throw new Error('Failed to create checklist');
+
 
       const items = aiData.items.map((item: any, idx: number) => ({
         checklist_id: checklist.id,
@@ -98,13 +100,18 @@ export function ChecklistGenerator({ onChecklistCreated }: { onChecklistCreated:
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <Label>Checklist Name</Label>
-          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Q1 2024 Compliance" />
+          <Label htmlFor="checklist-name">Checklist Name</Label>
+          <Input 
+            id="checklist-name"
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+            placeholder="Q1 2024 Compliance" 
+          />
         </div>
         <div>
-          <Label>Business Type</Label>
+          <Label htmlFor="business-type">Business Type</Label>
           <Select value={businessType} onValueChange={setBusinessType}>
-            <SelectTrigger>
+            <SelectTrigger id="business-type">
               <SelectValue placeholder="Select business type" />
             </SelectTrigger>
             <SelectContent>
@@ -116,19 +123,27 @@ export function ChecklistGenerator({ onChecklistCreated }: { onChecklistCreated:
           </Select>
         </div>
         <div>
-          <Label>Operating States</Label>
-          <div className="grid grid-cols-5 gap-2 mt-2">
+          <Label id="operating-states-label">Operating States</Label>
+          <div className="grid grid-cols-5 gap-2 mt-2" role="group" aria-labelledby="operating-states-label">
             {STATES.map(state => (
               <div key={state} className="flex items-center space-x-2">
-                <Checkbox checked={selectedStates.includes(state)} onCheckedChange={() => toggleState(state)} />
-                <Label className="text-sm">{state}</Label>
+                <Checkbox 
+                  id={`state-${state}`}
+                  checked={selectedStates.includes(state)} 
+                  onCheckedChange={() => toggleState(state)} 
+                />
+                <Label htmlFor={`state-${state}`} className="text-sm cursor-pointer">{state}</Label>
               </div>
             ))}
           </div>
         </div>
         <div className="flex items-center space-x-2">
-          <Checkbox checked={includeFederal} onCheckedChange={(checked) => setIncludeFederal(!!checked)} />
-          <Label>Include Federal Requirements</Label>
+          <Checkbox 
+            id="include-federal"
+            checked={includeFederal} 
+            onCheckedChange={(checked) => setIncludeFederal(!!checked)} 
+          />
+          <Label htmlFor="include-federal" className="cursor-pointer">Include Federal Requirements</Label>
         </div>
         <Button onClick={handleGenerate} disabled={loading} className="w-full">
           {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Generating...</> : 'Generate Checklist'}
