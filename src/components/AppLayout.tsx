@@ -18,7 +18,7 @@ import { StateMap } from './StateMap';
 import { Button } from './ui/button';
 import { useNavigate } from 'react-router-dom';
 import { DataPopulationTrigger } from './DataPopulationTrigger';
-import { StateRegulationsPoller } from './StateRegulationsPoller';
+import { CannabisHempPoller } from './CannabisHempPoller';
 import { StateInfo } from '@/data/states';
 import { EnhancedStatsSection } from './EnhancedStatsSection';
 import { OpenCommentPeriods } from './OpenCommentPeriods';
@@ -500,7 +500,7 @@ const AppLayout: React.FC = () => {
                 </TabsContent>
                 
                 <TabsContent value="states">
-                  <StateRegulationsPoller />
+                  <CannabisHempPoller />
                 </TabsContent>
               </Tabs>
             </CardContent>

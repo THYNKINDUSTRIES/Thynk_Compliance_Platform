@@ -7,7 +7,7 @@
 
 **Root Cause:** The `ingestion_log` table uses `started_at` as the timestamp column, but the frontend code was querying `created_at`.
 
-**Fix Applied:** Updated `src/components/StateRegulationsPoller.tsx` to:
+**Fix Applied:** Updated `src/components/CannabisHempPoller.tsx` to:
 - Try `started_at` first (the documented column name)
 - Fall back to `timestamp` if that fails
 - Fall back to querying without ordering if both fail
@@ -23,17 +23,17 @@
 - Gracefully handle 404 and missing table errors
 - Return empty arrays instead of throwing errors
 
-## Component Relationship: StateRegulationsPoller.tsx and cannabis-hemp-poller
+## Component Relationship: CannabisHempPoller.tsx and cannabis-hemp-poller
 
 ### Understanding the Naming
 
-- **StateRegulationsPoller.tsx** - The React frontend component that displays state regulation polling status
+- **CannabisHempPoller.tsx** - The React frontend component that displays state regulation polling status
 - **cannabis-hemp-poller** - The Supabase Edge Function that polls cannabis/hemp regulatory agencies
 - **state-regulations-poller** - A fallback Supabase Edge Function
 
 ### How They Work Together
 
-1. **StateRegulationsPoller.tsx** is the UI component that:
+1. **CannabisHempPoller.tsx** is the UI component that:
    - Displays status for 47+ state cannabis agencies
    - Shows polling history from `ingestion_log` table
    - Triggers polling by calling edge functions
@@ -68,7 +68,7 @@ The frontend gracefully handles if `cannabis-hemp-poller` is not deployed - it w
 
 ## Files Modified
 
-1. **src/components/StateRegulationsPoller.tsx**
+1. **src/components/CannabisHempPoller.tsx**
    - Fixed `fetchPollingLogs()` function to use correct column name
    - Added fallback handling for different column names
    - Added graceful error handling for missing tables

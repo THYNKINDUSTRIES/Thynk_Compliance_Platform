@@ -172,7 +172,7 @@ const POLLER_SOURCE_IDS = [
 ];
 
 
-export function StateRegulationsPoller() {
+export function CannabisHempPoller() {
   const [stateStatuses, setStateStatuses] = useState<StateStatus[]>([]);
   const [pollingLogs, setPollingLogs] = useState<NormalizedPollingLog[]>([]);
   const [recentNewItems, setRecentNewItems] = useState<any[]>([]);

@@ -233,7 +233,7 @@ Some state websites may block automated requests. The function uses:
 
 ## UI Component
 
-The `StateRegulationsPoller.tsx` component displays:
+The `CannabisHempPoller.tsx` component displays:
 - All 50 states with status indicators
 - Document type badges (AI-categorized)
 - Urgency levels

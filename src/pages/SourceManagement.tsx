@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 import { PopulateURLsButton } from '@/components/PopulateURLsButton';
 import { DataIngestionTester } from '@/components/DataIngestionTester';
 import { PollingHealthDashboard } from '@/components/PollingHealthDashboard';
-import { StateRegulationsPoller } from '@/components/StateRegulationsPoller';
+import { CannabisHempPoller } from '@/components/CannabisHempPoller';
 import { PollerTestPanel } from '@/components/PollerTestPanel';
 import { Database, RefreshCw, CheckCircle, AlertCircle, Loader2, Trash2, MapPin, FlaskConical } from 'lucide-react';
 
@@ -183,7 +183,7 @@ export default function SourceManagement() {
             </TabsList>
 
             <TabsContent value="states" className="space-y-6">
-              <StateRegulationsPoller />
+              <CannabisHempPoller />
             </TabsContent>
 
             <TabsContent value="ca-test" className="space-y-6">

@@ -149,7 +149,7 @@ If the function returns 0 records:
 ## Related Files
 
 - `src/components/PollerTestPanel.tsx` - Test UI component
-- `src/components/StateRegulationsPoller.tsx` - Main poller UI
+- `src/components/CannabisHempPoller.tsx` - Main poller UI
 - `FIX_CANNABIS_HEMP_POLLER.md` - CORS fix documentation
 - `MANUAL_DEPLOY_STATE_POLLER.md` - Full edge function code
 - `DATABASE_COLUMN_FIX.md` - Database schema fixes

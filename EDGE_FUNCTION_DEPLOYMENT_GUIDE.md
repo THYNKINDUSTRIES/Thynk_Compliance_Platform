@@ -937,7 +937,7 @@ curl -X POST 'https://kruwbjaszdwzttblxqwr.supabase.co/functions/v1/scheduled-po
 ## Function 6: state-regulations-poller
 
 **Purpose:** Poll state cannabis regulatory agency websites
-**Used By:** `scheduled-poller-cron`, `StateRegulationsPoller.tsx`
+**Used By:** `scheduled-poller-cron`, `CannabisHempPoller.tsx`
 
 ```typescript
 const corsHeaders = {
