@@ -1060,12 +1060,25 @@ async function analyzeWithOpenAI(
   }
 
   try {
+    // Build a Headers object and coerce all values to strings so Deno's
+    // WebIDL conversion to ByteString cannot fail (some runtimes reject non-strings).
+    const rawHeaders: Record<string, any> = {
+      'Authorization': `Bearer ${openaiKey}`,
+      'Content-Type': 'application/json'
+    };
+    const safeHeaders = new Headers();
+    for (const [k, v] of Object.entries(rawHeaders)) {
+      if (v === undefined || v === null) continue;
+      if (Array.isArray(v)) {
+        safeHeaders.set(k, v.map(String).join(', '));
+      } else {
+        safeHeaders.set(k, String(v));
+      }
+    }
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers: safeHeaders,
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
