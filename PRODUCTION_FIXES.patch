@@ -36,8 +36,8 @@ Create a `.env` file with:
 
 ```env
 VITE_SUPABASE_URL=https://kruwbjaszdwzttblxqwr.supabase.co
-VITE_SUPABASE_ANON_KEY=your_anon_key
-VITE_SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+VITE_SUPABASE_ANON_KEY=<REDACTED>
+VITE_SUPABASE_SERVICE_ROLE_KEY=<REDACTED>
 VITE_PREVIEW_MODE=false
 ```
 

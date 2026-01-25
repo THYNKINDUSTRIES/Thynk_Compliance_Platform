@@ -82,7 +82,7 @@ export default async function handler(req, res) {
    - **Schedule**: Every 4 hours
    - **Request Method**: POST
    - **Headers**: 
-     - `Authorization: Bearer YOUR_SUPABASE_SERVICE_ROLE_KEY` ← **NEVER use anon key for writes!**
+     - `Authorization: Bearer <REDACTED>` ← **NEVER use anon key for writes!**
      - `Content-Type: application/json`
 
 ## Security Note
@@ -108,7 +108,7 @@ You can manually trigger the polling at any time:
 ```bash
 curl -X POST \
   https://kruwbjaszdwzttblxqwr.supabase.co/functions/v1/scheduled-poller-cron \
-  -H "Authorization: Bearer YOUR_SUPABASE_SERVICE_ROLE_KEY" \
+  -H "Authorization: Bearer <REDACTED>" \
   -H "Content-Type: application/json"
 ```
 
