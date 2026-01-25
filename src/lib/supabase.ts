@@ -20,9 +20,9 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://kruwbjaszdwztt
 const isPreviewMode = import.meta.env.MODE === 'preview' || import.meta.env.VITE_PREVIEW_MODE === 'true';
 const useServiceRole = isPreviewMode && import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
 
-const supabaseKey = useServiceRole 
+const supabaseKey = useServiceRole
   ? import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
-  : (import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_epMbsnHiWniQUQlHXk6QSg_zDgzs08E');
+  : (import.meta.env.VITE_SUPABASE_ANON_KEY || '');
 
 // Log configuration (without exposing keys)
 if (import.meta.env.DEV) {
