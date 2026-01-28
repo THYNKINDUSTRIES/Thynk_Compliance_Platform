@@ -777,17 +777,28 @@ Deno.serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    // Prefer service role key for server operations; fall back to a runtime alias
-    // named `Supabase_API_Public` (if you map the secret in the dashboard/CLI),
-    // then finally to the anon key. Do NOT commit secrets to the repo.
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('Supabase_API_Public') || Deno.env.get('SUPABASE_ANON_KEY');
-    const keySource = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-      ? 'service_role'
-      : (Deno.env.get('Supabase_API_Public') ? 'alias_Supabase_API_Public' : (Deno.env.get('SUPABASE_ANON_KEY') ? 'anon' : 'none'));
+    // Prefer non-SUPABASE alias used in CI/Dashboard, then the official service role env,
+    // then runtime alias `Supabase_API_Public`, and finally the anon key.
+    // Order: `SERVICE_ROLE_KEY` -> `SUPABASE_SERVICE_ROLE_KEY` -> `Supabase_API_Public` -> `SUPABASE_ANON_KEY`.
+    // Do NOT commit secrets to the repo.
+    const supabaseKey = Deno.env.get('SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('Supabase_API_Public') || Deno.env.get('SUPABASE_ANON_KEY');
+    const keySource = Deno.env.get('SERVICE_ROLE_KEY')
+      ? 'service_role_alias_SERVICE_ROLE_KEY'
+      : (Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ? 'service_role_SUPABASE_SERVICE_ROLE_KEY' : (Deno.env.get('Supabase_API_Public') ? 'alias_Supabase_API_Public' : (Deno.env.get('SUPABASE_ANON_KEY') ? 'anon' : 'none')));
+
     if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing SUPABASE_URL or SUPABASE keys (SERVICE_ROLE_KEY / Supabase_API_Public / ANON_KEY)');
-      return new Response(JSON.stringify({ success: false, error: 'Missing SUPABASE_URL or SUPABASE keys (SERVICE_ROLE_KEY / Supabase_API_Public / ANON_KEY)' }), {
+      console.error('Missing SUPABASE_URL or SUPABASE keys. Ensure SERVICE_ROLE_KEY or SUPABASE_SERVICE_ROLE_KEY is set.');
+      return new Response(JSON.stringify({ success: false, error: 'Missing SUPABASE_URL or SUPABASE keys. Ensure SERVICE_ROLE_KEY or SUPABASE_SERVICE_ROLE_KEY is set.' }), {
         status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // If only an anon key is available, fail loudly — anon keys cannot perform writes under RLS.
+    if (keySource === 'anon') {
+      console.error('Refusing to run poller with anon key: writes will be rejected by RLS. Map a service role secret (SERVICE_ROLE_KEY) in the project.');
+      return new Response(JSON.stringify({ success: false, error: 'Server requires a Supabase service role key (SERVICE_ROLE_KEY). Do not use anon key for writes.' }), {
+        status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -795,7 +806,7 @@ Deno.serve(async (req) => {
     // Log which key source is being used (do not log the key value itself)
     console.log('Using Supabase key source for DB operations:', keySource);
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = createClient(supabaseUrl, supabaseKey.trim());
 
     // basic counters and error collection (moved earlier so updateProgress can reference it)
     let recordsProcessed = 0;
@@ -1049,12 +1060,25 @@ async function analyzeWithOpenAI(
   }
 
   try {
+    // Build a Headers object and coerce all values to strings so Deno's
+    // WebIDL conversion to ByteString cannot fail (some runtimes reject non-strings).
+    const rawHeaders: Record<string, any> = {
+      'Authorization': `Bearer ${openaiKey}`,
+      'Content-Type': 'application/json'
+    };
+    const safeHeaders = new Headers();
+    for (const [k, v] of Object.entries(rawHeaders)) {
+      if (v === undefined || v === null) continue;
+      if (Array.isArray(v)) {
+        safeHeaders.set(k, v.map(String).join(', '));
+      } else {
+        safeHeaders.set(k, String(v));
+      }
+    }
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers: safeHeaders,
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
