@@ -1,0 +1,178 @@
+state_code,agency_name,url_type,url,source,status_code,last_tested,notes
+AL,Alabama Medical Cannabis Commission,agency_main,https://amcc.alabama.gov/,cannabis-hemp-poller,200,2026-01-29T07:17:32.712Z,
+AL,Alabama Medical Cannabis Commission,news_page,https://www.alabama.gov/newsroom,cannabis-hemp-poller,404,2026-01-29T07:17:35.521Z,HTTP 404
+AL,Alabama Medical Cannabis Commission,news_page,https://www.legislature.state.al.us,cannabis-hemp-poller,200,2026-01-29T07:17:36.168Z,
+AL,Alabama Medical Cannabis Commission,regulation_page,https://amcc.alabama.gov/rules/,cannabis-hemp-poller,404,2026-01-29T07:17:36.986Z,HTTP 404
+AK,Alaska Marijuana Control Board,agency_main,https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx,cannabis-hemp-poller,404,2026-01-29T07:17:37.250Z,HTTP 404
+AK,Alaska Marijuana Control Board,news_page,https://www.alaska.gov/news,cannabis-hemp-poller,404,2026-01-29T07:17:38.066Z,HTTP 404
+AK,Alaska Marijuana Control Board,news_page,https://legislature.ak.gov/news.php,cannabis-hemp-poller,ERROR,2026-01-29T07:17:38.193Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://legislature.ak.gov/news.php"""
+AK,Alaska Marijuana Control Board,regulation_page,https://www.commerce.alaska.gov/web/cbpl/Marijuana/StatutesRegulations.aspx,cannabis-hemp-poller,404,2026-01-29T07:17:38.490Z,HTTP 404
+AZ,Arizona Department of Health Services – Marijuana Program,agency_main,https://www.azdhs.gov/licensing/marijuana/,cannabis-hemp-poller,200,2026-01-29T07:17:39.467Z,
+AZ,Arizona Department of Health Services – Marijuana Program,news_page,https://www.azdhs.gov/news/,cannabis-hemp-poller,200,2026-01-29T07:17:40.561Z,
+AZ,Arizona Department of Health Services – Marijuana Program,regulation_page,https://www.azdhs.gov/licensing/marijuana/adult-use-marijuana/,cannabis-hemp-poller,200,2026-01-29T07:17:41.549Z,
+AR,Arkansas Medical Marijuana Commission,agency_main,https://www.arkansas.gov/amcc/,cannabis-hemp-poller,404,2026-01-29T07:17:42.146Z,HTTP 404
+AR,Arkansas Medical Marijuana Commission,news_page,https://www.arkansas.gov/news,cannabis-hemp-poller,200,2026-01-29T07:17:42.892Z,
+AR,Arkansas Medical Marijuana Commission,news_page,https://www.arkansas.gov/governor/news,cannabis-hemp-poller,200,2026-01-29T07:17:43.908Z,
+AR,Arkansas Medical Marijuana Commission,regulation_page,https://www.arkansas.gov/amcc/rules-regulations/,cannabis-hemp-poller,404,2026-01-29T07:17:44.383Z,HTTP 404
+CA,California Department of Cannabis Control,agency_main,https://www.cannabis.ca.gov/,cannabis-hemp-poller,200,2026-01-29T07:17:44.673Z,
+CA,California Department of Cannabis Control,news_page,https://www.cannabis.ca.gov/about-us/announcements/,cannabis-hemp-poller,200,2026-01-29T07:17:44.963Z,
+CA,California Department of Cannabis Control,news_page,https://www.cannabis.ca.gov/posts/,cannabis-hemp-poller,200,2026-01-29T07:17:45.196Z,
+CA,California Department of Cannabis Control,regulation_page,https://www.cannabis.ca.gov/cannabis-laws/dcc-regulations/,cannabis-hemp-poller,200,2026-01-29T07:17:45.426Z,
+CO,Colorado Marijuana Enforcement Division,agency_main,https://sbg.colorado.gov/marijuana,cannabis-hemp-poller,404,2026-01-29T07:17:47.166Z,HTTP 404
+CO,Colorado Marijuana Enforcement Division,news_page,https://legislature.colorado.gov,cannabis-hemp-poller,ERROR,2026-01-29T07:17:47.290Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://legislature.colorado.gov"""
+CO,Colorado Marijuana Enforcement Division,news_page,https://www.colorado.gov/news,cannabis-hemp-poller,404,2026-01-29T07:17:47.710Z,HTTP 404
+CO,Colorado Marijuana Enforcement Division,regulation_page,https://legislature.colorado.gov,cannabis-hemp-poller,ERROR,2026-01-29T07:17:47.836Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://legislature.colorado.gov"""
+CT,Connecticut Department of Consumer Protection – Cannabis,agency_main,https://portal.ct.gov/dcp/cannabis,cannabis-hemp-poller,404,2026-01-29T07:17:49.147Z,HTTP 404
+CT,Connecticut Department of Consumer Protection – Cannabis,news_page,https://www.ct.gov/news,cannabis-hemp-poller,200,2026-01-29T07:17:49.660Z,
+CT,Connecticut Department of Consumer Protection – Cannabis,news_page,https://legislature.ct.gov,cannabis-hemp-poller,ERROR,2026-01-29T07:17:49.781Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://legislature.ct.gov"""
+CT,Connecticut Department of Consumer Protection – Cannabis,regulation_page,https://portal.ct.gov/dcp/cannabis/regulations,cannabis-hemp-poller,404,2026-01-29T07:17:50.736Z,HTTP 404
+DE,Delaware Office of the Marijuana Commissioner,agency_main,https://omc.delaware.gov/,cannabis-hemp-poller,200,2026-01-29T07:17:51.576Z,
+DE,Delaware Office of the Marijuana Commissioner,news_page,https://news.delaware.gov,cannabis-hemp-poller,200,2026-01-29T07:17:53.788Z,
+DE,Delaware Office of the Marijuana Commissioner,news_page,https://legislature.delaware.gov,cannabis-hemp-poller,ERROR,2026-01-29T07:17:53.913Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://legislature.delaware.gov"""
+DE,Delaware Office of the Marijuana Commissioner,regulation_page,https://omc.delaware.gov/regulations/,cannabis-hemp-poller,404,2026-01-29T07:17:54.429Z,HTTP 404
+FL,Florida Office of Medical Marijuana Use,agency_main,https://knowthefactsmmj.com/,cannabis-hemp-poller,200,2026-01-29T07:17:55.029Z,
+FL,Florida Office of Medical Marijuana Use,news_page,https://knowthefactsmmj.com/about/weekly-updates/,cannabis-hemp-poller,200,2026-01-29T07:17:55.636Z,
+FL,Florida Office of Medical Marijuana Use,news_page,https://www.floridahealth.gov/newsroom/,cannabis-hemp-poller,404,2026-01-29T07:17:56.723Z,HTTP 404
+FL,Florida Office of Medical Marijuana Use,regulation_page,https://knowthefactsmmj.com/about/,cannabis-hemp-poller,200,2026-01-29T07:17:57.313Z,
+GA,Georgia Access to Medical Cannabis Commission,agency_main,https://www.gmcc.ga.gov/,cannabis-hemp-poller,200,2026-01-29T07:17:57.731Z,
+GA,Georgia Access to Medical Cannabis Commission,news_page,https://www.gmcc.ga.gov/news,cannabis-hemp-poller,404,2026-01-29T07:17:58.059Z,HTTP 404
+GA,Georgia Access to Medical Cannabis Commission,news_page,https://gov.georgia.gov/press-releases,cannabis-hemp-poller,200,2026-01-29T07:17:58.760Z,
+GA,Georgia Access to Medical Cannabis Commission,regulation_page,https://www.gmcc.ga.gov/regulations,cannabis-hemp-poller,404,2026-01-29T07:17:59.115Z,HTTP 404
+HI,Hawaii Department of Health – Medical Cannabis Program,agency_main,https://health.hawaii.gov/medicalcannabis/,cannabis-hemp-poller,200,2026-01-29T07:17:59.431Z,
+HI,Hawaii Department of Health – Medical Cannabis Program,news_page,https://health.hawaii.gov/news/,cannabis-hemp-poller,200,2026-01-29T07:18:00.201Z,
+HI,Hawaii Department of Health – Medical Cannabis Program,regulation_page,https://health.hawaii.gov/medicalcannabis/statutes-rules/,cannabis-hemp-poller,404,2026-01-29T07:18:00.931Z,HTTP 404
+ID,Idaho State Department of Agriculture – Hemp Program,agency_main,https://agri.idaho.gov/main/hemp/,cannabis-hemp-poller,200,2026-01-29T07:18:03.899Z,
+ID,Idaho State Department of Agriculture – Hemp Program,news_page,https://agri.idaho.gov/news/,cannabis-hemp-poller,200,2026-01-29T07:18:06.347Z,
+ID,Idaho State Department of Agriculture – Hemp Program,regulation_page,https://agri.idaho.gov/main/hemp/,cannabis-hemp-poller,200,2026-01-29T07:18:09.152Z,
+IL,Illinois Department of Financial and Professional Regulation – Cannabis,agency_main,https://idfpr.illinois.gov/profs/adultusecan.html,cannabis-hemp-poller,200,2026-01-29T07:18:09.403Z,
+IL,Illinois Department of Financial and Professional Regulation – Cannabis,news_page,https://idfpr.illinois.gov/News.html,cannabis-hemp-poller,ERROR,2026-01-29T07:18:11.900Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://idfpr.illinois.gov/News.html"""
+IL,Illinois Department of Financial and Professional Regulation – Cannabis,regulation_page,https://idfpr.illinois.gov/profs/adultusecan.html,cannabis-hemp-poller,200,2026-01-29T07:18:12.127Z,
+IN,Indiana State Department of Health – Cannabis / Hemp,agency_main,https://www.in.gov/cannabis/,cannabis-hemp-poller,404,2026-01-29T07:18:12.914Z,HTTP 404
+IN,Indiana State Department of Health – Cannabis / Hemp,news_page,https://www.in.gov/news,cannabis-hemp-poller,404,2026-01-29T07:18:13.751Z,HTTP 404
+IN,Indiana State Department of Health – Cannabis / Hemp,news_page,https://iga.in.gov/legislative/,cannabis-hemp-poller,200,2026-01-29T07:18:14.008Z,
+IN,Indiana State Department of Health – Cannabis / Hemp,regulation_page,https://www.in.gov/cannabis/,cannabis-hemp-poller,404,2026-01-29T07:18:14.850Z,HTTP 404
+IA,Iowa Department of Health and Human Services – Medical Cannabis,agency_main,https://hhs.iowa.gov/medical-cannabis,cannabis-hemp-poller,200,2026-01-29T07:18:16.188Z,
+IA,Iowa Department of Health and Human Services – Medical Cannabis,news_page,https://hhs.iowa.gov/news,cannabis-hemp-poller,404,2026-01-29T07:18:16.867Z,HTTP 404
+IA,Iowa Department of Health and Human Services – Medical Cannabis,regulation_page,https://hhs.iowa.gov/medical-cannabis,cannabis-hemp-poller,200,2026-01-29T07:18:17.669Z,
+KS,Kansas Department of Agriculture – Hemp Program,agency_main,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp,cannabis-hemp-poller,403,2026-01-29T07:18:18.255Z,HTTP 403
+KS,Kansas Department of Agriculture – Hemp Program,news_page,https://agriculture.ks.gov/news,cannabis-hemp-poller,403,2026-01-29T07:18:18.803Z,HTTP 403
+KS,Kansas Department of Agriculture – Hemp Program,news_page,https://www.kslegislature.org,cannabis-hemp-poller,200,2026-01-29T07:18:19.807Z,
+KS,Kansas Department of Agriculture – Hemp Program,regulation_page,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp,cannabis-hemp-poller,403,2026-01-29T07:18:20.354Z,HTTP 403
+KY,Kentucky Office of Medical Cannabis,agency_main,https://kymedcan.ky.gov/,cannabis-hemp-poller,403,2026-01-29T07:18:20.601Z,HTTP 403
+KY,Kentucky Office of Medical Cannabis,news_page,https://legislature.ky.gov/news,cannabis-hemp-poller,403,2026-01-29T07:18:20.816Z,HTTP 403
+KY,Kentucky Office of Medical Cannabis,news_page,https://governor.ky.gov/news,cannabis-hemp-poller,403,2026-01-29T07:18:21.288Z,HTTP 403
+KY,Kentucky Office of Medical Cannabis,regulation_page,https://legislature.ky.gov/laws/statutes,cannabis-hemp-poller,403,2026-01-29T07:18:21.515Z,HTTP 403
+LA,Louisiana Department of Agriculture & Forestry – Medical Marijuana,agency_main,https://www.ldaf.state.la.us/medical-marijuana/,cannabis-hemp-poller,404,2026-01-29T07:18:22.195Z,HTTP 404
+LA,Louisiana Department of Agriculture & Forestry – Medical Marijuana,news_page,https://www.ldaf.state.la.us/newsroom,cannabis-hemp-poller,404,2026-01-29T07:18:22.896Z,HTTP 404
+LA,Louisiana Department of Agriculture & Forestry – Medical Marijuana,news_page,https://legislature.la.gov,cannabis-hemp-poller,ERROR,2026-01-29T07:18:23.055Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://legislature.la.gov"""
+LA,Louisiana Department of Agriculture & Forestry – Medical Marijuana,regulation_page,https://www.ldaf.state.la.us/medical-marijuana/regulations/,cannabis-hemp-poller,404,2026-01-29T07:18:23.628Z,HTTP 404
+ME,Maine Office of Cannabis Policy,agency_main,https://www.maine.gov/dafs/ocp,cannabis-hemp-poller,200,2026-01-29T07:18:25.338Z,
+ME,Maine Office of Cannabis Policy,news_page,https://www.maine.gov/dafs/ocp/news,cannabis-hemp-poller,404,2026-01-29T07:18:25.533Z,HTTP 404
+ME,Maine Office of Cannabis Policy,news_page,https://legislature.maine.gov,cannabis-hemp-poller,200,2026-01-29T07:18:26.257Z,
+ME,Maine Office of Cannabis Policy,regulation_page,https://www.maine.gov/dafs/ocp/rules-statutes,cannabis-hemp-poller,404,2026-01-29T07:18:26.447Z,HTTP 404
+MD,Maryland Cannabis Administration,agency_main,https://cannabis.maryland.gov/,cannabis-hemp-poller,200,2026-01-29T07:18:27.425Z,
+MD,Maryland Cannabis Administration,news_page,https://cannabis.maryland.gov/Pages/news.aspx,cannabis-hemp-poller,200,2026-01-29T07:18:27.834Z,
+MD,Maryland Cannabis Administration,regulation_page,https://cannabis.maryland.gov/Pages/Laws-Regulations.aspx,cannabis-hemp-poller,404,2026-01-29T07:18:28.140Z,HTTP 404
+MA,Massachusetts Cannabis Control Commission,agency_main,https://masscannabiscontrol.com,cannabis-hemp-poller,200,2026-01-29T07:18:28.788Z,
+MA,Massachusetts Cannabis Control Commission,news_page,https://masscannabiscontrol.com/news,cannabis-hemp-poller,200,2026-01-29T07:18:29.611Z,
+MA,Massachusetts Cannabis Control Commission,news_page,https://masscannabiscontrol.com/public-meetings,cannabis-hemp-poller,200,2026-01-29T07:18:30.865Z,
+MA,Massachusetts Cannabis Control Commission,regulation_page,https://masscannabiscontrol.com/public-documents/regulations,cannabis-hemp-poller,200,2026-01-29T07:18:31.708Z,
+MI,Michigan Cannabis Regulatory Agency,agency_main,https://www.michigan.gov/cra,cannabis-hemp-poller,403,2026-01-29T07:18:31.934Z,HTTP 403
+MI,Michigan Cannabis Regulatory Agency,news_page,https://www.michigan.gov/news,cannabis-hemp-poller,403,2026-01-29T07:18:32.133Z,HTTP 403
+MI,Michigan Cannabis Regulatory Agency,news_page,https://legislature.mi.gov,cannabis-hemp-poller,200,2026-01-29T07:18:33.406Z,
+MI,Michigan Cannabis Regulatory Agency,regulation_page,https://www.michigan.gov/cra/about/rules,cannabis-hemp-poller,403,2026-01-29T07:18:33.634Z,HTTP 403
+MN,Minnesota Office of Cannabis Management,agency_main,https://mn.gov/ocm,cannabis-hemp-poller,200,2026-01-29T07:18:34.443Z,
+MN,Minnesota Office of Cannabis Management,news_page,https://mn.gov/ocm/media/news-releases/,cannabis-hemp-poller,200,2026-01-29T07:18:35.149Z,
+MN,Minnesota Office of Cannabis Management,regulation_page,https://mn.gov/ocm/laws/,cannabis-hemp-poller,200,2026-01-29T07:18:35.853Z,
+MN,Minnesota Office of Cannabis Management,regulation_page,https://mn.gov/ocm/laws/rulemaking.jsp,cannabis-hemp-poller,200,2026-01-29T07:18:36.579Z,
+MN,Minnesota Office of Cannabis Management,regulation_page,https://www.revisor.mn.gov/rules/9810/,cannabis-hemp-poller,200,2026-01-29T07:18:37.104Z,
+MS,Mississippi Department of Agriculture - Hemp,agency_main,https://www.mda.ms.gov/divisions/hemp,cannabis-hemp-poller,ERROR,2026-01-29T07:18:37.228Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://www.mda.ms.gov/divisions/hemp"""
+MS,Mississippi Department of Agriculture - Hemp,news_page,https://www.mda.ms.gov/news,cannabis-hemp-poller,ERROR,2026-01-29T07:18:37.354Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://www.mda.ms.gov/news"""
+MS,Mississippi Department of Agriculture - Hemp,news_page,https://www.legislature.ms.gov,cannabis-hemp-poller,200,2026-01-29T07:18:38.020Z,
+MS,Mississippi Department of Agriculture - Hemp,regulation_page,https://www.mda.ms.gov/hemp-program,cannabis-hemp-poller,ERROR,2026-01-29T07:18:38.147Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://www.mda.ms.gov/hemp-program"""
+MO,Missouri Division of Cannabis Regulation,agency_main,https://cannabis.mo.gov,cannabis-hemp-poller,200,2026-01-29T07:18:39.027Z,
+MO,Missouri Division of Cannabis Regulation,news_page,https://cannabis.mo.gov/news,cannabis-hemp-poller,200,2026-01-29T07:18:39.705Z,
+MO,Missouri Division of Cannabis Regulation,regulation_page,https://cannabis.mo.gov/rules-regulations,cannabis-hemp-poller,200,2026-01-29T07:18:40.404Z,
+MT,Montana Department of Revenue - Cannabis Control Division,agency_main,https://mt.gov/cannabis,cannabis-hemp-poller,404,2026-01-29T07:18:40.775Z,HTTP 404
+MT,Montana Department of Revenue - Cannabis Control Division,news_page,https://mt.gov/cannabis/news,cannabis-hemp-poller,404,2026-01-29T07:18:41.155Z,HTTP 404
+MT,Montana Department of Revenue - Cannabis Control Division,news_page,https://leg.mt.gov,cannabis-hemp-poller,200,2026-01-29T07:18:47.324Z,
+MT,Montana Department of Revenue - Cannabis Control Division,regulation_page,https://mt.gov/cannabis/rules,cannabis-hemp-poller,404,2026-01-29T07:18:47.700Z,HTTP 404
+NE,Nebraska Department of Agriculture - Hemp,agency_main,https://agr.nebraska.gov/hemp,cannabis-hemp-poller,ERROR,2026-01-29T07:18:48.081Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://agr.nebraska.gov/hemp"""
+NE,Nebraska Department of Agriculture - Hemp,news_page,https://agr.nebraska.gov/news,cannabis-hemp-poller,ERROR,2026-01-29T07:18:48.201Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://agr.nebraska.gov/news"""
+NE,Nebraska Department of Agriculture - Hemp,news_page,https://legislature.nebraska.gov,cannabis-hemp-poller,200,2026-01-29T07:18:49.010Z,
+NE,Nebraska Department of Agriculture - Hemp,regulation_page,https://agr.nebraska.gov/hemp,cannabis-hemp-poller,ERROR,2026-01-29T07:18:49.131Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://agr.nebraska.gov/hemp"""
+NV,Nevada Cannabis Compliance Board,agency_main,https://ccb.nv.gov,cannabis-hemp-poller,200,2026-01-29T07:18:49.427Z,
+NV,Nevada Cannabis Compliance Board,news_page,https://ccb.nv.gov/news-events,cannabis-hemp-poller,404,2026-01-29T07:18:50.146Z,HTTP 404
+NV,Nevada Cannabis Compliance Board,news_page,https://www.leg.state.nv.us,cannabis-hemp-poller,200,2026-01-29T07:18:50.439Z,
+NV,Nevada Cannabis Compliance Board,regulation_page,https://ccb.nv.gov/public-notices,cannabis-hemp-poller,404,2026-01-29T07:18:51.209Z,HTTP 404
+NH,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,agency_main,https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis,cannabis-hemp-poller,403,2026-01-29T07:18:51.424Z,HTTP 403
+NH,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,news_page,https://www.dhhs.nh.gov/news-events/press-releases,cannabis-hemp-poller,403,2026-01-29T07:18:51.610Z,HTTP 403
+NH,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,news_page,https://www.gencourt.state.nh.us,cannabis-hemp-poller,200,2026-01-29T07:18:53.718Z,
+NH,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,regulation_page,https://www.dhhs.nh.gov/document/therapeutic-cannabis-program-data-report-2024,cannabis-hemp-poller,403,2026-01-29T07:18:53.917Z,HTTP 403
+NJ,New Jersey Cannabis Regulatory Commission,agency_main,https://www.nj.gov/cannabis/,cannabis-hemp-poller,200,2026-01-29T07:18:54.458Z,
+NJ,New Jersey Cannabis Regulatory Commission,news_page,https://www.nj.gov/cannabis/news/,cannabis-hemp-poller,200,2026-01-29T07:18:54.932Z,
+NJ,New Jersey Cannabis Regulatory Commission,regulation_page,https://www.nj.gov/cannabis/resources/cannabis-laws/,cannabis-hemp-poller,200,2026-01-29T07:18:55.378Z,
+NM,New Mexico Regulation & Licensing Department – Cannabis Control Division,agency_main,https://www.rld.nm.gov/cannabis/,cannabis-hemp-poller,200,2026-01-29T07:18:58.059Z,
+NM,New Mexico Regulation & Licensing Department – Cannabis Control Division,news_page,https://www.rld.nm.gov/news/,cannabis-hemp-poller,200,2026-01-29T07:19:05.464Z,
+NM,New Mexico Regulation & Licensing Department – Cannabis Control Division,regulation_page,https://www.rld.nm.gov/cannabis/rules-and-regulations/,cannabis-hemp-poller,404,2026-01-29T07:19:07.990Z,HTTP 404
+NY,New York Office of Cannabis Management,agency_main,https://cannabis.ny.gov/,cannabis-hemp-poller,200,2026-01-29T07:19:08.286Z,
+NY,New York Office of Cannabis Management,news_page,https://cannabis.ny.gov/pressroom,cannabis-hemp-poller,200,2026-01-29T07:19:08.607Z,
+NY,New York Office of Cannabis Management,regulation_page,https://cannabis.ny.gov/marihuana-regulation-and-taxation-act-mrta,cannabis-hemp-poller,200,2026-01-29T07:19:09.021Z,
+OH,Ohio Division of Cannabis Control,agency_main,https://cannabis.ohio.gov/,cannabis-hemp-poller,ERROR,2026-01-29T07:19:09.147Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://cannabis.ohio.gov/"""
+OH,Ohio Division of Cannabis Control,news_page,https://cannabis.ohio.gov/news,cannabis-hemp-poller,ERROR,2026-01-29T07:19:09.275Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://cannabis.ohio.gov/news"""
+OH,Ohio Division of Cannabis Control,news_page,https://www.legislature.ohio.gov,cannabis-hemp-poller,200,2026-01-29T07:19:09.809Z,
+OH,Ohio Division of Cannabis Control,regulation_page,https://cannabis.ohio.gov/rules,cannabis-hemp-poller,ERROR,2026-01-29T07:19:09.931Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://cannabis.ohio.gov/rules"""
+OK,Oklahoma Medical Marijuana Authority,agency_main,https://oklahoma.gov/omma.html,cannabis-hemp-poller,200,2026-01-29T07:19:10.287Z,
+OK,Oklahoma Medical Marijuana Authority,news_page,https://oklahoma.gov/omma/news.html,cannabis-hemp-poller,404,2026-01-29T07:19:10.484Z,HTTP 404
+OK,Oklahoma Medical Marijuana Authority,news_page,https://www.oklegislature.gov,cannabis-hemp-poller,200,2026-01-29T07:19:10.947Z,
+OK,Oklahoma Medical Marijuana Authority,regulation_page,https://oklahoma.gov/omma/rules.html,cannabis-hemp-poller,404,2026-01-29T07:19:11.150Z,HTTP 404
+OR,Oregon Liquor and Cannabis Commission,agency_main,https://www.oregon.gov/olcc/,cannabis-hemp-poller,200,2026-01-29T07:19:12.102Z,
+OR,Oregon Liquor and Cannabis Commission,news_page,https://www.oregon.gov/olcc/Pages/news.aspx,cannabis-hemp-poller,200,2026-01-29T07:19:12.895Z,
+OR,Oregon Liquor and Cannabis Commission,regulation_page,https://www.oregon.gov/olcc/marijuana/Pages/Recreational-Marijuana-Laws-and-Rules.aspx,cannabis-hemp-poller,200,2026-01-29T07:19:14.039Z,
+PA,Pennsylvania Department of Health – Medical Marijuana Program,agency_main,https://www.health.pa.gov/topics/programs/Medical%20Marijuana,cannabis-hemp-poller,200,2026-01-29T07:19:16.086Z,
+PA,Pennsylvania Department of Health – Medical Marijuana Program,news_page,https://www.health.pa.gov/topics/healthcare/Pages/News.aspx,cannabis-hemp-poller,200,2026-01-29T07:19:17.097Z,
+PA,Pennsylvania Department of Health – Medical Marijuana Program,regulation_page,https://www.health.pa.gov/topics/programs/Medical%20Marijuana/Pages/Regulations.aspx,cannabis-hemp-poller,200,2026-01-29T07:19:18.590Z,
+RI,Rhode Island Cannabis Control Commission,agency_main,https://ccc.ri.gov/,cannabis-hemp-poller,200,2026-01-29T07:19:19.243Z,
+RI,Rhode Island Cannabis Control Commission,news_page,https://ccc.ri.gov/news,cannabis-hemp-poller,404,2026-01-29T07:19:19.708Z,HTTP 404
+RI,Rhode Island Cannabis Control Commission,news_page,https://www.rilegislature.gov,cannabis-hemp-poller,200,2026-01-29T07:19:20.642Z,
+RI,Rhode Island Cannabis Control Commission,regulation_page,https://ccc.ri.gov/regulations,cannabis-hemp-poller,404,2026-01-29T07:19:21.185Z,HTTP 404
+SC,South Carolina Department of Agriculture – Hemp Program,agency_main,https://agriculture.sc.gov/divisions/consumer-protection/hemp/,cannabis-hemp-poller,200,2026-01-29T07:19:21.525Z,
+SC,South Carolina Department of Agriculture – Hemp Program,news_page,https://agriculture.sc.gov/news/,cannabis-hemp-poller,200,2026-01-29T07:19:21.846Z,
+SC,South Carolina Department of Agriculture – Hemp Program,regulation_page,https://www.scstatehouse.gov/code/t46c055.php,cannabis-hemp-poller,200,2026-01-29T07:19:25.460Z,
+SD,South Dakota Department of Health – Medical Cannabis Program,agency_main,https://medcannabis.sd.gov/,cannabis-hemp-poller,200,2026-01-29T07:19:25.893Z,
+SD,South Dakota Department of Health – Medical Cannabis Program,news_page,https://medcannabis.sd.gov/Updates/News.aspx,cannabis-hemp-poller,200,2026-01-29T07:19:26.296Z,
+SD,South Dakota Department of Health – Medical Cannabis Program,regulation_page,https://medcannabis.sd.gov/About/Laws.aspx,cannabis-hemp-poller,200,2026-01-29T07:19:26.697Z,
+SD,South Dakota Department of Health – Medical Cannabis Program,regulation_page,https://sdlegislature.gov/Statutes/34-20G,cannabis-hemp-poller,200,2026-01-29T07:19:28.464Z,
+TN,Tennessee Department of Agriculture – Hemp Program,agency_main,https://www.tn.gov/agriculture/businesses/hemp.html,cannabis-hemp-poller,ERROR,2026-01-29T07:19:29.054Z,"Command failed: curl -s -o /dev/null -w ""%{http_code}"" --max-time 10 --connect-timeout 5 -L ""https://www.tn.gov/agriculture/businesses/hemp.html"""
+TN,Tennessee Department of Agriculture – Hemp Program,news_page,https://www.tn.gov/news,cannabis-hemp-poller,200,2026-01-29T07:19:29.723Z,
+TN,Tennessee Department of Agriculture – Hemp Program,news_page,https://wapp.capitol.tn.gov,cannabis-hemp-poller,200,2026-01-29T07:19:30.180Z,
+TN,Tennessee Department of Agriculture – Hemp Program,regulation_page,https://www.tn.gov/agriculture/businesses/hemp.html,cannabis-hemp-poller,200,2026-01-29T07:19:30.855Z,
+TX,Texas Department of State Health Services – Consumable Hemp Program,agency_main,https://www.dshs.texas.gov/consumable-hemp-program,cannabis-hemp-poller,200,2026-01-29T07:19:31.389Z,
+TX,Texas Department of State Health Services – Consumable Hemp Program,news_page,https://www.dshs.texas.gov/news-alerts,cannabis-hemp-poller,200,2026-01-29T07:19:31.699Z,
+TX,Texas Department of State Health Services – Consumable Hemp Program,regulation_page,https://www.dshs.texas.gov/consumable-hemp-program,cannabis-hemp-poller,200,2026-01-29T07:19:31.996Z,
+TX,Texas Department of State Health Services – Consumable Hemp Program,regulation_page,https://texasagriculture.gov/Regulatory-Programs/Hemp,cannabis-hemp-poller,200,2026-01-29T07:19:32.688Z,
+UT,Utah Department of Health & Human Services – Medical Cannabis Program,agency_main,https://medicalcannabis.utah.gov/,cannabis-hemp-poller,200,2026-01-29T07:19:32.971Z,
+UT,Utah Department of Health & Human Services – Medical Cannabis Program,news_page,https://medicalcannabis.utah.gov/news/,cannabis-hemp-poller,404,2026-01-29T07:19:34.165Z,HTTP 404
+UT,Utah Department of Health & Human Services – Medical Cannabis Program,news_page,https://le.utah.gov,cannabis-hemp-poller,200,2026-01-29T07:19:34.546Z,
+UT,Utah Department of Health & Human Services – Medical Cannabis Program,regulation_page,https://medicalcannabis.utah.gov/laws-and-rules/,cannabis-hemp-poller,404,2026-01-29T07:19:35.206Z,HTTP 404
+VA,Virginia Cannabis Control Authority,agency_main,https://www.cca.virginia.gov/,cannabis-hemp-poller,200,2026-01-29T07:19:36.105Z,
+VA,Virginia Cannabis Control Authority,news_page,https://www.cca.virginia.gov/news,cannabis-hemp-poller,200,2026-01-29T07:19:37.001Z,
+VA,Virginia Cannabis Control Authority,regulation_page,https://www.cca.virginia.gov/regulations,cannabis-hemp-poller,404,2026-01-29T07:19:37.820Z,HTTP 404
+VT,Vermont Cannabis Control Board,agency_main,https://ccb.vermont.gov/,cannabis-hemp-poller,403,2026-01-29T07:19:38.132Z,HTTP 403
+VT,Vermont Cannabis Control Board,news_page,https://ccb.vermont.gov/news,cannabis-hemp-poller,403,2026-01-29T07:19:38.409Z,HTTP 403
+VT,Vermont Cannabis Control Board,news_page,https://legislature.vermont.gov,cannabis-hemp-poller,200,2026-01-29T07:19:40.411Z,
+VT,Vermont Cannabis Control Board,regulation_page,https://ccb.vermont.gov/rules,cannabis-hemp-poller,403,2026-01-29T07:19:40.682Z,HTTP 403
+WA,Washington State Liquor and Cannabis Board,agency_main,https://lcb.wa.gov/,cannabis-hemp-poller,200,2026-01-29T07:19:40.913Z,
+WA,Washington State Liquor and Cannabis Board,news_page,https://lcb.wa.gov/pressreleases,cannabis-hemp-poller,200,2026-01-29T07:19:41.237Z,
+WA,Washington State Liquor and Cannabis Board,regulation_page,https://lcb.wa.gov/laws/laws-and-rules,cannabis-hemp-poller,200,2026-01-29T07:19:41.565Z,
+WI,"Wisconsin Department of Agriculture, Trade and Consumer Protection – Hemp Program",agency_main,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx,cannabis-hemp-poller,200,2026-01-29T07:19:42.360Z,
+WI,"Wisconsin Department of Agriculture, Trade and Consumer Protection – Hemp Program",news_page,https://datcp.wi.gov/Pages/News_Media/News.aspx,cannabis-hemp-poller,404,2026-01-29T07:19:42.836Z,HTTP 404
+WI,"Wisconsin Department of Agriculture, Trade and Consumer Protection – Hemp Program",regulation_page,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx,cannabis-hemp-poller,200,2026-01-29T07:19:43.536Z,
+WV,West Virginia Office of Medical Cannabis,agency_main,https://omc.wv.gov/,cannabis-hemp-poller,200,2026-01-29T07:19:44.438Z,
+WV,West Virginia Office of Medical Cannabis,news_page,https://omc.wv.gov/news,cannabis-hemp-poller,200,2026-01-29T07:19:45.333Z,
+WV,West Virginia Office of Medical Cannabis,regulation_page,https://omc.wv.gov/rules/Pages/default.aspx,cannabis-hemp-poller,200,2026-01-29T07:19:45.965Z,
+WV,West Virginia Office of Medical Cannabis,regulation_page,https://code.wvlegislature.gov/16A/,cannabis-hemp-poller,200,2026-01-29T07:19:47.072Z,
+WY,Wyoming Department of Agriculture – Hemp Program,agency_main,https://agriculture.wy.gov/divisions/hemp,cannabis-hemp-poller,404,2026-01-29T07:19:48.620Z,HTTP 404
+WY,Wyoming Department of Agriculture – Hemp Program,news_page,https://agriculture.wy.gov/news,cannabis-hemp-poller,200,2026-01-29T07:19:50.119Z,
+WY,Wyoming Department of Agriculture – Hemp Program,regulation_page,https://agriculture.wy.gov/divisions/hemp,cannabis-hemp-poller,404,2026-01-29T07:19:51.369Z,HTTP 404
+FED,Federal Register,api_endpoint,https://www.federalregister.gov/api/v1/documents.json,federal-register-poller,200,2026-01-29T07:19:51.761Z,

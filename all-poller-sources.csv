@@ -1,0 +1,512 @@
+poller,state,agency,agencyName,sourceType,url,category
+cannabis-hemp-poller,AL,https://amcc.alabama.gov/,Alabama Medical Cannabis Commission,webpage,https://www.alabama.gov/newsroom,news
+cannabis-hemp-poller,AL,https://amcc.alabama.gov/,Alabama Medical Cannabis Commission,webpage,https://www.legislature.state.al.us,news
+cannabis-hemp-poller,AL,https://amcc.alabama.gov/,Alabama Medical Cannabis Commission,webpage,https://www.agi.alabama.gov/divisions/Regulatory/hemp.aspx,news
+cannabis-hemp-poller,AL,https://amcc.alabama.gov/,Alabama Medical Cannabis Commission,webpage,https://www.agi.alabama.gov/divisions/Regulatory/hemp.aspx/news,news
+cannabis-hemp-poller,AL,https://amcc.alabama.gov/,Alabama Medical Cannabis Commission,webpage,https://www.al.gov/agriculture/hemp,news
+cannabis-hemp-poller,AL,https://amcc.alabama.gov/,Alabama Medical Cannabis Commission,webpage,https://agriculture.al.gov/hemp,news
+cannabis-hemp-poller,AL,https://amcc.alabama.gov/,Alabama Medical Cannabis Commission,webpage,https://amcc.alabama.gov/rules/,regulations
+cannabis-hemp-poller,AL,https://amcc.alabama.gov/,Alabama Medical Cannabis Commission,webpage,https://www.agi.alabama.gov/divisions/Regulatory/hemp.aspx,regulations
+cannabis-hemp-poller,AL,https://amcc.alabama.gov/,Alabama Medical Cannabis Commission,webpage,https://www.agi.alabama.gov/divisions/Regulatory/hemp.aspx/regulations,regulations
+cannabis-hemp-poller,AL,https://amcc.alabama.gov/,Alabama Medical Cannabis Commission,webpage,https://www.agi.alabama.gov/divisions/Regulatory/hemp.aspx/rules,regulations
+cannabis-hemp-poller,AL,https://amcc.alabama.gov/,Alabama Medical Cannabis Commission,webpage,https://www.al.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,AK,https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx,Alaska Marijuana Control Board,webpage,https://www.alaska.gov/news,news
+cannabis-hemp-poller,AK,https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx,Alaska Marijuana Control Board,webpage,https://legislature.ak.gov/news.php,news
+cannabis-hemp-poller,AK,https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx,Alaska Marijuana Control Board,webpage,https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx,news
+cannabis-hemp-poller,AK,https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx,Alaska Marijuana Control Board,webpage,https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx/news,news
+cannabis-hemp-poller,AK,https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx,Alaska Marijuana Control Board,webpage,https://www.ak.gov/agriculture/hemp,news
+cannabis-hemp-poller,AK,https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx,Alaska Marijuana Control Board,webpage,https://agriculture.ak.gov/hemp,news
+cannabis-hemp-poller,AK,https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx,Alaska Marijuana Control Board,webpage,https://www.commerce.alaska.gov/web/cbpl/Marijuana/StatutesRegulations.aspx,regulations
+cannabis-hemp-poller,AK,https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx,Alaska Marijuana Control Board,webpage,https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx,regulations
+cannabis-hemp-poller,AK,https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx,Alaska Marijuana Control Board,webpage,https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx/regulations,regulations
+cannabis-hemp-poller,AK,https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx,Alaska Marijuana Control Board,webpage,https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx/rules,regulations
+cannabis-hemp-poller,AK,https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx,Alaska Marijuana Control Board,webpage,https://www.ak.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,AZ,https://www.azdhs.gov/licensing/marijuana/,Arizona Department of Health Services – Marijuana Program,webpage,https://www.azdhs.gov/news/,news
+cannabis-hemp-poller,AZ,https://www.azdhs.gov/licensing/marijuana/,Arizona Department of Health Services – Marijuana Program,webpage,https://agriculture.az.gov/hemp,news
+cannabis-hemp-poller,AZ,https://www.azdhs.gov/licensing/marijuana/,Arizona Department of Health Services – Marijuana Program,webpage,https://agriculture.az.gov/hemp/news,news
+cannabis-hemp-poller,AZ,https://www.azdhs.gov/licensing/marijuana/,Arizona Department of Health Services – Marijuana Program,webpage,https://www.az.gov/agriculture/hemp,news
+cannabis-hemp-poller,AZ,https://www.azdhs.gov/licensing/marijuana/,Arizona Department of Health Services – Marijuana Program,webpage,https://agriculture.az.gov/hemp,news
+cannabis-hemp-poller,AZ,https://www.azdhs.gov/licensing/marijuana/,Arizona Department of Health Services – Marijuana Program,webpage,https://www.azdhs.gov/licensing/marijuana/adult-use-marijuana/,regulations
+cannabis-hemp-poller,AZ,https://www.azdhs.gov/licensing/marijuana/,Arizona Department of Health Services – Marijuana Program,webpage,https://agriculture.az.gov/hemp,regulations
+cannabis-hemp-poller,AZ,https://www.azdhs.gov/licensing/marijuana/,Arizona Department of Health Services – Marijuana Program,webpage,https://agriculture.az.gov/hemp/regulations,regulations
+cannabis-hemp-poller,AZ,https://www.azdhs.gov/licensing/marijuana/,Arizona Department of Health Services – Marijuana Program,webpage,https://agriculture.az.gov/hemp/rules,regulations
+cannabis-hemp-poller,AZ,https://www.azdhs.gov/licensing/marijuana/,Arizona Department of Health Services – Marijuana Program,webpage,https://www.az.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,AR,https://www.arkansas.gov/amcc/,Arkansas Medical Marijuana Commission,webpage,https://www.arkansas.gov/news,news
+cannabis-hemp-poller,AR,https://www.arkansas.gov/amcc/,Arkansas Medical Marijuana Commission,webpage,https://www.arkansas.gov/governor/news,news
+cannabis-hemp-poller,AR,https://www.arkansas.gov/amcc/,Arkansas Medical Marijuana Commission,webpage,https://www.agriculture.arkansas.gov/divisions/plant-industries/hemp,news
+cannabis-hemp-poller,AR,https://www.arkansas.gov/amcc/,Arkansas Medical Marijuana Commission,webpage,https://www.agriculture.arkansas.gov/divisions/plant-industries/hemp/news,news
+cannabis-hemp-poller,AR,https://www.arkansas.gov/amcc/,Arkansas Medical Marijuana Commission,webpage,https://www.ar.gov/agriculture/hemp,news
+cannabis-hemp-poller,AR,https://www.arkansas.gov/amcc/,Arkansas Medical Marijuana Commission,webpage,https://agriculture.ar.gov/hemp,news
+cannabis-hemp-poller,AR,https://www.arkansas.gov/amcc/,Arkansas Medical Marijuana Commission,webpage,https://www.arkansas.gov/amcc/rules-regulations/,regulations
+cannabis-hemp-poller,AR,https://www.arkansas.gov/amcc/,Arkansas Medical Marijuana Commission,webpage,https://www.agriculture.arkansas.gov/divisions/plant-industries/hemp,regulations
+cannabis-hemp-poller,AR,https://www.arkansas.gov/amcc/,Arkansas Medical Marijuana Commission,webpage,https://www.agriculture.arkansas.gov/divisions/plant-industries/hemp/regulations,regulations
+cannabis-hemp-poller,AR,https://www.arkansas.gov/amcc/,Arkansas Medical Marijuana Commission,webpage,https://www.agriculture.arkansas.gov/divisions/plant-industries/hemp/rules,regulations
+cannabis-hemp-poller,AR,https://www.arkansas.gov/amcc/,Arkansas Medical Marijuana Commission,webpage,https://www.ar.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,CA,https://www.cannabis.ca.gov/,California Department of Cannabis Control,webpage,https://www.cannabis.ca.gov/about-us/announcements/,news
+cannabis-hemp-poller,CA,https://www.cannabis.ca.gov/,California Department of Cannabis Control,webpage,https://www.cannabis.ca.gov/posts/,news
+cannabis-hemp-poller,CA,https://www.cannabis.ca.gov/,California Department of Cannabis Control,webpage,https://www.cdfa.ca.gov/plant/industrialhemp,news
+cannabis-hemp-poller,CA,https://www.cannabis.ca.gov/,California Department of Cannabis Control,webpage,https://www.cdfa.ca.gov/plant/industrialhemp/news,news
+cannabis-hemp-poller,CA,https://www.cannabis.ca.gov/,California Department of Cannabis Control,webpage,https://www.ca.gov/agriculture/hemp,news
+cannabis-hemp-poller,CA,https://www.cannabis.ca.gov/,California Department of Cannabis Control,webpage,https://agriculture.ca.gov/hemp,news
+cannabis-hemp-poller,CA,https://www.cannabis.ca.gov/,California Department of Cannabis Control,webpage,https://www.cannabis.ca.gov/cannabis-laws/dcc-regulations/,regulations
+cannabis-hemp-poller,CA,https://www.cannabis.ca.gov/,California Department of Cannabis Control,webpage,https://www.cdfa.ca.gov/plant/industrialhemp/,regulations
+cannabis-hemp-poller,CA,https://www.cannabis.ca.gov/,California Department of Cannabis Control,webpage,https://www.cdfa.ca.gov/plant/industrialhemp/regulations,regulations
+cannabis-hemp-poller,CA,https://www.cannabis.ca.gov/,California Department of Cannabis Control,webpage,https://www.cdfa.ca.gov/plant/industrialhemp/rules,regulations
+cannabis-hemp-poller,CA,https://www.cannabis.ca.gov/,California Department of Cannabis Control,webpage,https://www.ca.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,CO,https://sbg.colorado.gov/marijuana,Colorado Marijuana Enforcement Division,webpage,https://legislature.colorado.gov,news
+cannabis-hemp-poller,CO,https://sbg.colorado.gov/marijuana,Colorado Marijuana Enforcement Division,webpage,https://www.colorado.gov/news,news
+cannabis-hemp-poller,CO,https://sbg.colorado.gov/marijuana,Colorado Marijuana Enforcement Division,webpage,https://www.colorado.gov/pacific/agriculture/hemp,news
+cannabis-hemp-poller,CO,https://sbg.colorado.gov/marijuana,Colorado Marijuana Enforcement Division,webpage,https://www.colorado.gov/pacific/agriculture/hemp/news,news
+cannabis-hemp-poller,CO,https://sbg.colorado.gov/marijuana,Colorado Marijuana Enforcement Division,webpage,https://www.co.gov/agriculture/hemp,news
+cannabis-hemp-poller,CO,https://sbg.colorado.gov/marijuana,Colorado Marijuana Enforcement Division,webpage,https://agriculture.co.gov/hemp,news
+cannabis-hemp-poller,CO,https://sbg.colorado.gov/marijuana,Colorado Marijuana Enforcement Division,webpage,https://legislature.colorado.gov,regulations
+cannabis-hemp-poller,CO,https://sbg.colorado.gov/marijuana,Colorado Marijuana Enforcement Division,webpage,https://www.colorado.gov/pacific/agriculture/hemp,regulations
+cannabis-hemp-poller,CO,https://sbg.colorado.gov/marijuana,Colorado Marijuana Enforcement Division,webpage,https://www.colorado.gov/pacific/agriculture/hemp/regulations,regulations
+cannabis-hemp-poller,CO,https://sbg.colorado.gov/marijuana,Colorado Marijuana Enforcement Division,webpage,https://www.colorado.gov/pacific/agriculture/hemp/rules,regulations
+cannabis-hemp-poller,CO,https://sbg.colorado.gov/marijuana,Colorado Marijuana Enforcement Division,webpage,https://www.co.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,CT,https://portal.ct.gov/dcp/cannabis,Connecticut Department of Consumer Protection – Cannabis,webpage,https://www.ct.gov/news,news
+cannabis-hemp-poller,CT,https://portal.ct.gov/dcp/cannabis,Connecticut Department of Consumer Protection – Cannabis,webpage,https://legislature.ct.gov,news
+cannabis-hemp-poller,CT,https://portal.ct.gov/dcp/cannabis,Connecticut Department of Consumer Protection – Cannabis,webpage,https://portal.ct.gov/doag/program/hemp,news
+cannabis-hemp-poller,CT,https://portal.ct.gov/dcp/cannabis,Connecticut Department of Consumer Protection – Cannabis,webpage,https://portal.ct.gov/doag/program/hemp/news,news
+cannabis-hemp-poller,CT,https://portal.ct.gov/dcp/cannabis,Connecticut Department of Consumer Protection – Cannabis,webpage,https://www.ct.gov/agriculture/hemp,news
+cannabis-hemp-poller,CT,https://portal.ct.gov/dcp/cannabis,Connecticut Department of Consumer Protection – Cannabis,webpage,https://agriculture.ct.gov/hemp,news
+cannabis-hemp-poller,CT,https://portal.ct.gov/dcp/cannabis,Connecticut Department of Consumer Protection – Cannabis,webpage,https://portal.ct.gov/dcp/cannabis/regulations,regulations
+cannabis-hemp-poller,CT,https://portal.ct.gov/dcp/cannabis,Connecticut Department of Consumer Protection – Cannabis,webpage,https://portal.ct.gov/doag/program/hemp,regulations
+cannabis-hemp-poller,CT,https://portal.ct.gov/dcp/cannabis,Connecticut Department of Consumer Protection – Cannabis,webpage,https://portal.ct.gov/doag/program/hemp/regulations,regulations
+cannabis-hemp-poller,CT,https://portal.ct.gov/dcp/cannabis,Connecticut Department of Consumer Protection – Cannabis,webpage,https://portal.ct.gov/doag/program/hemp/rules,regulations
+cannabis-hemp-poller,CT,https://portal.ct.gov/dcp/cannabis,Connecticut Department of Consumer Protection – Cannabis,webpage,https://www.ct.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,DE,https://omc.delaware.gov/,Delaware Office of the Marijuana Commissioner,webpage,https://news.delaware.gov,news
+cannabis-hemp-poller,DE,https://omc.delaware.gov/,Delaware Office of the Marijuana Commissioner,webpage,https://legislature.delaware.gov,news
+cannabis-hemp-poller,DE,https://omc.delaware.gov/,Delaware Office of the Marijuana Commissioner,webpage,https://dda.delaware.gov/hemp,news
+cannabis-hemp-poller,DE,https://omc.delaware.gov/,Delaware Office of the Marijuana Commissioner,webpage,https://dda.delaware.gov/hemp/news,news
+cannabis-hemp-poller,DE,https://omc.delaware.gov/,Delaware Office of the Marijuana Commissioner,webpage,https://www.de.gov/agriculture/hemp,news
+cannabis-hemp-poller,DE,https://omc.delaware.gov/,Delaware Office of the Marijuana Commissioner,webpage,https://agriculture.de.gov/hemp,news
+cannabis-hemp-poller,DE,https://omc.delaware.gov/,Delaware Office of the Marijuana Commissioner,webpage,https://omc.delaware.gov/regulations/,regulations
+cannabis-hemp-poller,DE,https://omc.delaware.gov/,Delaware Office of the Marijuana Commissioner,webpage,https://dda.delaware.gov/hemp/,regulations
+cannabis-hemp-poller,DE,https://omc.delaware.gov/,Delaware Office of the Marijuana Commissioner,webpage,https://dda.delaware.gov/hemp/regulations,regulations
+cannabis-hemp-poller,DE,https://omc.delaware.gov/,Delaware Office of the Marijuana Commissioner,webpage,https://dda.delaware.gov/hemp/rules,regulations
+cannabis-hemp-poller,DE,https://omc.delaware.gov/,Delaware Office of the Marijuana Commissioner,webpage,https://www.de.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,FL,https://knowthefactsmmj.com/,Florida Office of Medical Marijuana Use,webpage,https://knowthefactsmmj.com/about/weekly-updates/,news
+cannabis-hemp-poller,FL,https://knowthefactsmmj.com/,Florida Office of Medical Marijuana Use,webpage,https://www.floridahealth.gov/newsroom/,news
+cannabis-hemp-poller,FL,https://knowthefactsmmj.com/,Florida Office of Medical Marijuana Use,webpage,https://www.fdacs.gov/Agriculture-Industry/Hemp,news
+cannabis-hemp-poller,FL,https://knowthefactsmmj.com/,Florida Office of Medical Marijuana Use,webpage,https://www.fdacs.gov/Agriculture-Industry/Hemp/news,news
+cannabis-hemp-poller,FL,https://knowthefactsmmj.com/,Florida Office of Medical Marijuana Use,webpage,https://www.fl.gov/agriculture/hemp,news
+cannabis-hemp-poller,FL,https://knowthefactsmmj.com/,Florida Office of Medical Marijuana Use,webpage,https://agriculture.fl.gov/hemp,news
+cannabis-hemp-poller,FL,https://knowthefactsmmj.com/,Florida Office of Medical Marijuana Use,webpage,https://knowthefactsmmj.com/about/,regulations
+cannabis-hemp-poller,FL,https://knowthefactsmmj.com/,Florida Office of Medical Marijuana Use,webpage,https://www.fdacs.gov/Agriculture-Industry/Hemp,regulations
+cannabis-hemp-poller,FL,https://knowthefactsmmj.com/,Florida Office of Medical Marijuana Use,webpage,https://www.fdacs.gov/Agriculture-Industry/Hemp/regulations,regulations
+cannabis-hemp-poller,FL,https://knowthefactsmmj.com/,Florida Office of Medical Marijuana Use,webpage,https://www.fdacs.gov/Agriculture-Industry/Hemp/rules,regulations
+cannabis-hemp-poller,FL,https://knowthefactsmmj.com/,Florida Office of Medical Marijuana Use,webpage,https://www.fl.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,GA,https://www.gmcc.ga.gov/,Georgia Access to Medical Cannabis Commission,webpage,https://www.gmcc.ga.gov/news,news
+cannabis-hemp-poller,GA,https://www.gmcc.ga.gov/,Georgia Access to Medical Cannabis Commission,webpage,https://gov.georgia.gov/press-releases,news
+cannabis-hemp-poller,GA,https://www.gmcc.ga.gov/,Georgia Access to Medical Cannabis Commission,webpage,https://www.gmcc.ga.gov/regulations,regulations
+cannabis-hemp-poller,HI,https://health.hawaii.gov/medicalcannabis/,Hawaii Department of Health – Medical Cannabis Program,webpage,https://health.hawaii.gov/news/,news
+cannabis-hemp-poller,HI,https://health.hawaii.gov/medicalcannabis/,Hawaii Department of Health – Medical Cannabis Program,webpage,https://hdoa.hawaii.gov/hemp,news
+cannabis-hemp-poller,HI,https://health.hawaii.gov/medicalcannabis/,Hawaii Department of Health – Medical Cannabis Program,webpage,https://hdoa.hawaii.gov/hemp/news,news
+cannabis-hemp-poller,HI,https://health.hawaii.gov/medicalcannabis/,Hawaii Department of Health – Medical Cannabis Program,webpage,https://www.hi.gov/agriculture/hemp,news
+cannabis-hemp-poller,HI,https://health.hawaii.gov/medicalcannabis/,Hawaii Department of Health – Medical Cannabis Program,webpage,https://agriculture.hi.gov/hemp,news
+cannabis-hemp-poller,HI,https://health.hawaii.gov/medicalcannabis/,Hawaii Department of Health – Medical Cannabis Program,webpage,https://health.hawaii.gov/medicalcannabis/statutes-rules/,regulations
+cannabis-hemp-poller,HI,https://health.hawaii.gov/medicalcannabis/,Hawaii Department of Health – Medical Cannabis Program,webpage,https://hdoa.hawaii.gov/hemp/,regulations
+cannabis-hemp-poller,HI,https://health.hawaii.gov/medicalcannabis/,Hawaii Department of Health – Medical Cannabis Program,webpage,https://hdoa.hawaii.gov/hemp/regulations,regulations
+cannabis-hemp-poller,HI,https://health.hawaii.gov/medicalcannabis/,Hawaii Department of Health – Medical Cannabis Program,webpage,https://hdoa.hawaii.gov/hemp/rules,regulations
+cannabis-hemp-poller,HI,https://health.hawaii.gov/medicalcannabis/,Hawaii Department of Health – Medical Cannabis Program,webpage,https://www.hi.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,ID,https://agri.idaho.gov/main/hemp/,Idaho State Department of Agriculture – Hemp Program,webpage,https://agri.idaho.gov/news/,news
+cannabis-hemp-poller,ID,https://agri.idaho.gov/main/hemp/,Idaho State Department of Agriculture – Hemp Program,webpage,https://www.agri.idaho.gov/main/hemp,news
+cannabis-hemp-poller,ID,https://agri.idaho.gov/main/hemp/,Idaho State Department of Agriculture – Hemp Program,webpage,https://www.agri.idaho.gov/main/hemp/news,news
+cannabis-hemp-poller,ID,https://agri.idaho.gov/main/hemp/,Idaho State Department of Agriculture – Hemp Program,webpage,https://www.id.gov/agriculture/hemp,news
+cannabis-hemp-poller,ID,https://agri.idaho.gov/main/hemp/,Idaho State Department of Agriculture – Hemp Program,webpage,https://agriculture.id.gov/hemp,news
+cannabis-hemp-poller,ID,https://agri.idaho.gov/main/hemp/,Idaho State Department of Agriculture – Hemp Program,webpage,https://agri.idaho.gov/main/hemp/,regulations
+cannabis-hemp-poller,ID,https://agri.idaho.gov/main/hemp/,Idaho State Department of Agriculture – Hemp Program,webpage,https://www.agri.idaho.gov/main/hemp/,regulations
+cannabis-hemp-poller,ID,https://agri.idaho.gov/main/hemp/,Idaho State Department of Agriculture – Hemp Program,webpage,https://www.agri.idaho.gov/main/hemp/regulations,regulations
+cannabis-hemp-poller,ID,https://agri.idaho.gov/main/hemp/,Idaho State Department of Agriculture – Hemp Program,webpage,https://www.agri.idaho.gov/main/hemp/rules,regulations
+cannabis-hemp-poller,ID,https://agri.idaho.gov/main/hemp/,Idaho State Department of Agriculture – Hemp Program,webpage,https://www.id.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,IL,https://idfpr.illinois.gov/profs/adultusecan.html,Illinois Department of Financial and Professional Regulation – Cannabis,webpage,https://idfpr.illinois.gov/News.html,news
+cannabis-hemp-poller,IL,https://idfpr.illinois.gov/profs/adultusecan.html,Illinois Department of Financial and Professional Regulation – Cannabis,webpage,https://isp.idfpr.illinois.gov/hemp,news
+cannabis-hemp-poller,IL,https://idfpr.illinois.gov/profs/adultusecan.html,Illinois Department of Financial and Professional Regulation – Cannabis,webpage,https://isp.idfpr.illinois.gov/hemp/news,news
+cannabis-hemp-poller,IL,https://idfpr.illinois.gov/profs/adultusecan.html,Illinois Department of Financial and Professional Regulation – Cannabis,webpage,https://www.il.gov/agriculture/hemp,news
+cannabis-hemp-poller,IL,https://idfpr.illinois.gov/profs/adultusecan.html,Illinois Department of Financial and Professional Regulation – Cannabis,webpage,https://agriculture.il.gov/hemp,news
+cannabis-hemp-poller,IL,https://idfpr.illinois.gov/profs/adultusecan.html,Illinois Department of Financial and Professional Regulation – Cannabis,webpage,https://idfpr.illinois.gov/profs/adultusecan.html,regulations
+cannabis-hemp-poller,IL,https://idfpr.illinois.gov/profs/adultusecan.html,Illinois Department of Financial and Professional Regulation – Cannabis,webpage,https://isp.idfpr.illinois.gov/hemp,regulations
+cannabis-hemp-poller,IL,https://idfpr.illinois.gov/profs/adultusecan.html,Illinois Department of Financial and Professional Regulation – Cannabis,webpage,https://isp.idfpr.illinois.gov/hemp/regulations,regulations
+cannabis-hemp-poller,IL,https://idfpr.illinois.gov/profs/adultusecan.html,Illinois Department of Financial and Professional Regulation – Cannabis,webpage,https://isp.idfpr.illinois.gov/hemp/rules,regulations
+cannabis-hemp-poller,IL,https://idfpr.illinois.gov/profs/adultusecan.html,Illinois Department of Financial and Professional Regulation – Cannabis,webpage,https://www.il.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,IN,https://www.in.gov/cannabis/,Indiana State Department of Health – Cannabis / Hemp,webpage,https://www.in.gov/news,news
+cannabis-hemp-poller,IN,https://www.in.gov/cannabis/,Indiana State Department of Health – Cannabis / Hemp,webpage,https://iga.in.gov/legislative/,news
+cannabis-hemp-poller,IN,https://www.in.gov/cannabis/,Indiana State Department of Health – Cannabis / Hemp,webpage,https://www.in.gov/isda/divisions/plant-industries/hemp,news
+cannabis-hemp-poller,IN,https://www.in.gov/cannabis/,Indiana State Department of Health – Cannabis / Hemp,webpage,https://www.in.gov/isda/divisions/plant-industries/hemp/news,news
+cannabis-hemp-poller,IN,https://www.in.gov/cannabis/,Indiana State Department of Health – Cannabis / Hemp,webpage,https://www.in.gov/agriculture/hemp,news
+cannabis-hemp-poller,IN,https://www.in.gov/cannabis/,Indiana State Department of Health – Cannabis / Hemp,webpage,https://agriculture.in.gov/hemp,news
+cannabis-hemp-poller,IN,https://www.in.gov/cannabis/,Indiana State Department of Health – Cannabis / Hemp,webpage,https://www.in.gov/cannabis/,regulations
+cannabis-hemp-poller,IN,https://www.in.gov/cannabis/,Indiana State Department of Health – Cannabis / Hemp,webpage,https://www.in.gov/isda/divisions/plant-industries/hemp/,regulations
+cannabis-hemp-poller,IN,https://www.in.gov/cannabis/,Indiana State Department of Health – Cannabis / Hemp,webpage,https://www.in.gov/isda/divisions/plant-industries/hemp/regulations,regulations
+cannabis-hemp-poller,IN,https://www.in.gov/cannabis/,Indiana State Department of Health – Cannabis / Hemp,webpage,https://www.in.gov/isda/divisions/plant-industries/hemp/rules,regulations
+cannabis-hemp-poller,IN,https://www.in.gov/cannabis/,Indiana State Department of Health – Cannabis / Hemp,webpage,https://www.in.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,IA,https://hhs.iowa.gov/medical-cannabis,Iowa Department of Health and Human Services – Medical Cannabis,webpage,https://hhs.iowa.gov/news,news
+cannabis-hemp-poller,IA,https://hhs.iowa.gov/medical-cannabis,Iowa Department of Health and Human Services – Medical Cannabis,webpage,https://www.iowaagriculture.gov/hemp.asp,news
+cannabis-hemp-poller,IA,https://hhs.iowa.gov/medical-cannabis,Iowa Department of Health and Human Services – Medical Cannabis,webpage,https://www.iowaagriculture.gov/hemp.asp/news,news
+cannabis-hemp-poller,IA,https://hhs.iowa.gov/medical-cannabis,Iowa Department of Health and Human Services – Medical Cannabis,webpage,https://www.ia.gov/agriculture/hemp,news
+cannabis-hemp-poller,IA,https://hhs.iowa.gov/medical-cannabis,Iowa Department of Health and Human Services – Medical Cannabis,webpage,https://agriculture.ia.gov/hemp,news
+cannabis-hemp-poller,IA,https://hhs.iowa.gov/medical-cannabis,Iowa Department of Health and Human Services – Medical Cannabis,webpage,https://hhs.iowa.gov/medical-cannabis,regulations
+cannabis-hemp-poller,IA,https://hhs.iowa.gov/medical-cannabis,Iowa Department of Health and Human Services – Medical Cannabis,webpage,https://www.iowaagriculture.gov/hemp.asp,regulations
+cannabis-hemp-poller,IA,https://hhs.iowa.gov/medical-cannabis,Iowa Department of Health and Human Services – Medical Cannabis,webpage,https://www.iowaagriculture.gov/hemp.asp/regulations,regulations
+cannabis-hemp-poller,IA,https://hhs.iowa.gov/medical-cannabis,Iowa Department of Health and Human Services – Medical Cannabis,webpage,https://www.iowaagriculture.gov/hemp.asp/rules,regulations
+cannabis-hemp-poller,IA,https://hhs.iowa.gov/medical-cannabis,Iowa Department of Health and Human Services – Medical Cannabis,webpage,https://www.ia.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,KS,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp,Kansas Department of Agriculture – Hemp Program,webpage,https://agriculture.ks.gov/news,news
+cannabis-hemp-poller,KS,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp,Kansas Department of Agriculture – Hemp Program,webpage,https://www.kslegislature.org,news
+cannabis-hemp-poller,KS,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp,Kansas Department of Agriculture – Hemp Program,webpage,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp/news,news
+cannabis-hemp-poller,KS,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp,Kansas Department of Agriculture – Hemp Program,webpage,https://www.ks.gov/agriculture/hemp,news
+cannabis-hemp-poller,KS,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp,Kansas Department of Agriculture – Hemp Program,webpage,https://agriculture.ks.gov/hemp,news
+cannabis-hemp-poller,KS,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp,Kansas Department of Agriculture – Hemp Program,webpage,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp,regulations
+cannabis-hemp-poller,KS,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp,Kansas Department of Agriculture – Hemp Program,webpage,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp/regulations,regulations
+cannabis-hemp-poller,KS,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp,Kansas Department of Agriculture – Hemp Program,webpage,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp/rules,regulations
+cannabis-hemp-poller,KS,https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp,Kansas Department of Agriculture – Hemp Program,webpage,https://www.ks.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,KY,https://kymedcan.ky.gov/,Kentucky Office of Medical Cannabis,webpage,https://legislature.ky.gov/news,news
+cannabis-hemp-poller,KY,https://kymedcan.ky.gov/,Kentucky Office of Medical Cannabis,webpage,https://governor.ky.gov/news,news
+cannabis-hemp-poller,KY,https://kymedcan.ky.gov/,Kentucky Office of Medical Cannabis,webpage,https://www.kyagr.com/marketing/hemp.html,news
+cannabis-hemp-poller,KY,https://kymedcan.ky.gov/,Kentucky Office of Medical Cannabis,webpage,https://www.kyagr.com/marketing/hemp.html/news,news
+cannabis-hemp-poller,KY,https://kymedcan.ky.gov/,Kentucky Office of Medical Cannabis,webpage,https://www.ky.gov/agriculture/hemp,news
+cannabis-hemp-poller,KY,https://kymedcan.ky.gov/,Kentucky Office of Medical Cannabis,webpage,https://agriculture.ky.gov/hemp,news
+cannabis-hemp-poller,KY,https://kymedcan.ky.gov/,Kentucky Office of Medical Cannabis,webpage,https://legislature.ky.gov/laws/statutes,regulations
+cannabis-hemp-poller,KY,https://kymedcan.ky.gov/,Kentucky Office of Medical Cannabis,webpage,https://www.kyagr.com/marketing/hemp.html,regulations
+cannabis-hemp-poller,KY,https://kymedcan.ky.gov/,Kentucky Office of Medical Cannabis,webpage,https://www.kyagr.com/marketing/hemp.html/regulations,regulations
+cannabis-hemp-poller,KY,https://kymedcan.ky.gov/,Kentucky Office of Medical Cannabis,webpage,https://www.kyagr.com/marketing/hemp.html/rules,regulations
+cannabis-hemp-poller,KY,https://kymedcan.ky.gov/,Kentucky Office of Medical Cannabis,webpage,https://www.ky.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,LA,https://www.ldaf.state.la.us/medical-marijuana/,Louisiana Department of Agriculture & Forestry – Medical Marijuana,webpage,https://www.ldaf.state.la.us/newsroom,news
+cannabis-hemp-poller,LA,https://www.ldaf.state.la.us/medical-marijuana/,Louisiana Department of Agriculture & Forestry – Medical Marijuana,webpage,https://legislature.la.gov,news
+cannabis-hemp-poller,LA,https://www.ldaf.state.la.us/medical-marijuana/,Louisiana Department of Agriculture & Forestry – Medical Marijuana,webpage,https://www.ldaf.state.la.us/agricultural-commodities/hemp,news
+cannabis-hemp-poller,LA,https://www.ldaf.state.la.us/medical-marijuana/,Louisiana Department of Agriculture & Forestry – Medical Marijuana,webpage,https://www.ldaf.state.la.us/agricultural-commodities/hemp/news,news
+cannabis-hemp-poller,LA,https://www.ldaf.state.la.us/medical-marijuana/,Louisiana Department of Agriculture & Forestry – Medical Marijuana,webpage,https://www.la.gov/agriculture/hemp,news
+cannabis-hemp-poller,LA,https://www.ldaf.state.la.us/medical-marijuana/,Louisiana Department of Agriculture & Forestry – Medical Marijuana,webpage,https://agriculture.la.gov/hemp,news
+cannabis-hemp-poller,LA,https://www.ldaf.state.la.us/medical-marijuana/,Louisiana Department of Agriculture & Forestry – Medical Marijuana,webpage,https://www.ldaf.state.la.us/medical-marijuana/regulations/,regulations
+cannabis-hemp-poller,LA,https://www.ldaf.state.la.us/medical-marijuana/,Louisiana Department of Agriculture & Forestry – Medical Marijuana,webpage,https://www.ldaf.state.la.us/agricultural-commodities/hemp,regulations
+cannabis-hemp-poller,LA,https://www.ldaf.state.la.us/medical-marijuana/,Louisiana Department of Agriculture & Forestry – Medical Marijuana,webpage,https://www.ldaf.state.la.us/agricultural-commodities/hemp/regulations,regulations
+cannabis-hemp-poller,LA,https://www.ldaf.state.la.us/medical-marijuana/,Louisiana Department of Agriculture & Forestry – Medical Marijuana,webpage,https://www.ldaf.state.la.us/agricultural-commodities/hemp/rules,regulations
+cannabis-hemp-poller,LA,https://www.ldaf.state.la.us/medical-marijuana/,Louisiana Department of Agriculture & Forestry – Medical Marijuana,webpage,https://www.la.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,ME,https://www.maine.gov/dafs/ocp,Maine Office of Cannabis Policy,webpage,https://www.maine.gov/dafs/ocp/news,news
+cannabis-hemp-poller,ME,https://www.maine.gov/dafs/ocp,Maine Office of Cannabis Policy,webpage,https://legislature.maine.gov,news
+cannabis-hemp-poller,ME,https://www.maine.gov/dafs/ocp,Maine Office of Cannabis Policy,webpage,https://www.maine.gov/agriculture/hemp,news
+cannabis-hemp-poller,ME,https://www.maine.gov/dafs/ocp,Maine Office of Cannabis Policy,webpage,https://www.maine.gov/agriculture/hemp/news,news
+cannabis-hemp-poller,ME,https://www.maine.gov/dafs/ocp,Maine Office of Cannabis Policy,webpage,https://www.me.gov/agriculture/hemp,news
+cannabis-hemp-poller,ME,https://www.maine.gov/dafs/ocp,Maine Office of Cannabis Policy,webpage,https://agriculture.me.gov/hemp,news
+cannabis-hemp-poller,ME,https://www.maine.gov/dafs/ocp,Maine Office of Cannabis Policy,webpage,https://www.maine.gov/dafs/ocp/rules-statutes,regulations
+cannabis-hemp-poller,ME,https://www.maine.gov/dafs/ocp,Maine Office of Cannabis Policy,webpage,https://www.maine.gov/agriculture/hemp/,regulations
+cannabis-hemp-poller,ME,https://www.maine.gov/dafs/ocp,Maine Office of Cannabis Policy,webpage,https://www.maine.gov/agriculture/hemp/regulations,regulations
+cannabis-hemp-poller,ME,https://www.maine.gov/dafs/ocp,Maine Office of Cannabis Policy,webpage,https://www.maine.gov/agriculture/hemp/rules,regulations
+cannabis-hemp-poller,ME,https://www.maine.gov/dafs/ocp,Maine Office of Cannabis Policy,webpage,https://www.me.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,MD,https://cannabis.maryland.gov/,Maryland Cannabis Administration,webpage,https://cannabis.maryland.gov/Pages/news.aspx,news
+cannabis-hemp-poller,MD,https://cannabis.maryland.gov/,Maryland Cannabis Administration,webpage,https://mda.maryland.gov/hemp/Pages/default.aspx,news
+cannabis-hemp-poller,MD,https://cannabis.maryland.gov/,Maryland Cannabis Administration,webpage,https://mda.maryland.gov/hemp/Pages/default.aspx/news,news
+cannabis-hemp-poller,MD,https://cannabis.maryland.gov/,Maryland Cannabis Administration,webpage,https://www.md.gov/agriculture/hemp,news
+cannabis-hemp-poller,MD,https://cannabis.maryland.gov/,Maryland Cannabis Administration,webpage,https://agriculture.md.gov/hemp,news
+cannabis-hemp-poller,MD,https://cannabis.maryland.gov/,Maryland Cannabis Administration,webpage,https://cannabis.maryland.gov/Pages/Laws-Regulations.aspx,regulations
+cannabis-hemp-poller,MD,https://cannabis.maryland.gov/,Maryland Cannabis Administration,webpage,https://mda.maryland.gov/hemp/Pages/default.aspx,regulations
+cannabis-hemp-poller,MD,https://cannabis.maryland.gov/,Maryland Cannabis Administration,webpage,https://mda.maryland.gov/hemp/Pages/default.aspx/regulations,regulations
+cannabis-hemp-poller,MD,https://cannabis.maryland.gov/,Maryland Cannabis Administration,webpage,https://mda.maryland.gov/hemp/Pages/default.aspx/rules,regulations
+cannabis-hemp-poller,MD,https://cannabis.maryland.gov/,Maryland Cannabis Administration,webpage,https://www.md.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,MA,https://masscannabiscontrol.com,Massachusetts Cannabis Control Commission,rss,https://masscannabiscontrol.com/feed,news
+cannabis-hemp-poller,MA,https://masscannabiscontrol.com,Massachusetts Cannabis Control Commission,webpage,https://masscannabiscontrol.com/news,news
+cannabis-hemp-poller,MA,https://masscannabiscontrol.com,Massachusetts Cannabis Control Commission,webpage,https://masscannabiscontrol.com/public-meetings,news
+cannabis-hemp-poller,MA,https://masscannabiscontrol.com,Massachusetts Cannabis Control Commission,webpage,https://www.mass.gov/hemp,news
+cannabis-hemp-poller,MA,https://masscannabiscontrol.com,Massachusetts Cannabis Control Commission,webpage,https://www.mass.gov/hemp/news,news
+cannabis-hemp-poller,MA,https://masscannabiscontrol.com,Massachusetts Cannabis Control Commission,webpage,https://www.ma.gov/agriculture/hemp,news
+cannabis-hemp-poller,MA,https://masscannabiscontrol.com,Massachusetts Cannabis Control Commission,webpage,https://agriculture.ma.gov/hemp,news
+cannabis-hemp-poller,MA,https://masscannabiscontrol.com,Massachusetts Cannabis Control Commission,webpage,https://masscannabiscontrol.com/public-documents/regulations,regulations
+cannabis-hemp-poller,MA,https://masscannabiscontrol.com,Massachusetts Cannabis Control Commission,webpage,https://www.mass.gov/hemp,regulations
+cannabis-hemp-poller,MA,https://masscannabiscontrol.com,Massachusetts Cannabis Control Commission,webpage,https://www.mass.gov/hemp/regulations,regulations
+cannabis-hemp-poller,MA,https://masscannabiscontrol.com,Massachusetts Cannabis Control Commission,webpage,https://www.mass.gov/hemp/rules,regulations
+cannabis-hemp-poller,MA,https://masscannabiscontrol.com,Massachusetts Cannabis Control Commission,webpage,https://www.ma.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,https://www.michigan.gov/news,news
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,https://legislature.mi.gov,news
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,https://www.michigan.gov/mda/0,news
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,4601,news
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,7-125-1569_2802_2805---,news
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,00.html,news
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,https://www.michigan.gov/mda/0,news
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,4601,news
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,7-125-1569_2802_2805---,news
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,00.html/news,news
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,https://www.mi.gov/agriculture/hemp,news
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,https://agriculture.mi.gov/hemp,news
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,https://www.michigan.gov/cra/about/rules,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,https://www.michigan.gov/mda/0,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,4601,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,7-125-1569_2802_2805---,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,00.html,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,https://www.michigan.gov/mda/0,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,4601,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,7-125-1569_2802_2805---,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,00.html/regulations,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,https://www.michigan.gov/mda/0,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,4601,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,7-125-1569_2802_2805---,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,00.html/rules,regulations
+cannabis-hemp-poller,MI,https://www.michigan.gov/cra,Michigan Cannabis Regulatory Agency,webpage,https://www.mi.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,MN,https://mn.gov/ocm,Minnesota Office of Cannabis Management,webpage,https://mn.gov/ocm/media/news-releases/,news
+cannabis-hemp-poller,MN,https://mn.gov/ocm,Minnesota Office of Cannabis Management,webpage,https://www.mda.state.mn.us/hemp,news
+cannabis-hemp-poller,MN,https://mn.gov/ocm,Minnesota Office of Cannabis Management,webpage,https://www.mda.state.mn.us/hemp/news,news
+cannabis-hemp-poller,MN,https://mn.gov/ocm,Minnesota Office of Cannabis Management,webpage,https://www.mn.gov/agriculture/hemp,news
+cannabis-hemp-poller,MN,https://mn.gov/ocm,Minnesota Office of Cannabis Management,webpage,https://agriculture.mn.gov/hemp,news
+cannabis-hemp-poller,MN,https://mn.gov/ocm,Minnesota Office of Cannabis Management,webpage,https://mn.gov/ocm/laws/,regulations
+cannabis-hemp-poller,MN,https://mn.gov/ocm,Minnesota Office of Cannabis Management,webpage,https://mn.gov/ocm/laws/rulemaking.jsp,regulations
+cannabis-hemp-poller,MN,https://mn.gov/ocm,Minnesota Office of Cannabis Management,webpage,https://www.revisor.mn.gov/rules/9810/,regulations
+cannabis-hemp-poller,MN,https://mn.gov/ocm,Minnesota Office of Cannabis Management,webpage,https://www.mda.state.mn.us/hemp,regulations
+cannabis-hemp-poller,MN,https://mn.gov/ocm,Minnesota Office of Cannabis Management,webpage,https://www.mda.state.mn.us/hemp/regulations,regulations
+cannabis-hemp-poller,MN,https://mn.gov/ocm,Minnesota Office of Cannabis Management,webpage,https://www.mda.state.mn.us/hemp/rules,regulations
+cannabis-hemp-poller,MN,https://mn.gov/ocm,Minnesota Office of Cannabis Management,webpage,https://www.mn.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,MS,https://www.mda.ms.gov/divisions/hemp,Mississippi Department of Agriculture - Hemp,webpage,https://www.mda.ms.gov/news,news
+cannabis-hemp-poller,MS,https://www.mda.ms.gov/divisions/hemp,Mississippi Department of Agriculture - Hemp,webpage,https://www.legislature.ms.gov,news
+cannabis-hemp-poller,MS,https://www.mda.ms.gov/divisions/hemp,Mississippi Department of Agriculture - Hemp,webpage,https://www.mda.ms.gov/divisions/hemp/news,news
+cannabis-hemp-poller,MS,https://www.mda.ms.gov/divisions/hemp,Mississippi Department of Agriculture - Hemp,webpage,https://www.ms.gov/agriculture/hemp,news
+cannabis-hemp-poller,MS,https://www.mda.ms.gov/divisions/hemp,Mississippi Department of Agriculture - Hemp,webpage,https://agriculture.ms.gov/hemp,news
+cannabis-hemp-poller,MS,https://www.mda.ms.gov/divisions/hemp,Mississippi Department of Agriculture - Hemp,webpage,https://www.mda.ms.gov/hemp-program,regulations
+cannabis-hemp-poller,MS,https://www.mda.ms.gov/divisions/hemp,Mississippi Department of Agriculture - Hemp,webpage,https://www.mda.ms.gov/divisions/hemp/regulations,regulations
+cannabis-hemp-poller,MS,https://www.mda.ms.gov/divisions/hemp,Mississippi Department of Agriculture - Hemp,webpage,https://www.mda.ms.gov/divisions/hemp/rules,regulations
+cannabis-hemp-poller,MS,https://www.mda.ms.gov/divisions/hemp,Mississippi Department of Agriculture - Hemp,webpage,https://www.ms.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,MO,https://cannabis.mo.gov,Missouri Division of Cannabis Regulation,webpage,https://cannabis.mo.gov/news,news
+cannabis-hemp-poller,MO,https://cannabis.mo.gov,Missouri Division of Cannabis Regulation,webpage,https://agriculture.mo.gov/hemp,news
+cannabis-hemp-poller,MO,https://cannabis.mo.gov,Missouri Division of Cannabis Regulation,webpage,https://agriculture.mo.gov/hemp/news,news
+cannabis-hemp-poller,MO,https://cannabis.mo.gov,Missouri Division of Cannabis Regulation,webpage,https://www.mo.gov/agriculture/hemp,news
+cannabis-hemp-poller,MO,https://cannabis.mo.gov,Missouri Division of Cannabis Regulation,webpage,https://agriculture.mo.gov/hemp,news
+cannabis-hemp-poller,MO,https://cannabis.mo.gov,Missouri Division of Cannabis Regulation,webpage,https://cannabis.mo.gov/rules-regulations,regulations
+cannabis-hemp-poller,MO,https://cannabis.mo.gov,Missouri Division of Cannabis Regulation,webpage,https://agriculture.mo.gov/hemp/,regulations
+cannabis-hemp-poller,MO,https://cannabis.mo.gov,Missouri Division of Cannabis Regulation,webpage,https://agriculture.mo.gov/hemp/regulations,regulations
+cannabis-hemp-poller,MO,https://cannabis.mo.gov,Missouri Division of Cannabis Regulation,webpage,https://agriculture.mo.gov/hemp/rules,regulations
+cannabis-hemp-poller,MO,https://cannabis.mo.gov,Missouri Division of Cannabis Regulation,webpage,https://www.mo.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,MT,https://mt.gov/cannabis,Montana Department of Revenue - Cannabis Control Division,webpage,https://mt.gov/cannabis/news,news
+cannabis-hemp-poller,MT,https://mt.gov/cannabis,Montana Department of Revenue - Cannabis Control Division,webpage,https://leg.mt.gov,news
+cannabis-hemp-poller,MT,https://mt.gov/cannabis,Montana Department of Revenue - Cannabis Control Division,webpage,https://ag.mt.gov/hemp,news
+cannabis-hemp-poller,MT,https://mt.gov/cannabis,Montana Department of Revenue - Cannabis Control Division,webpage,https://ag.mt.gov/hemp/news,news
+cannabis-hemp-poller,MT,https://mt.gov/cannabis,Montana Department of Revenue - Cannabis Control Division,webpage,https://www.mt.gov/agriculture/hemp,news
+cannabis-hemp-poller,MT,https://mt.gov/cannabis,Montana Department of Revenue - Cannabis Control Division,webpage,https://agriculture.mt.gov/hemp,news
+cannabis-hemp-poller,MT,https://mt.gov/cannabis,Montana Department of Revenue - Cannabis Control Division,webpage,https://mt.gov/cannabis/rules,regulations
+cannabis-hemp-poller,MT,https://mt.gov/cannabis,Montana Department of Revenue - Cannabis Control Division,webpage,https://ag.mt.gov/hemp,regulations
+cannabis-hemp-poller,MT,https://mt.gov/cannabis,Montana Department of Revenue - Cannabis Control Division,webpage,https://ag.mt.gov/hemp/regulations,regulations
+cannabis-hemp-poller,MT,https://mt.gov/cannabis,Montana Department of Revenue - Cannabis Control Division,webpage,https://ag.mt.gov/hemp/rules,regulations
+cannabis-hemp-poller,MT,https://mt.gov/cannabis,Montana Department of Revenue - Cannabis Control Division,webpage,https://www.mt.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,NE,https://agr.nebraska.gov/hemp,Nebraska Department of Agriculture - Hemp,webpage,https://agr.nebraska.gov/news,news
+cannabis-hemp-poller,NE,https://agr.nebraska.gov/hemp,Nebraska Department of Agriculture - Hemp,webpage,https://legislature.nebraska.gov,news
+cannabis-hemp-poller,NE,https://agr.nebraska.gov/hemp,Nebraska Department of Agriculture - Hemp,webpage,https://nda.nebraska.gov/hemp,news
+cannabis-hemp-poller,NE,https://agr.nebraska.gov/hemp,Nebraska Department of Agriculture - Hemp,webpage,https://nda.nebraska.gov/hemp/news,news
+cannabis-hemp-poller,NE,https://agr.nebraska.gov/hemp,Nebraska Department of Agriculture - Hemp,webpage,https://www.ne.gov/agriculture/hemp,news
+cannabis-hemp-poller,NE,https://agr.nebraska.gov/hemp,Nebraska Department of Agriculture - Hemp,webpage,https://agriculture.ne.gov/hemp,news
+cannabis-hemp-poller,NE,https://agr.nebraska.gov/hemp,Nebraska Department of Agriculture - Hemp,webpage,https://agr.nebraska.gov/hemp,regulations
+cannabis-hemp-poller,NE,https://agr.nebraska.gov/hemp,Nebraska Department of Agriculture - Hemp,webpage,https://nda.nebraska.gov/hemp/,regulations
+cannabis-hemp-poller,NE,https://agr.nebraska.gov/hemp,Nebraska Department of Agriculture - Hemp,webpage,https://nda.nebraska.gov/hemp/regulations,regulations
+cannabis-hemp-poller,NE,https://agr.nebraska.gov/hemp,Nebraska Department of Agriculture - Hemp,webpage,https://nda.nebraska.gov/hemp/rules,regulations
+cannabis-hemp-poller,NE,https://agr.nebraska.gov/hemp,Nebraska Department of Agriculture - Hemp,webpage,https://www.ne.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,NV,https://ccb.nv.gov,Nevada Cannabis Compliance Board,webpage,https://ccb.nv.gov/news-events,news
+cannabis-hemp-poller,NV,https://ccb.nv.gov,Nevada Cannabis Compliance Board,webpage,https://www.leg.state.nv.us,news
+cannabis-hemp-poller,NV,https://ccb.nv.gov,Nevada Cannabis Compliance Board,webpage,https://agri.nv.gov/Programs/Industrial_Hemp,news
+cannabis-hemp-poller,NV,https://ccb.nv.gov,Nevada Cannabis Compliance Board,webpage,https://agri.nv.gov/Programs/Industrial_Hemp/news,news
+cannabis-hemp-poller,NV,https://ccb.nv.gov,Nevada Cannabis Compliance Board,webpage,https://www.nv.gov/agriculture/hemp,news
+cannabis-hemp-poller,NV,https://ccb.nv.gov,Nevada Cannabis Compliance Board,webpage,https://agriculture.nv.gov/hemp,news
+cannabis-hemp-poller,NV,https://ccb.nv.gov,Nevada Cannabis Compliance Board,webpage,https://ccb.nv.gov/public-notices,regulations
+cannabis-hemp-poller,NV,https://ccb.nv.gov,Nevada Cannabis Compliance Board,webpage,https://agri.nv.gov/Programs/Industrial_Hemp/,regulations
+cannabis-hemp-poller,NV,https://ccb.nv.gov,Nevada Cannabis Compliance Board,webpage,https://agri.nv.gov/Programs/Industrial_Hemp/regulations,regulations
+cannabis-hemp-poller,NV,https://ccb.nv.gov,Nevada Cannabis Compliance Board,webpage,https://agri.nv.gov/Programs/Industrial_Hemp/rules,regulations
+cannabis-hemp-poller,NV,https://ccb.nv.gov,Nevada Cannabis Compliance Board,webpage,https://www.nv.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,NH,https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,webpage,https://www.dhhs.nh.gov/news-events/press-releases,news
+cannabis-hemp-poller,NH,https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,webpage,https://www.gencourt.state.nh.us,news
+cannabis-hemp-poller,NH,https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,webpage,https://www.nh.gov/hemp,news
+cannabis-hemp-poller,NH,https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,webpage,https://www.nh.gov/hemp/news,news
+cannabis-hemp-poller,NH,https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,webpage,https://www.nh.gov/agriculture/hemp,news
+cannabis-hemp-poller,NH,https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,webpage,https://agriculture.nh.gov/hemp,news
+cannabis-hemp-poller,NH,https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,webpage,https://www.dhhs.nh.gov/document/therapeutic-cannabis-program-data-report-2024,regulations
+cannabis-hemp-poller,NH,https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,webpage,https://www.nh.gov/hemp/,regulations
+cannabis-hemp-poller,NH,https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,webpage,https://www.nh.gov/hemp/regulations,regulations
+cannabis-hemp-poller,NH,https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,webpage,https://www.nh.gov/hemp/rules,regulations
+cannabis-hemp-poller,NH,https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis,New Hampshire Department of Health and Human Services - Therapeutic Cannabis Program,webpage,https://www.nh.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,NJ,https://www.nj.gov/cannabis/,New Jersey Cannabis Regulatory Commission,webpage,https://www.nj.gov/cannabis/news/,news
+cannabis-hemp-poller,NJ,https://www.nj.gov/cannabis/,New Jersey Cannabis Regulatory Commission,webpage,https://www.nj.gov/agriculture/divisions/pi/hemp,news
+cannabis-hemp-poller,NJ,https://www.nj.gov/cannabis/,New Jersey Cannabis Regulatory Commission,webpage,https://www.nj.gov/agriculture/divisions/pi/hemp/news,news
+cannabis-hemp-poller,NJ,https://www.nj.gov/cannabis/,New Jersey Cannabis Regulatory Commission,webpage,https://www.nj.gov/agriculture/hemp,news
+cannabis-hemp-poller,NJ,https://www.nj.gov/cannabis/,New Jersey Cannabis Regulatory Commission,webpage,https://agriculture.nj.gov/hemp,news
+cannabis-hemp-poller,NJ,https://www.nj.gov/cannabis/,New Jersey Cannabis Regulatory Commission,webpage,https://www.nj.gov/cannabis/resources/cannabis-laws/,regulations
+cannabis-hemp-poller,NJ,https://www.nj.gov/cannabis/,New Jersey Cannabis Regulatory Commission,webpage,https://www.nj.gov/agriculture/divisions/pi/hemp/,regulations
+cannabis-hemp-poller,NJ,https://www.nj.gov/cannabis/,New Jersey Cannabis Regulatory Commission,webpage,https://www.nj.gov/agriculture/divisions/pi/hemp/regulations,regulations
+cannabis-hemp-poller,NJ,https://www.nj.gov/cannabis/,New Jersey Cannabis Regulatory Commission,webpage,https://www.nj.gov/agriculture/divisions/pi/hemp/rules,regulations
+cannabis-hemp-poller,NJ,https://www.nj.gov/cannabis/,New Jersey Cannabis Regulatory Commission,webpage,https://www.nj.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,NM,https://www.rld.nm.gov/cannabis/,New Mexico Regulation & Licensing Department – Cannabis Control Division,webpage,https://www.rld.nm.gov/news/,news
+cannabis-hemp-poller,NM,https://www.rld.nm.gov/cannabis/,New Mexico Regulation & Licensing Department – Cannabis Control Division,webpage,https://www.nmda.nmsu.edu/hemp,news
+cannabis-hemp-poller,NM,https://www.rld.nm.gov/cannabis/,New Mexico Regulation & Licensing Department – Cannabis Control Division,webpage,https://www.nmda.nmsu.edu/hemp/news,news
+cannabis-hemp-poller,NM,https://www.rld.nm.gov/cannabis/,New Mexico Regulation & Licensing Department – Cannabis Control Division,webpage,https://www.nm.gov/agriculture/hemp,news
+cannabis-hemp-poller,NM,https://www.rld.nm.gov/cannabis/,New Mexico Regulation & Licensing Department – Cannabis Control Division,webpage,https://agriculture.nm.gov/hemp,news
+cannabis-hemp-poller,NM,https://www.rld.nm.gov/cannabis/,New Mexico Regulation & Licensing Department – Cannabis Control Division,webpage,https://www.rld.nm.gov/cannabis/rules-and-regulations/,regulations
+cannabis-hemp-poller,NM,https://www.rld.nm.gov/cannabis/,New Mexico Regulation & Licensing Department – Cannabis Control Division,webpage,https://www.nmda.nmsu.edu/hemp/,regulations
+cannabis-hemp-poller,NM,https://www.rld.nm.gov/cannabis/,New Mexico Regulation & Licensing Department – Cannabis Control Division,webpage,https://www.nmda.nmsu.edu/hemp/regulations,regulations
+cannabis-hemp-poller,NM,https://www.rld.nm.gov/cannabis/,New Mexico Regulation & Licensing Department – Cannabis Control Division,webpage,https://www.nmda.nmsu.edu/hemp/rules,regulations
+cannabis-hemp-poller,NM,https://www.rld.nm.gov/cannabis/,New Mexico Regulation & Licensing Department – Cannabis Control Division,webpage,https://www.nm.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,NY,https://cannabis.ny.gov/,New York Office of Cannabis Management,webpage,https://cannabis.ny.gov/pressroom,news
+cannabis-hemp-poller,NY,https://cannabis.ny.gov/,New York Office of Cannabis Management,webpage,https://agriculture.ny.gov/hemp,news
+cannabis-hemp-poller,NY,https://cannabis.ny.gov/,New York Office of Cannabis Management,webpage,https://agriculture.ny.gov/hemp/news,news
+cannabis-hemp-poller,NY,https://cannabis.ny.gov/,New York Office of Cannabis Management,webpage,https://www.ny.gov/agriculture/hemp,news
+cannabis-hemp-poller,NY,https://cannabis.ny.gov/,New York Office of Cannabis Management,webpage,https://agriculture.ny.gov/hemp,news
+cannabis-hemp-poller,NY,https://cannabis.ny.gov/,New York Office of Cannabis Management,webpage,https://cannabis.ny.gov/marihuana-regulation-and-taxation-act-mrta,regulations
+cannabis-hemp-poller,NY,https://cannabis.ny.gov/,New York Office of Cannabis Management,webpage,https://agriculture.ny.gov/hemp,regulations
+cannabis-hemp-poller,NY,https://cannabis.ny.gov/,New York Office of Cannabis Management,webpage,https://agriculture.ny.gov/hemp/regulations,regulations
+cannabis-hemp-poller,NY,https://cannabis.ny.gov/,New York Office of Cannabis Management,webpage,https://agriculture.ny.gov/hemp/rules,regulations
+cannabis-hemp-poller,NY,https://cannabis.ny.gov/,New York Office of Cannabis Management,webpage,https://www.ny.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,OH,https://cannabis.ohio.gov/,Ohio Division of Cannabis Control,webpage,https://cannabis.ohio.gov/news,news
+cannabis-hemp-poller,OH,https://cannabis.ohio.gov/,Ohio Division of Cannabis Control,webpage,https://www.legislature.ohio.gov,news
+cannabis-hemp-poller,OH,https://cannabis.ohio.gov/,Ohio Division of Cannabis Control,webpage,https://agri.ohio.gov/divs/plant/seed-hemp,news
+cannabis-hemp-poller,OH,https://cannabis.ohio.gov/,Ohio Division of Cannabis Control,webpage,https://agri.ohio.gov/divs/plant/seed-hemp/news,news
+cannabis-hemp-poller,OH,https://cannabis.ohio.gov/,Ohio Division of Cannabis Control,webpage,https://www.oh.gov/agriculture/hemp,news
+cannabis-hemp-poller,OH,https://cannabis.ohio.gov/,Ohio Division of Cannabis Control,webpage,https://agriculture.oh.gov/hemp,news
+cannabis-hemp-poller,OH,https://cannabis.ohio.gov/,Ohio Division of Cannabis Control,webpage,https://cannabis.ohio.gov/rules,regulations
+cannabis-hemp-poller,OH,https://cannabis.ohio.gov/,Ohio Division of Cannabis Control,webpage,https://agri.ohio.gov/divs/plant/seed-hemp,regulations
+cannabis-hemp-poller,OH,https://cannabis.ohio.gov/,Ohio Division of Cannabis Control,webpage,https://agri.ohio.gov/divs/plant/seed-hemp/regulations,regulations
+cannabis-hemp-poller,OH,https://cannabis.ohio.gov/,Ohio Division of Cannabis Control,webpage,https://agri.ohio.gov/divs/plant/seed-hemp/rules,regulations
+cannabis-hemp-poller,OH,https://cannabis.ohio.gov/,Ohio Division of Cannabis Control,webpage,https://www.oh.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,OK,https://oklahoma.gov/omma.html,Oklahoma Medical Marijuana Authority,webpage,https://oklahoma.gov/omma/news.html,news
+cannabis-hemp-poller,OK,https://oklahoma.gov/omma.html,Oklahoma Medical Marijuana Authority,webpage,https://www.oklegislature.gov,news
+cannabis-hemp-poller,OK,https://oklahoma.gov/omma.html,Oklahoma Medical Marijuana Authority,webpage,https://www.oda.ok.gov/hemp,news
+cannabis-hemp-poller,OK,https://oklahoma.gov/omma.html,Oklahoma Medical Marijuana Authority,webpage,https://www.oda.ok.gov/hemp/news,news
+cannabis-hemp-poller,OK,https://oklahoma.gov/omma.html,Oklahoma Medical Marijuana Authority,webpage,https://www.ok.gov/agriculture/hemp,news
+cannabis-hemp-poller,OK,https://oklahoma.gov/omma.html,Oklahoma Medical Marijuana Authority,webpage,https://agriculture.ok.gov/hemp,news
+cannabis-hemp-poller,OK,https://oklahoma.gov/omma.html,Oklahoma Medical Marijuana Authority,webpage,https://oklahoma.gov/omma/rules.html,regulations
+cannabis-hemp-poller,OK,https://oklahoma.gov/omma.html,Oklahoma Medical Marijuana Authority,webpage,https://www.oda.ok.gov/hemp,regulations
+cannabis-hemp-poller,OK,https://oklahoma.gov/omma.html,Oklahoma Medical Marijuana Authority,webpage,https://www.oda.ok.gov/hemp/regulations,regulations
+cannabis-hemp-poller,OK,https://oklahoma.gov/omma.html,Oklahoma Medical Marijuana Authority,webpage,https://www.oda.ok.gov/hemp/rules,regulations
+cannabis-hemp-poller,OK,https://oklahoma.gov/omma.html,Oklahoma Medical Marijuana Authority,webpage,https://www.ok.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,OR,https://www.oregon.gov/olcc/,Oregon Liquor and Cannabis Commission,webpage,https://www.oregon.gov/olcc/Pages/news.aspx,news
+cannabis-hemp-poller,OR,https://www.oregon.gov/olcc/,Oregon Liquor and Cannabis Commission,webpage,https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx,news
+cannabis-hemp-poller,OR,https://www.oregon.gov/olcc/,Oregon Liquor and Cannabis Commission,webpage,https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx/news,news
+cannabis-hemp-poller,OR,https://www.oregon.gov/olcc/,Oregon Liquor and Cannabis Commission,webpage,https://www.or.gov/agriculture/hemp,news
+cannabis-hemp-poller,OR,https://www.oregon.gov/olcc/,Oregon Liquor and Cannabis Commission,webpage,https://agriculture.or.gov/hemp,news
+cannabis-hemp-poller,OR,https://www.oregon.gov/olcc/,Oregon Liquor and Cannabis Commission,webpage,https://www.oregon.gov/olcc/marijuana/Pages/Recreational-Marijuana-Laws-and-Rules.aspx,regulations
+cannabis-hemp-poller,OR,https://www.oregon.gov/olcc/,Oregon Liquor and Cannabis Commission,webpage,https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx,regulations
+cannabis-hemp-poller,OR,https://www.oregon.gov/olcc/,Oregon Liquor and Cannabis Commission,webpage,https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx/regulations,regulations
+cannabis-hemp-poller,OR,https://www.oregon.gov/olcc/,Oregon Liquor and Cannabis Commission,webpage,https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx/rules,regulations
+cannabis-hemp-poller,OR,https://www.oregon.gov/olcc/,Oregon Liquor and Cannabis Commission,webpage,https://www.or.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,PA,https://www.health.pa.gov/topics/programs/Medical%20Marijuana,Pennsylvania Department of Health – Medical Marijuana Program,webpage,https://www.health.pa.gov/topics/healthcare/Pages/News.aspx,news
+cannabis-hemp-poller,PA,https://www.health.pa.gov/topics/programs/Medical%20Marijuana,Pennsylvania Department of Health – Medical Marijuana Program,webpage,https://www.agriculture.pa.gov/Plants_Land_Water/PlantIndustry/hemp/Pages/default.aspx,news
+cannabis-hemp-poller,PA,https://www.health.pa.gov/topics/programs/Medical%20Marijuana,Pennsylvania Department of Health – Medical Marijuana Program,webpage,https://www.agriculture.pa.gov/Plants_Land_Water/PlantIndustry/hemp/Pages/default.aspx/news,news
+cannabis-hemp-poller,PA,https://www.health.pa.gov/topics/programs/Medical%20Marijuana,Pennsylvania Department of Health – Medical Marijuana Program,webpage,https://www.pa.gov/agriculture/hemp,news
+cannabis-hemp-poller,PA,https://www.health.pa.gov/topics/programs/Medical%20Marijuana,Pennsylvania Department of Health – Medical Marijuana Program,webpage,https://agriculture.pa.gov/hemp,news
+cannabis-hemp-poller,PA,https://www.health.pa.gov/topics/programs/Medical%20Marijuana,Pennsylvania Department of Health – Medical Marijuana Program,webpage,https://www.health.pa.gov/topics/programs/Medical%20Marijuana/Pages/Regulations.aspx,regulations
+cannabis-hemp-poller,PA,https://www.health.pa.gov/topics/programs/Medical%20Marijuana,Pennsylvania Department of Health – Medical Marijuana Program,webpage,https://www.agriculture.pa.gov/Plants_Land_Water/PlantIndustry/hemp/Pages/default.aspx,regulations
+cannabis-hemp-poller,PA,https://www.health.pa.gov/topics/programs/Medical%20Marijuana,Pennsylvania Department of Health – Medical Marijuana Program,webpage,https://www.agriculture.pa.gov/Plants_Land_Water/PlantIndustry/hemp/Pages/default.aspx/regulations,regulations
+cannabis-hemp-poller,PA,https://www.health.pa.gov/topics/programs/Medical%20Marijuana,Pennsylvania Department of Health – Medical Marijuana Program,webpage,https://www.agriculture.pa.gov/Plants_Land_Water/PlantIndustry/hemp/Pages/default.aspx/rules,regulations
+cannabis-hemp-poller,PA,https://www.health.pa.gov/topics/programs/Medical%20Marijuana,Pennsylvania Department of Health – Medical Marijuana Program,webpage,https://www.pa.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,RI,https://ccc.ri.gov/,Rhode Island Cannabis Control Commission,webpage,https://ccc.ri.gov/news,news
+cannabis-hemp-poller,RI,https://ccc.ri.gov/,Rhode Island Cannabis Control Commission,webpage,https://www.rilegislature.gov,news
+cannabis-hemp-poller,RI,https://ccc.ri.gov/,Rhode Island Cannabis Control Commission,webpage,https://www.agriculture.ri.gov/hemp,news
+cannabis-hemp-poller,RI,https://ccc.ri.gov/,Rhode Island Cannabis Control Commission,webpage,https://www.agriculture.ri.gov/hemp/news,news
+cannabis-hemp-poller,RI,https://ccc.ri.gov/,Rhode Island Cannabis Control Commission,webpage,https://www.ri.gov/agriculture/hemp,news
+cannabis-hemp-poller,RI,https://ccc.ri.gov/,Rhode Island Cannabis Control Commission,webpage,https://agriculture.ri.gov/hemp,news
+cannabis-hemp-poller,RI,https://ccc.ri.gov/,Rhode Island Cannabis Control Commission,webpage,https://ccc.ri.gov/regulations,regulations
+cannabis-hemp-poller,RI,https://ccc.ri.gov/,Rhode Island Cannabis Control Commission,webpage,https://www.agriculture.ri.gov/hemp/,regulations
+cannabis-hemp-poller,RI,https://ccc.ri.gov/,Rhode Island Cannabis Control Commission,webpage,https://www.agriculture.ri.gov/hemp/regulations,regulations
+cannabis-hemp-poller,RI,https://ccc.ri.gov/,Rhode Island Cannabis Control Commission,webpage,https://www.agriculture.ri.gov/hemp/rules,regulations
+cannabis-hemp-poller,RI,https://ccc.ri.gov/,Rhode Island Cannabis Control Commission,webpage,https://www.ri.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,SC,https://agriculture.sc.gov/divisions/consumer-protection/hemp/,South Carolina Department of Agriculture – Hemp Program,webpage,https://agriculture.sc.gov/news/,news
+cannabis-hemp-poller,SC,https://agriculture.sc.gov/divisions/consumer-protection/hemp/,South Carolina Department of Agriculture – Hemp Program,webpage,https://www.clemson.edu/cafls/hemp,news
+cannabis-hemp-poller,SC,https://agriculture.sc.gov/divisions/consumer-protection/hemp/,South Carolina Department of Agriculture – Hemp Program,webpage,https://www.clemson.edu/cafls/hemp/news,news
+cannabis-hemp-poller,SC,https://agriculture.sc.gov/divisions/consumer-protection/hemp/,South Carolina Department of Agriculture – Hemp Program,webpage,https://www.sc.gov/agriculture/hemp,news
+cannabis-hemp-poller,SC,https://agriculture.sc.gov/divisions/consumer-protection/hemp/,South Carolina Department of Agriculture – Hemp Program,webpage,https://agriculture.sc.gov/hemp,news
+cannabis-hemp-poller,SC,https://agriculture.sc.gov/divisions/consumer-protection/hemp/,South Carolina Department of Agriculture – Hemp Program,webpage,https://www.scstatehouse.gov/code/t46c055.php,regulations
+cannabis-hemp-poller,SC,https://agriculture.sc.gov/divisions/consumer-protection/hemp/,South Carolina Department of Agriculture – Hemp Program,webpage,https://www.clemson.edu/cafls/hemp/,regulations
+cannabis-hemp-poller,SC,https://agriculture.sc.gov/divisions/consumer-protection/hemp/,South Carolina Department of Agriculture – Hemp Program,webpage,https://www.clemson.edu/cafls/hemp/regulations,regulations
+cannabis-hemp-poller,SC,https://agriculture.sc.gov/divisions/consumer-protection/hemp/,South Carolina Department of Agriculture – Hemp Program,webpage,https://www.clemson.edu/cafls/hemp/rules,regulations
+cannabis-hemp-poller,SC,https://agriculture.sc.gov/divisions/consumer-protection/hemp/,South Carolina Department of Agriculture – Hemp Program,webpage,https://www.sc.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,SD,https://medcannabis.sd.gov/,South Dakota Department of Health – Medical Cannabis Program,webpage,https://medcannabis.sd.gov/Updates/News.aspx,news
+cannabis-hemp-poller,SD,https://medcannabis.sd.gov/,South Dakota Department of Health – Medical Cannabis Program,webpage,https://sddps.gov/hemp,news
+cannabis-hemp-poller,SD,https://medcannabis.sd.gov/,South Dakota Department of Health – Medical Cannabis Program,webpage,https://sddps.gov/hemp/news,news
+cannabis-hemp-poller,SD,https://medcannabis.sd.gov/,South Dakota Department of Health – Medical Cannabis Program,webpage,https://www.sd.gov/agriculture/hemp,news
+cannabis-hemp-poller,SD,https://medcannabis.sd.gov/,South Dakota Department of Health – Medical Cannabis Program,webpage,https://agriculture.sd.gov/hemp,news
+cannabis-hemp-poller,SD,https://medcannabis.sd.gov/,South Dakota Department of Health – Medical Cannabis Program,webpage,https://medcannabis.sd.gov/About/Laws.aspx,regulations
+cannabis-hemp-poller,SD,https://medcannabis.sd.gov/,South Dakota Department of Health – Medical Cannabis Program,webpage,https://sdlegislature.gov/Statutes/34-20G,regulations
+cannabis-hemp-poller,SD,https://medcannabis.sd.gov/,South Dakota Department of Health – Medical Cannabis Program,webpage,https://sddps.gov/hemp/,regulations
+cannabis-hemp-poller,SD,https://medcannabis.sd.gov/,South Dakota Department of Health – Medical Cannabis Program,webpage,https://sddps.gov/hemp/regulations,regulations
+cannabis-hemp-poller,SD,https://medcannabis.sd.gov/,South Dakota Department of Health – Medical Cannabis Program,webpage,https://sddps.gov/hemp/rules,regulations
+cannabis-hemp-poller,SD,https://medcannabis.sd.gov/,South Dakota Department of Health – Medical Cannabis Program,webpage,https://www.sd.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,TN,https://www.tn.gov/agriculture/businesses/hemp.html,Tennessee Department of Agriculture – Hemp Program,webpage,https://www.tn.gov/news,news
+cannabis-hemp-poller,TN,https://www.tn.gov/agriculture/businesses/hemp.html,Tennessee Department of Agriculture – Hemp Program,webpage,https://wapp.capitol.tn.gov,news
+cannabis-hemp-poller,TN,https://www.tn.gov/agriculture/businesses/hemp.html,Tennessee Department of Agriculture – Hemp Program,webpage,https://www.tn.gov/agriculture/businesses/hemp.html/news,news
+cannabis-hemp-poller,TN,https://www.tn.gov/agriculture/businesses/hemp.html,Tennessee Department of Agriculture – Hemp Program,webpage,https://www.tn.gov/agriculture/hemp,news
+cannabis-hemp-poller,TN,https://www.tn.gov/agriculture/businesses/hemp.html,Tennessee Department of Agriculture – Hemp Program,webpage,https://agriculture.tn.gov/hemp,news
+cannabis-hemp-poller,TN,https://www.tn.gov/agriculture/businesses/hemp.html,Tennessee Department of Agriculture – Hemp Program,webpage,https://www.tn.gov/agriculture/businesses/hemp.html,regulations
+cannabis-hemp-poller,TN,https://www.tn.gov/agriculture/businesses/hemp.html,Tennessee Department of Agriculture – Hemp Program,webpage,https://www.tn.gov/agriculture/businesses/hemp.html/regulations,regulations
+cannabis-hemp-poller,TN,https://www.tn.gov/agriculture/businesses/hemp.html,Tennessee Department of Agriculture – Hemp Program,webpage,https://www.tn.gov/agriculture/businesses/hemp.html/rules,regulations
+cannabis-hemp-poller,TN,https://www.tn.gov/agriculture/businesses/hemp.html,Tennessee Department of Agriculture – Hemp Program,webpage,https://www.tn.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,TX,https://www.dshs.texas.gov/consumable-hemp-program,Texas Department of State Health Services – Consumable Hemp Program,webpage,https://www.dshs.texas.gov/news-alerts,news
+cannabis-hemp-poller,TX,https://www.dshs.texas.gov/consumable-hemp-program,Texas Department of State Health Services – Consumable Hemp Program,webpage,https://www.texasagriculture.gov/Regulatory-Programs/PlantQuality/Hemp.aspx,news
+cannabis-hemp-poller,TX,https://www.dshs.texas.gov/consumable-hemp-program,Texas Department of State Health Services – Consumable Hemp Program,webpage,https://www.texasagriculture.gov/Regulatory-Programs/PlantQuality/Hemp.aspx/news,news
+cannabis-hemp-poller,TX,https://www.dshs.texas.gov/consumable-hemp-program,Texas Department of State Health Services – Consumable Hemp Program,webpage,https://www.tx.gov/agriculture/hemp,news
+cannabis-hemp-poller,TX,https://www.dshs.texas.gov/consumable-hemp-program,Texas Department of State Health Services – Consumable Hemp Program,webpage,https://agriculture.tx.gov/hemp,news
+cannabis-hemp-poller,TX,https://www.dshs.texas.gov/consumable-hemp-program,Texas Department of State Health Services – Consumable Hemp Program,webpage,https://www.dshs.texas.gov/consumable-hemp-program,regulations
+cannabis-hemp-poller,TX,https://www.dshs.texas.gov/consumable-hemp-program,Texas Department of State Health Services – Consumable Hemp Program,webpage,https://texasagriculture.gov/Regulatory-Programs/Hemp,regulations
+cannabis-hemp-poller,TX,https://www.dshs.texas.gov/consumable-hemp-program,Texas Department of State Health Services – Consumable Hemp Program,webpage,https://www.texasagriculture.gov/Regulatory-Programs/PlantQuality/Hemp.aspx,regulations
+cannabis-hemp-poller,TX,https://www.dshs.texas.gov/consumable-hemp-program,Texas Department of State Health Services – Consumable Hemp Program,webpage,https://www.texasagriculture.gov/Regulatory-Programs/PlantQuality/Hemp.aspx/regulations,regulations
+cannabis-hemp-poller,TX,https://www.dshs.texas.gov/consumable-hemp-program,Texas Department of State Health Services – Consumable Hemp Program,webpage,https://www.texasagriculture.gov/Regulatory-Programs/PlantQuality/Hemp.aspx/rules,regulations
+cannabis-hemp-poller,TX,https://www.dshs.texas.gov/consumable-hemp-program,Texas Department of State Health Services – Consumable Hemp Program,webpage,https://www.tx.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,UT,https://medicalcannabis.utah.gov/,Utah Department of Health & Human Services – Medical Cannabis Program,webpage,https://medicalcannabis.utah.gov/news/,news
+cannabis-hemp-poller,UT,https://medicalcannabis.utah.gov/,Utah Department of Health & Human Services – Medical Cannabis Program,webpage,https://le.utah.gov,news
+cannabis-hemp-poller,UT,https://medicalcannabis.utah.gov/,Utah Department of Health & Human Services – Medical Cannabis Program,webpage,https://ag.utah.gov/hemp,news
+cannabis-hemp-poller,UT,https://medicalcannabis.utah.gov/,Utah Department of Health & Human Services – Medical Cannabis Program,webpage,https://ag.utah.gov/hemp/news,news
+cannabis-hemp-poller,UT,https://medicalcannabis.utah.gov/,Utah Department of Health & Human Services – Medical Cannabis Program,webpage,https://www.ut.gov/agriculture/hemp,news
+cannabis-hemp-poller,UT,https://medicalcannabis.utah.gov/,Utah Department of Health & Human Services – Medical Cannabis Program,webpage,https://agriculture.ut.gov/hemp,news
+cannabis-hemp-poller,UT,https://medicalcannabis.utah.gov/,Utah Department of Health & Human Services – Medical Cannabis Program,webpage,https://medicalcannabis.utah.gov/laws-and-rules/,regulations
+cannabis-hemp-poller,UT,https://medicalcannabis.utah.gov/,Utah Department of Health & Human Services – Medical Cannabis Program,webpage,https://ag.utah.gov/hemp/,regulations
+cannabis-hemp-poller,UT,https://medicalcannabis.utah.gov/,Utah Department of Health & Human Services – Medical Cannabis Program,webpage,https://ag.utah.gov/hemp/regulations,regulations
+cannabis-hemp-poller,UT,https://medicalcannabis.utah.gov/,Utah Department of Health & Human Services – Medical Cannabis Program,webpage,https://ag.utah.gov/hemp/rules,regulations
+cannabis-hemp-poller,UT,https://medicalcannabis.utah.gov/,Utah Department of Health & Human Services – Medical Cannabis Program,webpage,https://www.ut.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,VA,https://www.cca.virginia.gov/,Virginia Cannabis Control Authority,webpage,https://www.cca.virginia.gov/news,news
+cannabis-hemp-poller,VA,https://www.cca.virginia.gov/,Virginia Cannabis Control Authority,webpage,https://www.vdacs.virginia.gov/hemp.shtml,news
+cannabis-hemp-poller,VA,https://www.cca.virginia.gov/,Virginia Cannabis Control Authority,webpage,https://www.vdacs.virginia.gov/hemp.shtml/news,news
+cannabis-hemp-poller,VA,https://www.cca.virginia.gov/,Virginia Cannabis Control Authority,webpage,https://www.va.gov/agriculture/hemp,news
+cannabis-hemp-poller,VA,https://www.cca.virginia.gov/,Virginia Cannabis Control Authority,webpage,https://agriculture.va.gov/hemp,news
+cannabis-hemp-poller,VA,https://www.cca.virginia.gov/,Virginia Cannabis Control Authority,webpage,https://www.cca.virginia.gov/regulations,regulations
+cannabis-hemp-poller,VA,https://www.cca.virginia.gov/,Virginia Cannabis Control Authority,webpage,https://www.vdacs.virginia.gov/hemp.shtml,regulations
+cannabis-hemp-poller,VA,https://www.cca.virginia.gov/,Virginia Cannabis Control Authority,webpage,https://www.vdacs.virginia.gov/hemp.shtml/regulations,regulations
+cannabis-hemp-poller,VA,https://www.cca.virginia.gov/,Virginia Cannabis Control Authority,webpage,https://www.vdacs.virginia.gov/hemp.shtml/rules,regulations
+cannabis-hemp-poller,VA,https://www.cca.virginia.gov/,Virginia Cannabis Control Authority,webpage,https://www.va.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,VT,https://ccb.vermont.gov/,Vermont Cannabis Control Board,rss,https://ccb.vermont.gov/feed,news
+cannabis-hemp-poller,VT,https://ccb.vermont.gov/,Vermont Cannabis Control Board,webpage,https://ccb.vermont.gov/news,news
+cannabis-hemp-poller,VT,https://ccb.vermont.gov/,Vermont Cannabis Control Board,webpage,https://legislature.vermont.gov,news
+cannabis-hemp-poller,VT,https://ccb.vermont.gov/,Vermont Cannabis Control Board,webpage,https://agriculture.vermont.gov/hemp,news
+cannabis-hemp-poller,VT,https://ccb.vermont.gov/,Vermont Cannabis Control Board,webpage,https://agriculture.vermont.gov/hemp/news,news
+cannabis-hemp-poller,VT,https://ccb.vermont.gov/,Vermont Cannabis Control Board,webpage,https://www.vt.gov/agriculture/hemp,news
+cannabis-hemp-poller,VT,https://ccb.vermont.gov/,Vermont Cannabis Control Board,webpage,https://agriculture.vt.gov/hemp,news
+cannabis-hemp-poller,VT,https://ccb.vermont.gov/,Vermont Cannabis Control Board,webpage,https://ccb.vermont.gov/rules,regulations
+cannabis-hemp-poller,VT,https://ccb.vermont.gov/,Vermont Cannabis Control Board,webpage,https://agriculture.vermont.gov/hemp,regulations
+cannabis-hemp-poller,VT,https://ccb.vermont.gov/,Vermont Cannabis Control Board,webpage,https://agriculture.vermont.gov/hemp/regulations,regulations
+cannabis-hemp-poller,VT,https://ccb.vermont.gov/,Vermont Cannabis Control Board,webpage,https://agriculture.vermont.gov/hemp/rules,regulations
+cannabis-hemp-poller,VT,https://ccb.vermont.gov/,Vermont Cannabis Control Board,webpage,https://www.vt.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,WA,https://lcb.wa.gov/,Washington State Liquor and Cannabis Board,webpage,https://lcb.wa.gov/pressreleases,news
+cannabis-hemp-poller,WA,https://lcb.wa.gov/,Washington State Liquor and Cannabis Board,webpage,https://agr.wa.gov/hemp,news
+cannabis-hemp-poller,WA,https://lcb.wa.gov/,Washington State Liquor and Cannabis Board,webpage,https://agr.wa.gov/hemp/news,news
+cannabis-hemp-poller,WA,https://lcb.wa.gov/,Washington State Liquor and Cannabis Board,webpage,https://www.wa.gov/agriculture/hemp,news
+cannabis-hemp-poller,WA,https://lcb.wa.gov/,Washington State Liquor and Cannabis Board,webpage,https://agriculture.wa.gov/hemp,news
+cannabis-hemp-poller,WA,https://lcb.wa.gov/,Washington State Liquor and Cannabis Board,webpage,https://lcb.wa.gov/laws/laws-and-rules,regulations
+cannabis-hemp-poller,WA,https://lcb.wa.gov/,Washington State Liquor and Cannabis Board,webpage,https://agr.wa.gov/hemp/,regulations
+cannabis-hemp-poller,WA,https://lcb.wa.gov/,Washington State Liquor and Cannabis Board,webpage,https://agr.wa.gov/hemp/regulations,regulations
+cannabis-hemp-poller,WA,https://lcb.wa.gov/,Washington State Liquor and Cannabis Board,webpage,https://agr.wa.gov/hemp/rules,regulations
+cannabis-hemp-poller,WA,https://lcb.wa.gov/,Washington State Liquor and Cannabis Board,webpage,https://www.wa.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,WI,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx,"Wisconsin Department of Agriculture, Trade and Consumer Protection – Hemp Program",webpage,https://datcp.wi.gov/Pages/News_Media/News.aspx,news
+cannabis-hemp-poller,WI,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx,"Wisconsin Department of Agriculture, Trade and Consumer Protection – Hemp Program",webpage,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx/news,news
+cannabis-hemp-poller,WI,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx,"Wisconsin Department of Agriculture, Trade and Consumer Protection – Hemp Program",webpage,https://www.wi.gov/agriculture/hemp,news
+cannabis-hemp-poller,WI,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx,"Wisconsin Department of Agriculture, Trade and Consumer Protection – Hemp Program",webpage,https://agriculture.wi.gov/hemp,news
+cannabis-hemp-poller,WI,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx,"Wisconsin Department of Agriculture, Trade and Consumer Protection – Hemp Program",webpage,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx,regulations
+cannabis-hemp-poller,WI,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx,"Wisconsin Department of Agriculture, Trade and Consumer Protection – Hemp Program",webpage,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx/regulations,regulations
+cannabis-hemp-poller,WI,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx,"Wisconsin Department of Agriculture, Trade and Consumer Protection – Hemp Program",webpage,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx/rules,regulations
+cannabis-hemp-poller,WI,https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx,"Wisconsin Department of Agriculture, Trade and Consumer Protection – Hemp Program",webpage,https://www.wi.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,WV,https://omc.wv.gov/,West Virginia Office of Medical Cannabis,webpage,https://omc.wv.gov/news,news
+cannabis-hemp-poller,WV,https://omc.wv.gov/,West Virginia Office of Medical Cannabis,webpage,https://agriculture.wv.gov/Divisions/Plant/Ag_Industries/hemp/Pages/default.aspx,news
+cannabis-hemp-poller,WV,https://omc.wv.gov/,West Virginia Office of Medical Cannabis,webpage,https://agriculture.wv.gov/Divisions/Plant/Ag_Industries/hemp/Pages/default.aspx/news,news
+cannabis-hemp-poller,WV,https://omc.wv.gov/,West Virginia Office of Medical Cannabis,webpage,https://www.wv.gov/agriculture/hemp,news
+cannabis-hemp-poller,WV,https://omc.wv.gov/,West Virginia Office of Medical Cannabis,webpage,https://agriculture.wv.gov/hemp,news
+cannabis-hemp-poller,WV,https://omc.wv.gov/,West Virginia Office of Medical Cannabis,webpage,https://omc.wv.gov/rules/Pages/default.aspx,regulations
+cannabis-hemp-poller,WV,https://omc.wv.gov/,West Virginia Office of Medical Cannabis,webpage,https://code.wvlegislature.gov/16A/,regulations
+cannabis-hemp-poller,WV,https://omc.wv.gov/,West Virginia Office of Medical Cannabis,webpage,https://agriculture.wv.gov/Divisions/Plant/Ag_Industries/hemp/Pages/default.aspx,regulations
+cannabis-hemp-poller,WV,https://omc.wv.gov/,West Virginia Office of Medical Cannabis,webpage,https://agriculture.wv.gov/Divisions/Plant/Ag_Industries/hemp/Pages/default.aspx/regulations,regulations
+cannabis-hemp-poller,WV,https://omc.wv.gov/,West Virginia Office of Medical Cannabis,webpage,https://agriculture.wv.gov/Divisions/Plant/Ag_Industries/hemp/Pages/default.aspx/rules,regulations
+cannabis-hemp-poller,WV,https://omc.wv.gov/,West Virginia Office of Medical Cannabis,webpage,https://www.wv.gov/laws-regulations/hemp,regulations
+cannabis-hemp-poller,WY,https://agriculture.wy.gov/divisions/hemp,Wyoming Department of Agriculture – Hemp Program,webpage,https://agriculture.wy.gov/news,news
+cannabis-hemp-poller,WY,https://agriculture.wy.gov/divisions/hemp,Wyoming Department of Agriculture – Hemp Program,webpage,https://agriculture.wy.gov/divisions/hemp,regulations
+agency-contacts,FEDERAL,https://www.fda.gov/news-events/public-health-focus/fda-regulation-cannabis-and-cannabis-derived-products-including-cannabidiol-cbd,,contact,https://www.fda.gov/news-events/public-health-focus/fda-regulation-cannabis-and-cannabis-derived-products-including-cannabidiol-cbd,federal
+agency-contacts,FEDERAL,https://www.dea.gov/drug-information/cannabis,,contact,https://www.dea.gov/drug-information/cannabis,federal
+agency-contacts,FEDERAL,https://www.ams.usda.gov/rules-regulations/hemp,,contact,https://www.ams.usda.gov/rules-regulations/hemp,federal
+agency-contacts,MI,https://www.michigan.gov/cra,,contact,https://www.michigan.gov/cra,state
+agency-contacts,CA,https://cannabis.ca.gov,,contact,https://cannabis.ca.gov,state
+agency-contacts,CO,https://sbg.colorado.gov/med,,contact,https://sbg.colorado.gov/med,state

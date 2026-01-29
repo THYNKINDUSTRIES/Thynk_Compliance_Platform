@@ -1,0 +1,7 @@
+poller,state,agency,agencyName,sourceType,url,category
+agency-contacts,FEDERAL,https://www.fda.gov/news-events/public-health-focus/fda-regulation-cannabis-and-cannabis-derived-products-including-cannabidiol-cbd,,contact,https://www.fda.gov/news-events/public-health-focus/fda-regulation-cannabis-and-cannabis-derived-products-including-cannabidiol-cbd,federal
+agency-contacts,FEDERAL,https://www.dea.gov/drug-information/cannabis,,contact,https://www.dea.gov/drug-information/cannabis,federal
+agency-contacts,FEDERAL,https://www.ams.usda.gov/rules-regulations/hemp,,contact,https://www.ams.usda.gov/rules-regulations/hemp,federal
+agency-contacts,MI,https://www.michigan.gov/cra,,contact,https://www.michigan.gov/cra,state
+agency-contacts,CA,https://cannabis.ca.gov,,contact,https://cannabis.ca.gov,state
+agency-contacts,CO,https://sbg.colorado.gov/med,,contact,https://sbg.colorado.gov/med,state
