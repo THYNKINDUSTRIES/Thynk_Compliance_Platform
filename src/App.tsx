@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppProvider } from "@/contexts/AppContext";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { SubscriptionRoute } from "@/components/SubscriptionRoute";
 import { CookieConsent } from "@/components/CookieConsent";
 
 import Information from "./pages/Information";
@@ -74,18 +74,18 @@ const App = () => (
                 <Route path="/legislature-bills" element={<LegislatureBills />} />
 
 
-                {/* Protected routes - require authentication */}
+                {/* Trial/Paid routes - require authentication and trial/paid access */}
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-                <Route path="/alerts" element={<ProtectedRoute><AlertPreferences /></ProtectedRoute>} />
-                <Route path="/workflows" element={<ProtectedRoute><Workflows /></ProtectedRoute>} />
-                <Route path="/workflows/:id" element={<ProtectedRoute><Workflows /></ProtectedRoute>} />
-                <Route path="/notification-preferences" element={<ProtectedRoute><NotificationPreferences /></ProtectedRoute>} />
-                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                <Route path="/checklists" element={<ProtectedRoute><ComplianceChecklists /></ProtectedRoute>} />
-                <Route path="/templates" element={<ProtectedRoute><TemplateLibrary /></ProtectedRoute>} />
-                <Route path="/beta-invites" element={<ProtectedRoute><BetaInvites /></ProtectedRoute>} />
+                <Route path="/dashboard" element={<SubscriptionRoute><Dashboard /></SubscriptionRoute>} />
+                <Route path="/analytics" element={<SubscriptionRoute requirePaid><Analytics /></SubscriptionRoute>} />
+                <Route path="/alerts" element={<SubscriptionRoute><AlertPreferences /></SubscriptionRoute>} />
+                <Route path="/workflows" element={<SubscriptionRoute><Workflows /></SubscriptionRoute>} />
+                <Route path="/workflows/:id" element={<SubscriptionRoute><Workflows /></SubscriptionRoute>} />
+                <Route path="/notification-preferences" element={<SubscriptionRoute><NotificationPreferences /></SubscriptionRoute>} />
+                <Route path="/settings" element={<SubscriptionRoute><Settings /></SubscriptionRoute>} />
+                <Route path="/checklists" element={<SubscriptionRoute requirePaid><ComplianceChecklists /></SubscriptionRoute>} />
+                <Route path="/templates" element={<SubscriptionRoute requirePaid><TemplateLibrary /></SubscriptionRoute>} />
+                <Route path="/beta-invites" element={<SubscriptionRoute requirePaid><BetaInvites /></SubscriptionRoute>} />
 
                 {/* Admin routes - require admin role */}
                 <Route path="/source-management" element={<ProtectedRoute adminOnly><SourceManagement /></ProtectedRoute>} />

@@ -169,7 +169,7 @@ export function PollerTestPanel() {
 
     toast({
       title: 'Starting California Poll Test',
-      description: 'Testing cannabis-hemp-poller for CA...',
+      description: 'Testing cannabis-hemp-poller and state-regulations-poller for CA...',
     });
 
     try {
@@ -177,12 +177,16 @@ export function PollerTestPanel() {
       console.log('=== Testing cannabis-hemp-poller for CA ===');
       const cannabisResult = await testEdgeFunction('cannabis-hemp-poller', 'CA');
 
+      // Test 2: state-regulations-poller
+      console.log('=== Testing state-regulations-poller for CA ===');
+      const stateResult = await testEdgeFunction('state-regulations-poller', 'CA');
+
       // Refresh ingestion logs to see new entries
       await new Promise(resolve => setTimeout(resolve, 2000));
       await fetchIngestionLogs();
 
       // Summary
-      const successCount = [cannabisResult].filter(r => r.success).length;
+      const successCount = [cannabisResult, stateResult].filter(r => r.success).length;
       
       toast({
         title: successCount > 0 ? 'Test Complete' : 'Test Failed',

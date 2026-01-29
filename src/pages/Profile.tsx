@@ -4,11 +4,108 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Mail, Lock, Shield, RefreshCw, CheckCircle, AlertCircle, Play } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { User, Mail, Lock, Shield, RefreshCw, CheckCircle, AlertCircle, Play, CreditCard, Clock } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
+
+function SubscriptionTab() {
+  const { profile, isTrialActive, isPaidUser, trialDaysRemaining } = useAuth();
+
+  const getSubscriptionStatus = () => {
+    if (isPaidUser) return { status: 'Active', color: 'text-green-600', bg: 'bg-green-50' };
+    if (isTrialActive) return { status: 'Trial', color: 'text-blue-600', bg: 'bg-blue-50' };
+    return { status: 'Expired', color: 'text-red-600', bg: 'bg-red-50' };
+  };
+
+  const status = getSubscriptionStatus();
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard className="w-5 h-5" />
+            Subscription Status
+          </CardTitle>
+          <CardDescription>Manage your subscription and billing</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className={`p-4 rounded-lg ${status.bg}`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="font-medium">Current Plan</span>
+              <Badge variant={isPaidUser ? 'default' : isTrialActive ? 'secondary' : 'destructive'}>
+                {status.status}
+              </Badge>
+            </div>
+            <div className="text-sm text-gray-600">
+              {isPaidUser ? (
+                'You have full access to all features.'
+              ) : isTrialActive ? (
+                <span className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  {trialDaysRemaining} days remaining in trial
+                </span>
+              ) : (
+                'Your trial has expired. Upgrade to continue using premium features.'
+              )}
+            </div>
+          </div>
+
+          {isTrialActive && (
+            <div className="p-4 border rounded-lg">
+              <h3 className="font-medium mb-2">Trial Features</h3>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• Access to platform and dashboard</li>
+                <li>• Basic compliance monitoring</li>
+                <li>• State regulation tracking</li>
+                <li>• Email notifications</li>
+              </ul>
+            </div>
+          )}
+
+          {isPaidUser && (
+            <div className="p-4 border rounded-lg">
+              <h3 className="font-medium mb-2">Pro Features</h3>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• All trial features</li>
+                <li>• Advanced analytics and reporting</li>
+                <li>• Compliance checklists and templates</li>
+                <li>• Workflow automation</li>
+                <li>• Priority support</li>
+                <li>• API access</li>
+              </ul>
+            </div>
+          )}
+
+          {!isPaidUser && (
+            <div className="flex gap-3">
+              <Button className="bg-[#794108] hover:bg-[#E89C5C]">
+                <CreditCard className="w-4 h-4 mr-2" />
+                {isTrialActive ? 'Upgrade to Pro' : 'Start Free Trial'}
+              </Button>
+              <Button variant="outline">
+                Compare Plans
+              </Button>
+            </div>
+          )}
+
+          {profile && (
+            <div className="text-xs text-gray-500 space-y-1">
+              <div>Trial started: {new Date(profile.trial_started_at).toLocaleDateString()}</div>
+              <div>Trial ends: {new Date(profile.trial_ends_at).toLocaleDateString()}</div>
+              {profile.subscription_started_at && (
+                <div>Subscription started: {new Date(profile.subscription_started_at).toLocaleDateString()}</div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 export default function Profile() {
   const { user, profile, updateProfile, updatePassword, onboardingCompleted, resetOnboarding } = useAuth();
@@ -104,10 +201,14 @@ export default function Profile() {
         <h1 className="text-4xl font-bold text-[#794108] mb-8">Profile Settings</h1>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="profile">
               <User className="w-4 h-4 mr-2" />
               Profile
+            </TabsTrigger>
+            <TabsTrigger value="subscription">
+              <CreditCard className="w-4 h-4 mr-2" />
+              Subscription
             </TabsTrigger>
             <TabsTrigger value="security">
               <Lock className="w-4 h-4 mr-2" />
@@ -223,6 +324,10 @@ export default function Profile() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="subscription">
+            <SubscriptionTab />
           </TabsContent>
 
           <TabsContent value="security">

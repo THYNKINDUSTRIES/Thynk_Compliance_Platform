@@ -12,6 +12,13 @@ interface UserProfile {
   saved_searches: any[];
   onboarding_completed: boolean;
   onboarding_completed_at: string | null;
+  subscription_status: 'trial' | 'active' | 'expired' | 'cancelled';
+  trial_started_at: string;
+  trial_ends_at: string;
+  subscription_started_at: string | null;
+  subscription_ends_at: string | null;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -24,6 +31,9 @@ interface AuthContextType {
   isAdmin: boolean;
   hasBetaAccess: boolean;
   onboardingCompleted: boolean;
+  isTrialActive: boolean;
+  isPaidUser: boolean;
+  trialDaysRemaining: number;
   signUp: (email: string, password: string, fullName: string) => Promise<{ data: any; error: AuthError | null }>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -91,12 +101,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Check beta access based on user email
   const userHasBetaAccess = hasBetaAccess(user?.email);
 
+  // Subscription helpers
+  const isTrialActive = profile ? (
+    profile.subscription_status === 'trial' &&
+    new Date(profile.trial_ends_at) > new Date()
+  ) : false;
+
+  const isPaidUser = profile ? (
+    profile.subscription_status === 'active' &&
+    (!profile.subscription_ends_at || new Date(profile.subscription_ends_at) > new Date())
+  ) : false;
+
+  const trialDaysRemaining = profile ? (
+    profile.subscription_status === 'trial' ?
+      Math.max(0, Math.ceil((new Date(profile.trial_ends_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))) :
+      0
+  ) : 0;
+
   const fetchProfile = useCallback(async (userId: string) => {
     try {
       // Use a simpler query to avoid RLS recursion issues
       const { data, error } = await supabase
         .from('user_profiles')
-        .select('id, email, full_name, role, email_verified, saved_searches, onboarding_completed, onboarding_completed_at, created_at, updated_at')
+        .select('id, email, full_name, role, email_verified, saved_searches, onboarding_completed, onboarding_completed_at, subscription_status, trial_started_at, trial_ends_at, subscription_started_at, subscription_ends_at, stripe_customer_id, stripe_subscription_id, created_at, updated_at')
         .eq('id', userId)
         .maybeSingle(); // Use maybeSingle to avoid errors on empty results
 
@@ -116,6 +143,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               saved_searches: [],
               onboarding_completed: getOnboardingStatus(userId),
               onboarding_completed_at: null,
+              subscription_status: 'trial',
+              trial_started_at: authUser.created_at || new Date().toISOString(),
+              trial_ends_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
+              subscription_started_at: null,
+              subscription_ends_at: null,
+              stripe_customer_id: null,
+              stripe_subscription_id: null,
               created_at: authUser.created_at || new Date().toISOString(),
               updated_at: new Date().toISOString()
             });
@@ -137,7 +171,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const profileWithDefaults: UserProfile = {
           ...data,
           onboarding_completed: data.onboarding_completed ?? false,
-          onboarding_completed_at: data.onboarding_completed_at ?? null
+          onboarding_completed_at: data.onboarding_completed_at ?? null,
+          subscription_status: data.subscription_status ?? 'trial',
+          trial_started_at: data.trial_started_at ?? data.created_at,
+          trial_ends_at: data.trial_ends_at ?? new Date(new Date(data.created_at).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          subscription_started_at: data.subscription_started_at ?? null,
+          subscription_ends_at: data.subscription_ends_at ?? null,
+          stripe_customer_id: data.stripe_customer_id ?? null,
+          stripe_subscription_id: data.stripe_subscription_id ?? null
         };
         setProfile(profileWithDefaults);
         
@@ -358,6 +399,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isAdmin: profile?.role === 'admin',
       hasBetaAccess: userHasBetaAccess,
       onboardingCompleted,
+      isTrialActive,
+      isPaidUser,
+      trialDaysRemaining,
       signUp, signIn, signOut, resetPassword, updatePassword, updateProfile, refreshProfile, completeOnboarding, resetOnboarding
     }}>
       {children}

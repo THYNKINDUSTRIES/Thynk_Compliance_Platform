@@ -9,11 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { User, Settings, LogOut, Shield, Bell, LayoutDashboard } from 'lucide-react';
+import { User, Settings, LogOut, Shield, Bell, LayoutDashboard, Clock, CreditCard } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 export const UserMenu = () => {
-  const { user, profile, signOut, isAdmin } = useAuth();
+  const { user, profile, signOut, isAdmin, isTrialActive, isPaidUser, trialDaysRemaining } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -58,12 +58,30 @@ export const UserMenu = () => {
         <DropdownMenuLabel className="flex flex-col">
           <span className="font-medium">{profile?.full_name || 'User'}</span>
           <span className="text-xs font-normal text-gray-500 truncate">{user.email}</span>
-          {isAdmin && (
-            <Badge variant="default" className="mt-1 w-fit text-xs">
-              <Shield size={10} className="mr-1" />
-              Admin
-            </Badge>
-          )}
+          <div className="flex items-center gap-2 mt-1">
+            {isPaidUser ? (
+              <Badge variant="default" className="text-xs">
+                <CreditCard size={10} className="mr-1" />
+                Pro
+              </Badge>
+            ) : isTrialActive ? (
+              <Badge variant="secondary" className="text-xs">
+                <Clock size={10} className="mr-1" />
+                Trial ({trialDaysRemaining}d)
+              </Badge>
+            ) : (
+              <Badge variant="destructive" className="text-xs">
+                <Clock size={10} className="mr-1" />
+                Expired
+              </Badge>
+            )}
+            {isAdmin && (
+              <Badge variant="default" className="text-xs">
+                <Shield size={10} className="mr-1" />
+                Admin
+              </Badge>
+            )}
+          </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
