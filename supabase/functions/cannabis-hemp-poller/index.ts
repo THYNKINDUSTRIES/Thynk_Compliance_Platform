@@ -20,11 +20,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Alabama Medical Cannabis Commission',
   rssFeeds: [],
   newsPages: [
-    'https://amcc.alabama.gov/news/',
-    'https://www.alabama.gov/newsroom/'
+    'https://www.alabama.gov/newsroom',
+    'https://www.legislature.state.al.us',
+    'https://www.agi.alabama.gov/divisions/Regulatory/hemp.aspx',
+    'https://www.agi.alabama.gov/divisions/Regulatory/hemp.aspx/news',
+    'https://www.al.gov/agriculture/hemp',
+    'https://agriculture.al.gov/hemp'
   ],
   regulationPages: [
-    'https://amcc.alabama.gov/rules/'
+    'https://amcc.alabama.gov/rules/',
+    'https://www.agi.alabama.gov/divisions/Regulatory/hemp.aspx',
+    'https://www.agi.alabama.gov/divisions/Regulatory/hemp.aspx/regulations',
+    'https://www.agi.alabama.gov/divisions/Regulatory/hemp.aspx/rules',
+    'https://www.al.gov/laws-regulations/hemp'
   ]
 },
 
@@ -33,10 +41,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Alaska Marijuana Control Board',
   rssFeeds: [],
   newsPages: [
-    'https://www.commerce.alaska.gov/web/cbpl/Marijuana/News.aspx'
+    'https://www.alaska.gov/news',
+    'https://legislature.ak.gov/news.php',
+    'https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx',
+    'https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx/news',
+    'https://www.ak.gov/agriculture/hemp',
+    'https://agriculture.ak.gov/hemp'
   ],
   regulationPages: [
-    'https://www.commerce.alaska.gov/web/cbpl/Marijuana/StatutesRegulations.aspx'
+    'https://www.commerce.alaska.gov/web/cbpl/Marijuana/StatutesRegulations.aspx',
+    'https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx',
+    'https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx/regulations',
+    'https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx/rules',
+    'https://www.ak.gov/laws-regulations/hemp'
   ]
 },
 
@@ -45,10 +62,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Arizona Department of Health Services – Marijuana Program',
   rssFeeds: [],
   newsPages: [
-    'https://www.azdhs.gov/news/'
+    'https://www.azdhs.gov/news/',
+    'https://agriculture.az.gov/hemp',
+    'https://agriculture.az.gov/hemp/news',
+    'https://www.az.gov/agriculture/hemp',
+    'https://agriculture.az.gov/hemp'
   ],
   regulationPages: [
-    'https://www.azdhs.gov/licensing/marijuana/adult-use-marijuana/'
+    'https://www.azdhs.gov/licensing/marijuana/adult-use-marijuana/',
+    'https://agriculture.az.gov/hemp',
+    'https://agriculture.az.gov/hemp/regulations',
+    'https://agriculture.az.gov/hemp/rules',
+    'https://www.az.gov/laws-regulations/hemp'
   ]
 },
 
@@ -57,10 +82,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Arkansas Medical Marijuana Commission',
   rssFeeds: [],
   newsPages: [
-    'https://www.arkansas.gov/amcc/news/'
+    'https://www.arkansas.gov/news',
+    'https://www.arkansas.gov/governor/news',
+    'https://www.agriculture.arkansas.gov/divisions/plant-industries/hemp',
+    'https://www.agriculture.arkansas.gov/divisions/plant-industries/hemp/news',
+    'https://www.ar.gov/agriculture/hemp',
+    'https://agriculture.ar.gov/hemp'
   ],
   regulationPages: [
-    'https://www.arkansas.gov/amcc/rules-regulations/'
+    'https://www.arkansas.gov/amcc/rules-regulations/',
+    'https://www.agriculture.arkansas.gov/divisions/plant-industries/hemp',
+    'https://www.agriculture.arkansas.gov/divisions/plant-industries/hemp/regulations',
+    'https://www.agriculture.arkansas.gov/divisions/plant-industries/hemp/rules',
+    'https://www.ar.gov/laws-regulations/hemp'
   ]
 },
 
@@ -70,10 +104,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   rssFeeds: [],
   newsPages: [
     'https://www.cannabis.ca.gov/about-us/announcements/',
-    'https://www.cannabis.ca.gov/posts/'
+    'https://www.cannabis.ca.gov/posts/',
+    'https://www.cdfa.ca.gov/plant/industrialhemp',
+    'https://www.cdfa.ca.gov/plant/industrialhemp/news',
+    'https://www.ca.gov/agriculture/hemp',
+    'https://agriculture.ca.gov/hemp'
   ],
   regulationPages: [
-    'https://www.cannabis.ca.gov/cannabis-laws/dcc-regulations/'
+    'https://www.cannabis.ca.gov/cannabis-laws/dcc-regulations/',
+    'https://www.cdfa.ca.gov/plant/industrialhemp/',
+    'https://www.cdfa.ca.gov/plant/industrialhemp/regulations',
+    'https://www.cdfa.ca.gov/plant/industrialhemp/rules',
+    'https://www.ca.gov/laws-regulations/hemp'
   ]
 },
 
@@ -82,10 +124,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Colorado Marijuana Enforcement Division',
   rssFeeds: [],
   newsPages: [
-    'https://sbg.colorado.gov/marijuana/news'
+    'https://legislature.colorado.gov',
+    'https://www.colorado.gov/news',
+    'https://www.colorado.gov/pacific/agriculture/hemp',
+    'https://www.colorado.gov/pacific/agriculture/hemp/news',
+    'https://www.co.gov/agriculture/hemp',
+    'https://agriculture.co.gov/hemp'
   ],
   regulationPages: [
-    'https://sbg.colorado.gov/marijuana/rules'
+    'https://legislature.colorado.gov',
+    'https://www.colorado.gov/pacific/agriculture/hemp',
+    'https://www.colorado.gov/pacific/agriculture/hemp/regulations',
+    'https://www.colorado.gov/pacific/agriculture/hemp/rules',
+    'https://www.co.gov/laws-regulations/hemp'
   ]
 },
 
@@ -94,10 +145,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Connecticut Department of Consumer Protection – Cannabis',
   rssFeeds: [],
   newsPages: [
-    'https://portal.ct.gov/dcp/news'
+    'https://www.ct.gov/news',
+    'https://legislature.ct.gov',
+    'https://portal.ct.gov/doag/program/hemp',
+    'https://portal.ct.gov/doag/program/hemp/news',
+    'https://www.ct.gov/agriculture/hemp',
+    'https://agriculture.ct.gov/hemp'
   ],
   regulationPages: [
-    'https://portal.ct.gov/dcp/cannabis/regulations'
+    'https://portal.ct.gov/dcp/cannabis/regulations',
+    'https://portal.ct.gov/doag/program/hemp',
+    'https://portal.ct.gov/doag/program/hemp/regulations',
+    'https://portal.ct.gov/doag/program/hemp/rules',
+    'https://www.ct.gov/laws-regulations/hemp'
   ]
 },
 
@@ -106,11 +166,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Delaware Office of the Marijuana Commissioner',
   rssFeeds: [],
   newsPages: [
-    'https://omc.delaware.gov/news/',
-    'https://news.delaware.gov/category/office-of-the-marijuana-commissioner/'
+    'https://news.delaware.gov',
+    'https://legislature.delaware.gov',
+    'https://dda.delaware.gov/hemp',
+    'https://dda.delaware.gov/hemp/news',
+    'https://www.de.gov/agriculture/hemp',
+    'https://agriculture.de.gov/hemp'
   ],
   regulationPages: [
-    'https://omc.delaware.gov/regulations/'
+    'https://omc.delaware.gov/regulations/',
+    'https://dda.delaware.gov/hemp/',
+    'https://dda.delaware.gov/hemp/regulations',
+    'https://dda.delaware.gov/hemp/rules',
+    'https://www.de.gov/laws-regulations/hemp'
   ]
 },
 
@@ -120,10 +188,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   rssFeeds: [],
   newsPages: [
     'https://knowthefactsmmj.com/about/weekly-updates/',
-    'https://www.floridahealth.gov/newsroom/'
+    'https://www.floridahealth.gov/newsroom/',
+    'https://www.fdacs.gov/Agriculture-Industry/Hemp',
+    'https://www.fdacs.gov/Agriculture-Industry/Hemp/news',
+    'https://www.fl.gov/agriculture/hemp',
+    'https://agriculture.fl.gov/hemp'
   ],
   regulationPages: [
-    'https://knowthefactsmmj.com/about/'
+    'https://knowthefactsmmj.com/about/',
+    'https://www.fdacs.gov/Agriculture-Industry/Hemp',
+    'https://www.fdacs.gov/Agriculture-Industry/Hemp/regulations',
+    'https://www.fdacs.gov/Agriculture-Industry/Hemp/rules',
+    'https://www.fl.gov/laws-regulations/hemp'
   ]
 },
 
@@ -145,10 +221,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Hawaii Department of Health – Medical Cannabis Program',
   rssFeeds: [],
   newsPages: [
-    'https://health.hawaii.gov/news/'
+    'https://health.hawaii.gov/news/',
+    'https://hdoa.hawaii.gov/hemp',
+    'https://hdoa.hawaii.gov/hemp/news',
+    'https://www.hi.gov/agriculture/hemp',
+    'https://agriculture.hi.gov/hemp'
   ],
   regulationPages: [
-    'https://health.hawaii.gov/medicalcannabis/statutes-rules/'
+    'https://health.hawaii.gov/medicalcannabis/statutes-rules/',
+    'https://hdoa.hawaii.gov/hemp/',
+    'https://hdoa.hawaii.gov/hemp/regulations',
+    'https://hdoa.hawaii.gov/hemp/rules',
+    'https://www.hi.gov/laws-regulations/hemp'
   ]
 },
 
@@ -157,10 +241,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Idaho State Department of Agriculture – Hemp Program',
   rssFeeds: [],
   newsPages: [
-    'https://agri.idaho.gov/news/'
+    'https://agri.idaho.gov/news/',
+    'https://www.agri.idaho.gov/main/hemp',
+    'https://www.agri.idaho.gov/main/hemp/news',
+    'https://www.id.gov/agriculture/hemp',
+    'https://agriculture.id.gov/hemp'
   ],
   regulationPages: [
-    'https://agri.idaho.gov/main/hemp/'
+    'https://agri.idaho.gov/main/hemp/',
+    'https://www.agri.idaho.gov/main/hemp/',
+    'https://www.agri.idaho.gov/main/hemp/regulations',
+    'https://www.agri.idaho.gov/main/hemp/rules',
+    'https://www.id.gov/laws-regulations/hemp'
   ]
 },
 
@@ -169,10 +261,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Illinois Department of Financial and Professional Regulation – Cannabis',
   rssFeeds: [],
   newsPages: [
-    'https://idfpr.illinois.gov/News.html'
+    'https://idfpr.illinois.gov/News.html',
+    'https://isp.idfpr.illinois.gov/hemp',
+    'https://isp.idfpr.illinois.gov/hemp/news',
+    'https://www.il.gov/agriculture/hemp',
+    'https://agriculture.il.gov/hemp'
   ],
   regulationPages: [
-    'https://idfpr.illinois.gov/profs/adultusecan.html'
+    'https://idfpr.illinois.gov/profs/adultusecan.html',
+    'https://isp.idfpr.illinois.gov/hemp',
+    'https://isp.idfpr.illinois.gov/hemp/regulations',
+    'https://isp.idfpr.illinois.gov/hemp/rules',
+    'https://www.il.gov/laws-regulations/hemp'
   ]
 },
 
@@ -181,10 +281,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Indiana State Department of Health – Cannabis / Hemp',
   rssFeeds: [],
   newsPages: [
-    'https://www.in.gov/news/'
+    'https://www.in.gov/news',
+    'https://iga.in.gov/legislative/',
+    'https://www.in.gov/isda/divisions/plant-industries/hemp',
+    'https://www.in.gov/isda/divisions/plant-industries/hemp/news',
+    'https://www.in.gov/agriculture/hemp',
+    'https://agriculture.in.gov/hemp'
   ],
   regulationPages: [
-    'https://www.in.gov/cannabis/'
+    'https://www.in.gov/cannabis/',
+    'https://www.in.gov/isda/divisions/plant-industries/hemp/',
+    'https://www.in.gov/isda/divisions/plant-industries/hemp/regulations',
+    'https://www.in.gov/isda/divisions/plant-industries/hemp/rules',
+    'https://www.in.gov/laws-regulations/hemp'
   ]
 },
 
@@ -193,10 +302,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Iowa Department of Health and Human Services – Medical Cannabis',
   rssFeeds: [],
   newsPages: [
-    'https://hhs.iowa.gov/news'
+    'https://hhs.iowa.gov/news',
+    'https://www.iowaagriculture.gov/hemp.asp',
+    'https://www.iowaagriculture.gov/hemp.asp/news',
+    'https://www.ia.gov/agriculture/hemp',
+    'https://agriculture.ia.gov/hemp'
   ],
   regulationPages: [
-    'https://hhs.iowa.gov/medical-cannabis'
+    'https://hhs.iowa.gov/medical-cannabis',
+    'https://www.iowaagriculture.gov/hemp.asp',
+    'https://www.iowaagriculture.gov/hemp.asp/regulations',
+    'https://www.iowaagriculture.gov/hemp.asp/rules',
+    'https://www.ia.gov/laws-regulations/hemp'
   ]
 },
 
@@ -205,10 +322,17 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Kansas Department of Agriculture – Hemp Program',
   rssFeeds: [],
   newsPages: [
-    'https://agriculture.ks.gov/news'
+    'https://agriculture.ks.gov/news',
+    'https://www.kslegislature.org',
+    'https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp/news',
+    'https://www.ks.gov/agriculture/hemp',
+    'https://agriculture.ks.gov/hemp'
   ],
   regulationPages: [
-    'https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp'
+    'https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp',
+    'https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp/regulations',
+    'https://agriculture.ks.gov/divisions-programs/plant-protection-and-weed-control/hemp/rules',
+    'https://www.ks.gov/laws-regulations/hemp'
   ]
 },
 
@@ -217,11 +341,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Kentucky Office of Medical Cannabis',
   rssFeeds: [],
   newsPages: [
-    'https://kymedcan.ky.gov/news',
-    'https://governor.ky.gov/news'
+    'https://legislature.ky.gov/news',
+    'https://governor.ky.gov/news',
+    'https://www.kyagr.com/marketing/hemp.html',
+    'https://www.kyagr.com/marketing/hemp.html/news',
+    'https://www.ky.gov/agriculture/hemp',
+    'https://agriculture.ky.gov/hemp'
   ],
   regulationPages: [
-    'https://kymedcan.ky.gov/laws-and-regulations/Pages/Regulations.aspx'
+    'https://legislature.ky.gov/laws/statutes',
+    'https://www.kyagr.com/marketing/hemp.html',
+    'https://www.kyagr.com/marketing/hemp.html/regulations',
+    'https://www.kyagr.com/marketing/hemp.html/rules',
+    'https://www.ky.gov/laws-regulations/hemp'
   ]
 },
 
@@ -230,10 +362,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Louisiana Department of Agriculture & Forestry – Medical Marijuana',
   rssFeeds: [],
   newsPages: [
-    'https://www.ldaf.state.la.us/newsroom/'
+    'https://www.ldaf.state.la.us/newsroom',
+    'https://legislature.la.gov',
+    'https://www.ldaf.state.la.us/agricultural-commodities/hemp',
+    'https://www.ldaf.state.la.us/agricultural-commodities/hemp/news',
+    'https://www.la.gov/agriculture/hemp',
+    'https://agriculture.la.gov/hemp'
   ],
   regulationPages: [
-    'https://www.ldaf.state.la.us/medical-marijuana/regulations/'
+    'https://www.ldaf.state.la.us/medical-marijuana/regulations/',
+    'https://www.ldaf.state.la.us/agricultural-commodities/hemp',
+    'https://www.ldaf.state.la.us/agricultural-commodities/hemp/regulations',
+    'https://www.ldaf.state.la.us/agricultural-commodities/hemp/rules',
+    'https://www.la.gov/laws-regulations/hemp'
   ]
 },
 
@@ -242,10 +383,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Maine Office of Cannabis Policy',
   rssFeeds: [],
   newsPages: [
-    'https://www.maine.gov/dafs/ocp/news'
+    'https://www.maine.gov/dafs/ocp/news',
+    'https://legislature.maine.gov',
+    'https://www.maine.gov/agriculture/hemp',
+    'https://www.maine.gov/agriculture/hemp/news',
+    'https://www.me.gov/agriculture/hemp',
+    'https://agriculture.me.gov/hemp'
   ],
   regulationPages: [
-    'https://www.maine.gov/dafs/ocp/rules-statutes'
+    'https://www.maine.gov/dafs/ocp/rules-statutes',
+    'https://www.maine.gov/agriculture/hemp/',
+    'https://www.maine.gov/agriculture/hemp/regulations',
+    'https://www.maine.gov/agriculture/hemp/rules',
+    'https://www.me.gov/laws-regulations/hemp'
   ]
 },
 
@@ -254,71 +404,177 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Maryland Cannabis Administration',
   rssFeeds: [],
   newsPages: [
-    'https://cannabis.maryland.gov/Pages/news.aspx'
+    'https://cannabis.maryland.gov/Pages/news.aspx',
+    'https://mda.maryland.gov/hemp/Pages/default.aspx',
+    'https://mda.maryland.gov/hemp/Pages/default.aspx/news',
+    'https://www.md.gov/agriculture/hemp',
+    'https://agriculture.md.gov/hemp'
   ],
   regulationPages: [
-    'https://cannabis.maryland.gov/Pages/Laws-Regulations.aspx'
+    'https://cannabis.maryland.gov/Pages/Laws-Regulations.aspx',
+    'https://mda.maryland.gov/hemp/Pages/default.aspx',
+    'https://mda.maryland.gov/hemp/Pages/default.aspx/regulations',
+    'https://mda.maryland.gov/hemp/Pages/default.aspx/rules',
+    'https://www.md.gov/laws-regulations/hemp'
   ]
 },
 'MA': { 
    agency: 'https://masscannabiscontrol.com', 
    agencyName: 'Massachusetts Cannabis Control Commission', 
    rssFeeds: ['https://masscannabiscontrol.com/feed'], 
-   newsPages: ['https://masscannabiscontrol.com/news', 'https://masscannabiscontrol.com/public-meetings'], 
-   regulationPages: ['https://masscannabiscontrol.com/public-documents/regulations'] 
+   newsPages: [
+    'https://masscannabiscontrol.com/news',
+    'https://masscannabiscontrol.com/public-meetings',
+    'https://www.mass.gov/hemp',
+    'https://www.mass.gov/hemp/news',
+    'https://www.ma.gov/agriculture/hemp',
+    'https://agriculture.ma.gov/hemp'
+  ], 
+   regulationPages: [
+    'https://masscannabiscontrol.com/public-documents/regulations',
+    'https://www.mass.gov/hemp',
+    'https://www.mass.gov/hemp/regulations',
+    'https://www.mass.gov/hemp/rules',
+    'https://www.ma.gov/laws-regulations/hemp'
+  ] 
 },
 'MI': { 
    agency: 'https://www.michigan.gov/cra', 
    agencyName: 'Michigan Cannabis Regulatory Agency', 
    rssFeeds: [], 
-   newsPages: ['https://www.michigan.gov/cra/news', 'https://www.michigan.gov/cra/about/bulletins'], 
-   regulationPages: ['https://www.michigan.gov/cra/about/rules'] 
+   newsPages: [
+    'https://www.michigan.gov/news',
+    'https://legislature.mi.gov',
+    'https://www.michigan.gov/mda/0,4601,7-125-1569_2802_2805---,00.html',
+    'https://www.michigan.gov/mda/0,4601,7-125-1569_2802_2805---,00.html/news',
+    'https://www.mi.gov/agriculture/hemp',
+    'https://agriculture.mi.gov/hemp'
+  ], 
+   regulationPages: [
+    'https://www.michigan.gov/cra/about/rules',
+    'https://www.michigan.gov/mda/0,4601,7-125-1569_2802_2805---,00.html',
+    'https://www.michigan.gov/mda/0,4601,7-125-1569_2802_2805---,00.html/regulations',
+    'https://www.michigan.gov/mda/0,4601,7-125-1569_2802_2805---,00.html/rules',
+    'https://www.mi.gov/laws-regulations/hemp'
+  ] 
 },
 'MN': { 
    agency: 'https://mn.gov/ocm', 
    agencyName: 'Minnesota Office of Cannabis Management', 
    rssFeeds: [], 
-   newsPages: ['https://mn.gov/ocm/media/news-releases/'], 
+   newsPages: [
+    'https://mn.gov/ocm/media/news-releases/',
+    'https://www.mda.state.mn.us/hemp',
+    'https://www.mda.state.mn.us/hemp/news',
+    'https://www.mn.gov/agriculture/hemp',
+    'https://agriculture.mn.gov/hemp'
+  ], 
    regulationPages: [
     'https://mn.gov/ocm/laws/',
     'https://mn.gov/ocm/laws/rulemaking.jsp',
-    'https://www.revisor.mn.gov/rules/9810/'
+    'https://www.revisor.mn.gov/rules/9810/',
+    'https://www.mda.state.mn.us/hemp',
+    'https://www.mda.state.mn.us/hemp/regulations',
+    'https://www.mda.state.mn.us/hemp/rules',
+    'https://www.mn.gov/laws-regulations/hemp'
   ] 
 },
 'MS': { 
    agency: 'https://www.mda.ms.gov/divisions/hemp', 
    agencyName: 'Mississippi Department of Agriculture - Hemp', 
    rssFeeds: [], 
-   newsPages: ['https://www.mda.ms.gov/news'], 
-   regulationPages: ['https://www.mda.ms.gov/hemp-program'] 
+   newsPages: [
+    'https://www.mda.ms.gov/news',
+    'https://www.legislature.ms.gov',
+    'https://www.mda.ms.gov/divisions/hemp/news',
+    'https://www.ms.gov/agriculture/hemp',
+    'https://agriculture.ms.gov/hemp'
+  ], 
+   regulationPages: [
+    'https://www.mda.ms.gov/hemp-program',
+    'https://www.mda.ms.gov/divisions/hemp/regulations',
+    'https://www.mda.ms.gov/divisions/hemp/rules',
+    'https://www.ms.gov/laws-regulations/hemp'
+  ] 
 },
 'MO': { 
    agency: 'https://cannabis.mo.gov', 
    agencyName: 'Missouri Division of Cannabis Regulation', 
    rssFeeds: [], 
-   newsPages: ['https://cannabis.mo.gov/news'], 
-   regulationPages: ['https://cannabis.mo.gov/rules-regulations'] 
+   newsPages: [
+    'https://cannabis.mo.gov/news',
+    'https://agriculture.mo.gov/hemp',
+    'https://agriculture.mo.gov/hemp/news',
+    'https://www.mo.gov/agriculture/hemp',
+    'https://agriculture.mo.gov/hemp'
+  ], 
+   regulationPages: [
+    'https://cannabis.mo.gov/rules-regulations',
+    'https://agriculture.mo.gov/hemp/',
+    'https://agriculture.mo.gov/hemp/regulations',
+    'https://agriculture.mo.gov/hemp/rules',
+    'https://www.mo.gov/laws-regulations/hemp'
+  ] 
 },
 'MT': { 
    agency: 'https://mt.gov/cannabis', 
    agencyName: 'Montana Department of Revenue - Cannabis Control Division', 
    rssFeeds: [], 
-   newsPages: ['https://mt.gov/cannabis/news'], 
-   regulationPages: ['https://mt.gov/cannabis/rules'] 
+   newsPages: [
+    'https://mt.gov/cannabis/news',
+    'https://leg.mt.gov',
+    'https://ag.mt.gov/hemp',
+    'https://ag.mt.gov/hemp/news',
+    'https://www.mt.gov/agriculture/hemp',
+    'https://agriculture.mt.gov/hemp'
+  ], 
+   regulationPages: [
+    'https://mt.gov/cannabis/rules',
+    'https://ag.mt.gov/hemp',
+    'https://ag.mt.gov/hemp/regulations',
+    'https://ag.mt.gov/hemp/rules',
+    'https://www.mt.gov/laws-regulations/hemp'
+  ] 
 },
 'NE': { 
    agency: 'https://agr.nebraska.gov/hemp', 
    agencyName: 'Nebraska Department of Agriculture - Hemp', 
    rssFeeds: [], 
-   newsPages: ['https://agr.nebraska.gov/news'], 
-   regulationPages: ['https://agr.nebraska.gov/hemp'] 
+   newsPages: [
+    'https://agr.nebraska.gov/news',
+    'https://legislature.nebraska.gov',
+    'https://nda.nebraska.gov/hemp',
+    'https://nda.nebraska.gov/hemp/news',
+    'https://www.ne.gov/agriculture/hemp',
+    'https://agriculture.ne.gov/hemp'
+  ], 
+   regulationPages: [
+    'https://agr.nebraska.gov/hemp',
+    'https://nda.nebraska.gov/hemp/',
+    'https://nda.nebraska.gov/hemp/regulations',
+    'https://nda.nebraska.gov/hemp/rules',
+    'https://www.ne.gov/laws-regulations/hemp'
+  ] 
 },
 'NV': { 
    agency: 'https://ccb.nv.gov', 
    agencyName: 'Nevada Cannabis Compliance Board', 
    rssFeeds: [], 
-   newsPages: ['https://ccb.nv.gov/news-events', 'https://ccb.nv.gov/public-notices'], 
-   regulationPages: ['https://ccb.nv.gov/laws-regulations'] 
+   newsPages: [
+    'https://ccb.nv.gov/news-events',
+    'https://www.leg.state.nv.us',
+    'https://agri.nv.gov/Programs/Industrial_Hemp',
+    'https://agri.nv.gov/Programs/Industrial_Hemp/news',
+    'https://www.nv.gov/agriculture/hemp',
+    'https://agriculture.nv.gov/hemp'
+  ], 
+   regulationPages: [
+    'https://ccb.nv.gov/public-notices',
+    'https://agri.nv.gov/Programs/Industrial_Hemp/',
+    'https://agri.nv.gov/Programs/Industrial_Hemp/regulations',
+    'https://agri.nv.gov/Programs/Industrial_Hemp/rules',
+    'https://www.nv.gov/laws-regulations/hemp'
+  ] 
 },
 'NH': {
   agency: 'https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis',
@@ -326,11 +582,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   rssFeeds: [],
   newsPages: [
     'https://www.dhhs.nh.gov/news-events/press-releases',
-    'https://www.dhhs.nh.gov/document/therapeutic-cannabis-program-data-report-2024'
+    'https://www.gencourt.state.nh.us',
+    'https://www.nh.gov/hemp',
+    'https://www.nh.gov/hemp/news',
+    'https://www.nh.gov/agriculture/hemp',
+    'https://agriculture.nh.gov/hemp'
   ],
   regulationPages: [
-    'https://gc.nh.gov/rsa/html/x/126-x/126-x-mrg.htm',
-    'https://gc.nh.gov/rules/state_agencies/he-c400.html'
+    'https://www.dhhs.nh.gov/document/therapeutic-cannabis-program-data-report-2024',
+    'https://www.nh.gov/hemp/',
+    'https://www.nh.gov/hemp/regulations',
+    'https://www.nh.gov/hemp/rules',
+    'https://www.nh.gov/laws-regulations/hemp'
   ]
 },
 'NJ': {
@@ -338,10 +601,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'New Jersey Cannabis Regulatory Commission',
   rssFeeds: [],
   newsPages: [
-    'https://www.nj.gov/cannabis/news/'
+    'https://www.nj.gov/cannabis/news/',
+    'https://www.nj.gov/agriculture/divisions/pi/hemp',
+    'https://www.nj.gov/agriculture/divisions/pi/hemp/news',
+    'https://www.nj.gov/agriculture/hemp',
+    'https://agriculture.nj.gov/hemp'
   ],
   regulationPages: [
-    'https://www.nj.gov/cannabis/resources/cannabis-laws/'
+    'https://www.nj.gov/cannabis/resources/cannabis-laws/',
+    'https://www.nj.gov/agriculture/divisions/pi/hemp/',
+    'https://www.nj.gov/agriculture/divisions/pi/hemp/regulations',
+    'https://www.nj.gov/agriculture/divisions/pi/hemp/rules',
+    'https://www.nj.gov/laws-regulations/hemp'
   ]
 },
 
@@ -350,10 +621,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'New Mexico Regulation & Licensing Department – Cannabis Control Division',
   rssFeeds: [],
   newsPages: [
-    'https://www.rld.nm.gov/news/'
+    'https://www.rld.nm.gov/news/',
+    'https://www.nmda.nmsu.edu/hemp',
+    'https://www.nmda.nmsu.edu/hemp/news',
+    'https://www.nm.gov/agriculture/hemp',
+    'https://agriculture.nm.gov/hemp'
   ],
   regulationPages: [
-    'https://www.rld.nm.gov/cannabis/rules-and-regulations/'
+    'https://www.rld.nm.gov/cannabis/rules-and-regulations/',
+    'https://www.nmda.nmsu.edu/hemp/',
+    'https://www.nmda.nmsu.edu/hemp/regulations',
+    'https://www.nmda.nmsu.edu/hemp/rules',
+    'https://www.nm.gov/laws-regulations/hemp'
   ]
 },
 
@@ -362,10 +641,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'New York Office of Cannabis Management',
   rssFeeds: [],
   newsPages: [
-    'https://cannabis.ny.gov/pressroom'
+    'https://cannabis.ny.gov/pressroom',
+    'https://agriculture.ny.gov/hemp',
+    'https://agriculture.ny.gov/hemp/news',
+    'https://www.ny.gov/agriculture/hemp',
+    'https://agriculture.ny.gov/hemp'
   ],
   regulationPages: [
-    'https://cannabis.ny.gov/marihuana-regulation-and-taxation-act-mrta'
+    'https://cannabis.ny.gov/marihuana-regulation-and-taxation-act-mrta',
+    'https://agriculture.ny.gov/hemp',
+    'https://agriculture.ny.gov/hemp/regulations',
+    'https://agriculture.ny.gov/hemp/rules',
+    'https://www.ny.gov/laws-regulations/hemp'
   ]
 },
 
@@ -374,10 +661,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Ohio Division of Cannabis Control',
   rssFeeds: [],
   newsPages: [
-    'https://cannabis.ohio.gov/news'
+    'https://cannabis.ohio.gov/news',
+    'https://www.legislature.ohio.gov',
+    'https://agri.ohio.gov/divs/plant/seed-hemp',
+    'https://agri.ohio.gov/divs/plant/seed-hemp/news',
+    'https://www.oh.gov/agriculture/hemp',
+    'https://agriculture.oh.gov/hemp'
   ],
   regulationPages: [
-    'https://cannabis.ohio.gov/rules'
+    'https://cannabis.ohio.gov/rules',
+    'https://agri.ohio.gov/divs/plant/seed-hemp',
+    'https://agri.ohio.gov/divs/plant/seed-hemp/regulations',
+    'https://agri.ohio.gov/divs/plant/seed-hemp/rules',
+    'https://www.oh.gov/laws-regulations/hemp'
   ]
 },
 
@@ -386,10 +682,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Oklahoma Medical Marijuana Authority',
   rssFeeds: [],
   newsPages: [
-    'https://oklahoma.gov/omma/news.html'
+    'https://oklahoma.gov/omma/news.html',
+    'https://www.oklegislature.gov',
+    'https://www.oda.ok.gov/hemp',
+    'https://www.oda.ok.gov/hemp/news',
+    'https://www.ok.gov/agriculture/hemp',
+    'https://agriculture.ok.gov/hemp'
   ],
   regulationPages: [
-    'https://oklahoma.gov/omma/rules.html'
+    'https://oklahoma.gov/omma/rules.html',
+    'https://www.oda.ok.gov/hemp',
+    'https://www.oda.ok.gov/hemp/regulations',
+    'https://www.oda.ok.gov/hemp/rules',
+    'https://www.ok.gov/laws-regulations/hemp'
   ]
 },
 
@@ -398,10 +703,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Oregon Liquor and Cannabis Commission',
   rssFeeds: [],
   newsPages: [
-    'https://www.oregon.gov/olcc/Pages/news.aspx'
+    'https://www.oregon.gov/olcc/Pages/news.aspx',
+    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx',
+    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx/news',
+    'https://www.or.gov/agriculture/hemp',
+    'https://agriculture.or.gov/hemp'
   ],
   regulationPages: [
-    'https://www.oregon.gov/olcc/marijuana/Pages/Recreational-Marijuana-Laws-and-Rules.aspx'
+    'https://www.oregon.gov/olcc/marijuana/Pages/Recreational-Marijuana-Laws-and-Rules.aspx',
+    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx',
+    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx/regulations',
+    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx/rules',
+    'https://www.or.gov/laws-regulations/hemp'
   ]
 },
 
@@ -410,10 +723,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Pennsylvania Department of Health – Medical Marijuana Program',
   rssFeeds: [],
   newsPages: [
-    'https://www.health.pa.gov/topics/healthcare/Pages/News.aspx'
+    'https://www.health.pa.gov/topics/healthcare/Pages/News.aspx',
+    'https://www.agriculture.pa.gov/Plants_Land_Water/PlantIndustry/hemp/Pages/default.aspx',
+    'https://www.agriculture.pa.gov/Plants_Land_Water/PlantIndustry/hemp/Pages/default.aspx/news',
+    'https://www.pa.gov/agriculture/hemp',
+    'https://agriculture.pa.gov/hemp'
   ],
   regulationPages: [
-    'https://www.health.pa.gov/topics/programs/Medical%20Marijuana/Pages/Regulations.aspx'
+    'https://www.health.pa.gov/topics/programs/Medical%20Marijuana/Pages/Regulations.aspx',
+    'https://www.agriculture.pa.gov/Plants_Land_Water/PlantIndustry/hemp/Pages/default.aspx',
+    'https://www.agriculture.pa.gov/Plants_Land_Water/PlantIndustry/hemp/Pages/default.aspx/regulations',
+    'https://www.agriculture.pa.gov/Plants_Land_Water/PlantIndustry/hemp/Pages/default.aspx/rules',
+    'https://www.pa.gov/laws-regulations/hemp'
   ]
 },
 'RI': {
@@ -422,11 +743,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   rssFeeds: [],
   newsPages: [
     'https://ccc.ri.gov/news',
-    'https://governor.ri.gov/press-releases'
+    'https://www.rilegislature.gov',
+    'https://www.agriculture.ri.gov/hemp',
+    'https://www.agriculture.ri.gov/hemp/news',
+    'https://www.ri.gov/agriculture/hemp',
+    'https://agriculture.ri.gov/hemp'
   ],
   regulationPages: [
     'https://ccc.ri.gov/regulations',
-    'https://rules.sos.ri.gov/regulations/part/230-80-05-1'
+    'https://www.agriculture.ri.gov/hemp/',
+    'https://www.agriculture.ri.gov/hemp/regulations',
+    'https://www.agriculture.ri.gov/hemp/rules',
+    'https://www.ri.gov/laws-regulations/hemp'
   ]
 },
 'SC': {
@@ -434,10 +762,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'South Carolina Department of Agriculture – Hemp Program',
   rssFeeds: [],
   newsPages: [
-    'https://agriculture.sc.gov/news/'
+    'https://agriculture.sc.gov/news/',
+    'https://www.clemson.edu/cafls/hemp',
+    'https://www.clemson.edu/cafls/hemp/news',
+    'https://www.sc.gov/agriculture/hemp',
+    'https://agriculture.sc.gov/hemp'
   ],
   regulationPages: [
-    'https://www.scstatehouse.gov/code/t46c055.php'
+    'https://www.scstatehouse.gov/code/t46c055.php',
+    'https://www.clemson.edu/cafls/hemp/',
+    'https://www.clemson.edu/cafls/hemp/regulations',
+    'https://www.clemson.edu/cafls/hemp/rules',
+    'https://www.sc.gov/laws-regulations/hemp'
   ]
 },
 
@@ -446,11 +782,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'South Dakota Department of Health – Medical Cannabis Program',
   rssFeeds: [],
   newsPages: [
-    'https://medcannabis.sd.gov/Updates/News.aspx'
+    'https://medcannabis.sd.gov/Updates/News.aspx',
+    'https://sddps.gov/hemp',
+    'https://sddps.gov/hemp/news',
+    'https://www.sd.gov/agriculture/hemp',
+    'https://agriculture.sd.gov/hemp'
   ],
   regulationPages: [
     'https://medcannabis.sd.gov/About/Laws.aspx',
-    'https://sdlegislature.gov/Statutes/34-20G'
+    'https://sdlegislature.gov/Statutes/34-20G',
+    'https://sddps.gov/hemp/',
+    'https://sddps.gov/hemp/regulations',
+    'https://sddps.gov/hemp/rules',
+    'https://www.sd.gov/laws-regulations/hemp'
   ]
 },
 
@@ -459,11 +803,17 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Tennessee Department of Agriculture – Hemp Program',
   rssFeeds: [],
   newsPages: [
-    'https://www.tn.gov/agriculture/news.html'
+    'https://www.tn.gov/news',
+    'https://wapp.capitol.tn.gov',
+    'https://www.tn.gov/agriculture/businesses/hemp.html/news',
+    'https://www.tn.gov/agriculture/hemp',
+    'https://agriculture.tn.gov/hemp'
   ],
   regulationPages: [
     'https://www.tn.gov/agriculture/businesses/hemp.html',
-    'https://www.tn.gov/agriculture/businesses/hemp/hemp-derived-cannabinoids.html'
+    'https://www.tn.gov/agriculture/businesses/hemp.html/regulations',
+    'https://www.tn.gov/agriculture/businesses/hemp.html/rules',
+    'https://www.tn.gov/laws-regulations/hemp'
   ]
 },
 
@@ -472,11 +822,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Texas Department of State Health Services – Consumable Hemp Program',
   rssFeeds: [],
   newsPages: [
-    'https://www.dshs.texas.gov/news-alerts'
+    'https://www.dshs.texas.gov/news-alerts',
+    'https://www.texasagriculture.gov/Regulatory-Programs/PlantQuality/Hemp.aspx',
+    'https://www.texasagriculture.gov/Regulatory-Programs/PlantQuality/Hemp.aspx/news',
+    'https://www.tx.gov/agriculture/hemp',
+    'https://agriculture.tx.gov/hemp'
   ],
   regulationPages: [
     'https://www.dshs.texas.gov/consumable-hemp-program',
-    'https://texasagriculture.gov/Regulatory-Programs/Hemp'
+    'https://texasagriculture.gov/Regulatory-Programs/Hemp',
+    'https://www.texasagriculture.gov/Regulatory-Programs/PlantQuality/Hemp.aspx',
+    'https://www.texasagriculture.gov/Regulatory-Programs/PlantQuality/Hemp.aspx/regulations',
+    'https://www.texasagriculture.gov/Regulatory-Programs/PlantQuality/Hemp.aspx/rules',
+    'https://www.tx.gov/laws-regulations/hemp'
   ]
 },
 
@@ -485,10 +843,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Utah Department of Health & Human Services – Medical Cannabis Program',
   rssFeeds: [],
   newsPages: [
-    'https://medicalcannabis.utah.gov/news/'
+    'https://medicalcannabis.utah.gov/news/',
+    'https://le.utah.gov',
+    'https://ag.utah.gov/hemp',
+    'https://ag.utah.gov/hemp/news',
+    'https://www.ut.gov/agriculture/hemp',
+    'https://agriculture.ut.gov/hemp'
   ],
   regulationPages: [
-    'https://medicalcannabis.utah.gov/laws-and-rules/'
+    'https://medicalcannabis.utah.gov/laws-and-rules/',
+    'https://ag.utah.gov/hemp/',
+    'https://ag.utah.gov/hemp/regulations',
+    'https://ag.utah.gov/hemp/rules',
+    'https://www.ut.gov/laws-regulations/hemp'
   ]
 },
 
@@ -497,10 +864,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Virginia Cannabis Control Authority',
   rssFeeds: [],
   newsPages: [
-    'https://www.cca.virginia.gov/news'
+    'https://www.cca.virginia.gov/news',
+    'https://www.vdacs.virginia.gov/hemp.shtml',
+    'https://www.vdacs.virginia.gov/hemp.shtml/news',
+    'https://www.va.gov/agriculture/hemp',
+    'https://agriculture.va.gov/hemp'
   ],
   regulationPages: [
-    'https://www.cca.virginia.gov/regulations'
+    'https://www.cca.virginia.gov/regulations',
+    'https://www.vdacs.virginia.gov/hemp.shtml',
+    'https://www.vdacs.virginia.gov/hemp.shtml/regulations',
+    'https://www.vdacs.virginia.gov/hemp.shtml/rules',
+    'https://www.va.gov/laws-regulations/hemp'
   ]
 },
 
@@ -511,10 +886,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
     'https://ccb.vermont.gov/feed'
   ],
   newsPages: [
-    'https://ccb.vermont.gov/news'
+    'https://ccb.vermont.gov/news',
+    'https://legislature.vermont.gov',
+    'https://agriculture.vermont.gov/hemp',
+    'https://agriculture.vermont.gov/hemp/news',
+    'https://www.vt.gov/agriculture/hemp',
+    'https://agriculture.vt.gov/hemp'
   ],
   regulationPages: [
-    'https://ccb.vermont.gov/rules'
+    'https://ccb.vermont.gov/rules',
+    'https://agriculture.vermont.gov/hemp',
+    'https://agriculture.vermont.gov/hemp/regulations',
+    'https://agriculture.vermont.gov/hemp/rules',
+    'https://www.vt.gov/laws-regulations/hemp'
   ]
 },
 
@@ -523,10 +907,18 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Washington State Liquor and Cannabis Board',
   rssFeeds: [],
   newsPages: [
-    'https://lcb.wa.gov/pressreleases'
+    'https://lcb.wa.gov/pressreleases',
+    'https://agr.wa.gov/hemp',
+    'https://agr.wa.gov/hemp/news',
+    'https://www.wa.gov/agriculture/hemp',
+    'https://agriculture.wa.gov/hemp'
   ],
   regulationPages: [
-    'https://lcb.wa.gov/laws/laws-and-rules'
+    'https://lcb.wa.gov/laws/laws-and-rules',
+    'https://agr.wa.gov/hemp/',
+    'https://agr.wa.gov/hemp/regulations',
+    'https://agr.wa.gov/hemp/rules',
+    'https://www.wa.gov/laws-regulations/hemp'
   ]
 },
 
@@ -535,10 +927,16 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Wisconsin Department of Agriculture, Trade and Consumer Protection – Hemp Program',
   rssFeeds: [],
   newsPages: [
-    'https://datcp.wi.gov/Pages/News_Media/News.aspx'
+    'https://datcp.wi.gov/Pages/News_Media/News.aspx',
+    'https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx/news',
+    'https://www.wi.gov/agriculture/hemp',
+    'https://agriculture.wi.gov/hemp'
   ],
   regulationPages: [
-    'https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx'
+    'https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx',
+    'https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx/regulations',
+    'https://datcp.wi.gov/Pages/Programs_Services/Hemp.aspx/rules',
+    'https://www.wi.gov/laws-regulations/hemp'
   ]
 },
 
@@ -547,11 +945,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'West Virginia Office of Medical Cannabis',
   rssFeeds: [],
   newsPages: [
-    'https://omc.wv.gov/news'
+    'https://omc.wv.gov/news',
+    'https://agriculture.wv.gov/Divisions/Plant/Ag_Industries/hemp/Pages/default.aspx',
+    'https://agriculture.wv.gov/Divisions/Plant/Ag_Industries/hemp/Pages/default.aspx/news',
+    'https://www.wv.gov/agriculture/hemp',
+    'https://agriculture.wv.gov/hemp'
   ],
   regulationPages: [
     'https://omc.wv.gov/rules/Pages/default.aspx',
-    'https://code.wvlegislature.gov/16A/'
+    'https://code.wvlegislature.gov/16A/',
+    'https://agriculture.wv.gov/Divisions/Plant/Ag_Industries/hemp/Pages/default.aspx',
+    'https://agriculture.wv.gov/Divisions/Plant/Ag_Industries/hemp/Pages/default.aspx/regulations',
+    'https://agriculture.wv.gov/Divisions/Plant/Ag_Industries/hemp/Pages/default.aspx/rules',
+    'https://www.wv.gov/laws-regulations/hemp'
   ]
 },
 
@@ -676,48 +1082,105 @@ function decodeHTMLEntities(text: string): string {
 // TEMPORARY STUB: Use default analysis during lite testing
 function getDefaultAnalysis(title: string, description: string) {
   const text = `${title} ${description}`.toLowerCase();
+
+  // Enhanced hemp and cannabinoid detection
+  const hempKeywords = /\b(hemp|industrial hemp|cbd|cbda|thca|delta.?8|delta.?9|delta.?10|thc.?p|hhc|cannabinoid|cannabinoids|hemp.?derived|hemp.?based|farm bill|2018 farm bill)\b/i;
+  const cannabisKeywords = /\b(cannabis|marijuana|medical cannabis|recreational cannabis|thc|tetrahydrocannabinol|mmj)\b/i;
+
+  // Determine primary category
+  let category = 'other';
+  let sub_category = 'general';
+
+  if (hempKeywords.test(text)) {
+    category = 'hemp';
+    if (/\b(thca|delta.?8|delta.?9|delta.?10|thc.?p|hhc)\b/i.test(text)) {
+      sub_category = 'novel_cannabinoids';
+    } else if (/\b(cbd|cbda|hemp.?derived)\b/i.test(text)) {
+      sub_category = 'cbd_hemp';
+    } else if (/\b(farm bill|2018 farm bill|industrial hemp)\b/i.test(text)) {
+      sub_category = 'farm_bill';
+    } else {
+      sub_category = 'general_hemp';
+    }
+  } else if (cannabisKeywords.test(text)) {
+    category = 'cannabis';
+    if (/\b(medical|mmj|patient|doctor|prescription)\b/i.test(text)) {
+      sub_category = 'medical';
+    } else if (/\b(recreational|adult.?use|retail)\b/i.test(text)) {
+      sub_category = 'adult_use';
+    } else {
+      sub_category = 'general_cannabis';
+    }
+  }
+
   let documentType = 'announcement';
   if (text.includes('proposed') && text.includes('rule')) documentType = 'proposed_rule';
   else if (text.includes('final') && text.includes('rule')) documentType = 'final_rule';
-  else if (text.includes('regulation')) documentType = 'regulation';
-  else if (text.includes('guidance')) documentType = 'guidance';
+  else if (text.includes('regulation') || text.includes('regulatory')) documentType = 'regulation';
+  else if (text.includes('guidance') || text.includes('guidelines')) documentType = 'guidance';
   else if (text.includes('bulletin')) documentType = 'bulletin';
-  else if (text.includes('memo')) documentType = 'memo';
-  else if (text.includes('enforcement')) documentType = 'enforcement_action';
-  else if (text.includes('license')) documentType = 'license_update';
+  else if (text.includes('memo') || text.includes('memorandum')) documentType = 'memo';
+  else if (text.includes('enforcement') || text.includes('violation') || text.includes('penalty')) documentType = 'enforcement_action';
+  else if (text.includes('license') || text.includes('licensing') || text.includes('permit')) documentType = 'license_update';
   else if (text.includes('policy')) documentType = 'policy_change';
   else if (text.includes('notice')) documentType = 'public_notice';
   else if (text.includes('emergency')) documentType = 'emergency_rule';
   else if (text.includes('press release') || text.includes('press-release')) documentType = 'press_release';
   else if (text.includes('advisory')) documentType = 'advisory';
+  else if (text.includes('testing') || text.includes('lab') || text.includes('potency')) documentType = 'testing_requirements';
+  else if (text.includes('tax') || text.includes('revenue')) documentType = 'tax_policy';
 
-  const isDispensaryRelated = /dispensary|dispensaries|retail|storefront|mmtc|treatment center/.test(text);
-  const isLicensingRelated = /license|licensing|application|permit|renewal|lottery/.test(text);
-  const isComplianceRelated = /compliance|requirement|regulation|rule|violation|inspection/.test(text);
+  // Enhanced topic detection for hemp and cannabinoids
+  const isDispensaryRelated = /dispensary|dispensaries|retail|storefront|mmtc|treatment center|dispensary|apothecary/i.test(text);
+  const isLicensingRelated = /license|licensing|application|permit|renewal|lottery|registration|certification/i.test(text);
+  const isComplianceRelated = /compliance|requirement|regulation|rule|violation|inspection|audit|monitoring/i.test(text);
+  const isHempRelated = hempKeywords.test(text);
+  const isCannabisRelated = cannabisKeywords.test(text);
+  const isNovelCannabinoidRelated = /\b(thca|delta.?8|delta.?9|delta.?10|thc.?p|hhc|cannabinoid|cannabinoids)\b/i.test(text);
+  const isFederalRelated = /federal|dea|fda|usda|farm bill|controlled substances|schedule|drug enforcement/i.test(text);
+  const isStateRelated = /state|department|agency|commission|board|division/i.test(text);
 
   let urgency = 'medium';
-  if (text.includes('emergency') || text.includes('immediate') || text.includes('urgent')) urgency = 'critical';
-  else if (text.includes('deadline') || text.includes('required') || text.includes('mandatory')) urgency = 'high';
-  else if (text.includes('update') || text.includes('reminder')) urgency = 'low';
+  if (text.includes('emergency') || text.includes('immediate') || text.includes('urgent') || text.includes('recall')) urgency = 'critical';
+  else if (text.includes('deadline') || text.includes('required') || text.includes('mandatory') || text.includes('compliance date')) urgency = 'high';
+  else if (text.includes('update') || text.includes('reminder') || text.includes('extension')) urgency = 'low';
 
   const topics: string[] = [];
   if (isDispensaryRelated) topics.push('dispensary');
   if (isLicensingRelated) topics.push('licensing');
   if (isComplianceRelated) topics.push('compliance');
-  if (text.includes('hemp')) topics.push('hemp');
-  if (text.includes('medical')) topics.push('medical cannabis');
-  if (text.includes('adult') || text.includes('recreational')) topics.push('adult-use');
+  if (isHempRelated) topics.push('hemp');
+  if (isCannabisRelated) topics.push('cannabis');
+  if (isNovelCannabinoidRelated) topics.push('novel_cannabinoids');
+  if (/\b(thca|tetrahydrocannabinolic acid)\b/i.test(text)) topics.push('thca');
+  if (/\b(delta.?8|delta-8)\b/i.test(text)) topics.push('delta_8');
+  if (/\b(delta.?9|delta-9)\b/i.test(text)) topics.push('delta_9');
+  if (/\b(delta.?10|delta-10)\b/i.test(text)) topics.push('delta_10');
+  if (/\b(thc.?p|thcp)\b/i.test(text)) topics.push('thcp');
+  if (/\b(hhc|hexahydrocannabinol)\b/i.test(text)) topics.push('hhc');
+  if (/\b(cbd|cbda|cannabidiol)\b/i.test(text)) topics.push('cbd');
+  if (isFederalRelated) topics.push('federal');
+  if (isStateRelated) topics.push('state');
+  if (text.includes('testing') || text.includes('lab')) topics.push('testing');
+  if (text.includes('tax') || text.includes('revenue')) topics.push('taxation');
+  if (text.includes('export') || text.includes('import')) topics.push('trade');
+  if (text.includes('research') || text.includes('study')) topics.push('research');
 
   return {
     documentType,
-    category: 'cannabis',
-    sub_category: 'other',
+    category,
+    sub_category,
     summary: description?.substring(0, 200) || title,
-    relevanceScore: 0.5 + (isDispensaryRelated ? 0.2 : 0) + (isLicensingRelated ? 0.15 : 0) + (isComplianceRelated ? 0.15 : 0),
+    relevanceScore: 0.5 + (isDispensaryRelated ? 0.2 : 0) + (isLicensingRelated ? 0.15 : 0) + (isComplianceRelated ? 0.15 : 0) + (isHempRelated ? 0.2 : 0) + (isNovelCannabinoidRelated ? 0.25 : 0) + (isFederalRelated ? 0.1 : 0),
     topics,
     isDispensaryRelated,
     isLicensingRelated,
     isComplianceRelated,
+    isHempRelated,
+    isCannabisRelated,
+    isNovelCannabinoidRelated,
+    isFederalRelated,
+    isStateRelated,
     urgency
   };
 }
