@@ -736,7 +736,10 @@ async function fetchWithRetry(url: string, retries = 2): Promise<string | null> 
         }
       });
       clearTimeout(timeoutId);
-      if (response.ok) return await response.text();
+      if (response.ok) {
+        console.log(`Fetch success for ${url}: ${response.status}`);
+        return await response.text();
+      }
       console.log(`Fetch failed for ${url}: ${response.status}`);
     } catch (e: any) {
       console.log(`Fetch error for ${url}: ${e.message}`);
@@ -855,8 +858,12 @@ Deno.serve(async (req) => {
     const existingIds = new Set((existingItems || []).map(i => i.external_id));
 
     for (const [code, sources] of statesToProcess) {
+      console.log(`Processing state: ${code} (${sources.agencyName})`);
       const jurisdiction = jurisdictions?.find(j => j.code === code);
-      if (!jurisdiction) continue;
+      if (!jurisdiction) {
+        console.log(`No jurisdiction found for ${code}, skipping`);
+        continue;
+      }
 
       // RSS Feeds
       for (const feedUrl of sources.rssFeeds) {

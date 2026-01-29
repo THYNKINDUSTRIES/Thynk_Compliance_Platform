@@ -155,16 +155,12 @@ const STATE_AGENCIES: Record<string, { name: string; agency: string; hasRSS: boo
 // Edge function names - cannabis-hemp-poller is the primary poller
 const EDGE_FUNCTIONS = {
   PRIMARY: 'cannabis-hemp-poller',
-  FALLBACK: 'state-regulations-poller',
 };
 
 // Source IDs that identify cannabis/hemp poller logs
 const POLLER_SOURCE_IDS = [
   'cannabis-hemp-poller',
   'cannabis_hemp_poller',
-  'state-regulations-poller',
-  'state_regulations_poller',
-  'state_regulations',
   'enhanced-state-poller',
   'state-news-scraper',
   'state_rss',
@@ -310,10 +306,8 @@ export function CannabisHempPoller() {
       // Filter the logs client-side to match our sources
       const relevantSources = [
         'state_regulations', 
-        'state_regulations_poller',
         'cannabis-hemp-poller', 
         'cannabis_hemp_poller', 
-        'state-regulations-poller', 
         'enhanced-state-poller', 
         'state-news-scraper'
       ];
@@ -368,17 +362,6 @@ export function CannabisHempPoller() {
 
       const results: any[] = [];
       const errors: string[] = [];
-
-      // Call state-regulations-poller (always works)
-      try {
-        const result1 = await supabase.functions.invoke('state-regulations-poller', {
-          body: { stateCode, fullScan },
-        });
-        if (result1.data) results.push(result1.data);
-        if (result1.error) errors.push(`state-regulations-poller: ${result1.error.message}`);
-      } catch (e: any) {
-        errors.push(`state-regulations-poller: ${e.message}`);
-      }
 
       // Try cannabis-hemp-poller (may fail if not deployed correctly)
       try {

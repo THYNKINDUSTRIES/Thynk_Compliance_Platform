@@ -57,7 +57,6 @@ const POLLER_TYPES = [
   { value: 'federal-register-poller', label: 'Federal Register' },
   { value: 'regulations-gov-poller', label: 'Regulations.gov' },
   { value: 'rss-feed-poller', label: 'RSS Feed' },
-  { value: 'state-regulations-poller', label: 'State Regulations' },
   { value: 'cannabis-hemp-poller', label: 'Cannabis & Hemp' },
   { value: 'scheduled-poller-cron', label: 'Scheduled Cron' },
 ];
