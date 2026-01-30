@@ -1,10 +1,13 @@
-"use client"
 import React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
-import { ThemeProviderProps } from "next-themes/dist/types"
-
 
 type Theme = "dark" | "light" | "system"
+
+type ThemeProviderProps = {
+  children: React.ReactNode
+  defaultTheme?: Theme
+  value?: any
+}
 
 type ThemeContextType = {
   theme: Theme
