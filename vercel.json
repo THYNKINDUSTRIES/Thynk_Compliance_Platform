@@ -62,8 +62,8 @@
     }
   ],
   "env": {
-    "VITE_BETA_MODE": "true",
-    "VITE_ALLOWED_EMAIL_DOMAIN": "@thynk.guru"
+    "VITE_BETA_MODE": "false",
+    "VITE_ALLOWED_EMAIL_DOMAIN": "@thynkflow.io"
   },
   "crons": [
     {
