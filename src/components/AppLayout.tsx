@@ -8,7 +8,7 @@ import { useAppContext } from '@/contexts/AppContext';
 import { useRegulations } from '@/hooks/useRegulations';
 import { supabase } from '@/lib/supabase';
 import { clearCache } from '@/lib/cache';
-import { Loader2, AlertCircle, ArrowUpDown, Check, RefreshCw, AlertTriangle, Database, MapPin, Play } from 'lucide-react';
+import { Loader2, AlertCircle, ArrowUpDown, Check, RefreshCw, AlertTriangle, Database, MapPin, Play, MessageCircle, X } from 'lucide-react';
 
 import { RegulationCard } from './RegulationCard';
 import { FilterPanel } from './FilterPanel';
@@ -23,9 +23,7 @@ import { StateInfo } from '@/data/states';
 import { EnhancedStatsSection } from './EnhancedStatsSection';
 import { OpenCommentPeriods } from './OpenCommentPeriods';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { CacheStatusIndicator } from './CacheStatusIndicator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { AIChatbot } from './AIChatbot';
 
 
 
@@ -36,8 +34,7 @@ const AppLayout: React.FC = () => {
   const { regulations, loading, error, fromCache, refresh } = useRegulations(filters);
   const [sortBy, setSortBy] = useState<string>('date-desc');
   const [secondarySortBy, setSecondarySortBy] = useState<string>('none');
-  const [isClearing, setIsClearing] = useState(false);
-  const [showCacheBanner, setShowCacheBanner] = useState(false);
+  const [showAIChat, setShowAIChat] = useState(false);
 
   // Handle clear cache and refresh
   const handleClearCacheAndRefresh = async () => {
@@ -738,6 +735,32 @@ const AppLayout: React.FC = () => {
 
       <Newsletter />
       <Footer />
+      
+      {/* AI Chatbot - Floating Widget */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {showAIChat ? (
+          <div className="relative">
+            <Button
+              onClick={() => setShowAIChat(false)}
+              className="absolute -top-2 -right-2 z-10 h-8 w-8 rounded-full bg-red-500 hover:bg-red-600 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+            <AIChatbot 
+              regulations={sortedRegulations.slice(0, 5)} 
+              onSearchSuggestion={(term) => updateFilter('search', term)}
+            />
+          </div>
+        ) : (
+          <Button
+            onClick={() => setShowAIChat(true)}
+            className="h-14 w-14 rounded-full bg-purple-600 hover:bg-purple-700 shadow-lg"
+            size="icon"
+          >
+            <MessageCircle className="h-6 w-6" />
+          </Button>
+        )}
+      </div>
       </div>
     </>
   );
