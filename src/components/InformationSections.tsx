@@ -2,24 +2,30 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, Building2, TrendingUp } from "lucide-react";
 
-export const LegalSection = () => (
-  <section className="py-16 px-4">
-    <div className="max-w-6xl mx-auto">
-      <h2 className="text-3xl font-bold mb-4 text-center">Designed for Legal and Compliance Professionals</h2>
-      <p className="text-lg mb-8 text-center text-gray-700 max-w-3xl mx-auto">
-        TCP gives law firms, in-house counsel, and compliance officers a practical, daily-use tool for managing regulatory risk in emerging markets.
-      </p>
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <Card className="p-6"><p className="text-gray-700">Quickly answer client questions on multi-state legality by product and supply chain stage</p></Card>
-        <Card className="p-6"><p className="text-gray-700">Monitor new developments without tracking 50+ newsletters, blogs, and agency sites</p></Card>
-        <Card className="p-6"><p className="text-gray-700">Export insights to support client memos, risk assessments, and internal briefings</p></Card>
+export const LegalSection = () => {
+  const handleBookDemo = () => {
+    window.location.href = 'https://thynkflow.io/contact';
+  };
+
+  return (
+    <section className="py-16 px-4">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-3xl font-bold mb-4 text-center">Designed for Legal and Compliance Professionals</h2>
+        <p className="text-lg mb-8 text-center text-gray-700 max-w-3xl mx-auto">
+          TCP gives law firms, in-house counsel, and compliance officers a practical, daily-use tool for managing regulatory risk in emerging markets.
+        </p>
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <Card className="p-6"><p className="text-gray-700">Quickly answer client questions on multi-state legality by product and supply chain stage</p></Card>
+          <Card className="p-6"><p className="text-gray-700">Monitor new developments without tracking 50+ newsletters, blogs, and agency sites</p></Card>
+          <Card className="p-6"><p className="text-gray-700">Export insights to support client memos, risk assessments, and internal briefings</p></Card>
+        </div>
+        <div className="text-center">
+          <Button size="lg" className="bg-black hover:bg-gray-800" onClick={handleBookDemo}>Book a 20-minute demo <ArrowRight className="ml-2 w-4 h-4" /></Button>
+        </div>
       </div>
-      <div className="text-center">
-        <Button size="lg" className="bg-black hover:bg-gray-800">Book a 20-minute demo <ArrowRight className="ml-2 w-4 h-4" /></Button>
-      </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export const OperatorsSection = () => (
   <section className="py-16 px-4 bg-gray-50">

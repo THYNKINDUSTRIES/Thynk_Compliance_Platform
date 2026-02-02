@@ -13,8 +13,8 @@ const Information = () => {
   const agencyProfiles = getAllAgencyProfiles();
 
   const handleBookDemo = () => {
-    // Navigate to contact page with sales tab pre-selected
-    navigate('/contact?tab=sales');
+    // Navigate to contact page on thynkflow.io
+    window.location.href = 'https://thynkflow.io/contact';
   };
 
   const handleExploreMap = () => {
