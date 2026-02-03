@@ -62,8 +62,7 @@
     }
   ],
   "env": {
-    "VITE_BETA_MODE": "false",
-    "VITE_ALLOWED_EMAIL_DOMAIN": "@thynkflow.io"
+    "VITE_BETA_MODE": "false"
   },
   "crons": [
     {
