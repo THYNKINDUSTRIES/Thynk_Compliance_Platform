@@ -59,6 +59,15 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'instrument' AND column_name = 'effective_at') THEN
     ALTER TABLE public.instrument ADD COLUMN effective_at TIMESTAMPTZ;
   END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'instrument' AND column_name = 'category') THEN
+    ALTER TABLE public.instrument ADD COLUMN category TEXT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'instrument' AND column_name = 'description') THEN
+    ALTER TABLE public.instrument ADD COLUMN description TEXT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'instrument' AND column_name = 'sub_category') THEN
+    ALTER TABLE public.instrument ADD COLUMN sub_category TEXT;
+  END IF;
 END $$;
 
 -- Create instrument table (regulations/documents)
@@ -76,6 +85,21 @@ CREATE TABLE IF NOT EXISTS public.instrument (
   metadata JSONB DEFAULT '{}'::jsonb,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Create ingestion_log table
+CREATE TABLE IF NOT EXISTS public.ingestion_log (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  source_id TEXT,
+  source TEXT,
+  status TEXT NOT NULL DEFAULT 'pending',
+  records_fetched INTEGER DEFAULT 0,
+  records_created INTEGER DEFAULT 0,
+  started_at TIMESTAMPTZ DEFAULT NOW(),
+  completed_at TIMESTAMPTZ,
+  error_message TEXT,
+  metadata JSONB DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Create search_queries table
@@ -149,6 +173,9 @@ CREATE INDEX IF NOT EXISTS idx_instrument_effective_at ON public.instrument(effe
 CREATE INDEX IF NOT EXISTS idx_instrument_status ON public.instrument(status);
 CREATE INDEX IF NOT EXISTS idx_ingestion_log_session ON public.ingestion_log(session_id);
 CREATE INDEX IF NOT EXISTS idx_ingestion_log_status ON public.ingestion_log(status);
+CREATE INDEX IF NOT EXISTS idx_ingestion_log_started_at ON public.ingestion_log(started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ingestion_log_created_at ON public.ingestion_log(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ingestion_log_source_id ON public.ingestion_log(source_id);
 CREATE INDEX IF NOT EXISTS idx_search_queries_query ON public.search_queries(query);
 CREATE INDEX IF NOT EXISTS idx_search_queries_count ON public.search_queries(search_count);
 CREATE INDEX IF NOT EXISTS idx_api_metrics_timestamp ON public.api_metrics(timestamp);
@@ -345,10 +372,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER data_population_progress_updated_at
-  BEFORE UPDATE ON public.data_population_progress
-  FOR EACH ROW
-  EXECUTE FUNCTION update_data_population_progress_updated_at();
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger 
+    WHERE tgname = 'data_population_progress_updated_at' 
+    AND tgrelid = 'public.data_population_progress'::regclass
+  ) THEN
+    EXECUTE 'CREATE TRIGGER data_population_progress_updated_at BEFORE UPDATE ON public.data_population_progress FOR EACH ROW EXECUTE FUNCTION update_data_population_progress_updated_at()';
+  END IF;
+END $$;
 
 -- Create the providers table for compliance service providers
 CREATE TABLE IF NOT EXISTS public.providers (
@@ -416,10 +449,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER providers_updated_at
-  BEFORE UPDATE ON public.providers
-  FOR EACH ROW
-  EXECUTE FUNCTION update_providers_updated_at();
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger 
+    WHERE tgname = 'providers_updated_at' 
+    AND tgrelid = 'public.providers'::regclass
+  ) THEN
+    EXECUTE 'CREATE TRIGGER providers_updated_at BEFORE UPDATE ON public.providers FOR EACH ROW EXECUTE FUNCTION update_providers_updated_at()';
+  END IF;
+END $$;
 
 -- Seed providers table with sample data
 INSERT INTO public.providers (name, description, categories, tier, services, states_covered, pricing_tier, rating, review_count, verified, featured)
@@ -428,5 +467,28 @@ VALUES
   ('GreenTrack Solutions', 'Comprehensive seed-to-sale tracking', ARRAY['Seed-to-Sale', 'Inventory Management'], 'VIP', ARRAY['Seed-to-Sale Tracking', 'METRC Integration'], ARRAY['CA', 'CO', 'WA'], 'Premium', 4.8, 412, true, true),
   ('CannaSafe Labs', 'ISO-certified testing laboratory', ARRAY['Testing', 'Laboratory Services'], 'VIP', ARRAY['Potency Testing', 'Contaminant Screening'], ARRAY['CA', 'CO', 'WA'], 'Premium', 4.9, 523, true, true)
 ON CONFLICT (name) DO NOTHING;
+
+-- Create jurisdiction_freshness view for tracking last update times and instrument counts
+CREATE OR REPLACE VIEW public.jurisdiction_freshness AS
+SELECT
+  j.id as jurisdiction_id,
+  j.code as jurisdiction_code,
+  j.name as jurisdiction_name,
+  j.slug as jurisdiction_slug,
+  MAX(COALESCE(i.published_at, i.created_at)) as last_updated,
+  COUNT(i.id) as total_instruments
+FROM public.jurisdiction j
+LEFT JOIN public.instrument i ON j.id = i.jurisdiction_id
+GROUP BY j.id, j.code, j.name, j.slug
+ORDER BY j.name;
+
+-- Enable RLS on the view
+ALTER VIEW public.jurisdiction_freshness SET (security_barrier = true);
+
+-- Create policy for the view
+CREATE POLICY "Allow public read access on jurisdiction_freshness" 
+  ON public.jurisdiction_freshness 
+  FOR SELECT 
+  USING (true);
 
 COMMIT;

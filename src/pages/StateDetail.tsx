@@ -47,7 +47,32 @@ const StateDetail = () => {
   
   // Combine all states
   const allStates = [...US_STATES, ...MORE_STATES];
-  const currentState = allStates.find(s => s.slug === stateSlug);
+  let currentState = allStates.find(s => s.slug === stateSlug);
+  
+  // If not found in static data, try to find in jurisdictions (for states not in static data)
+  if (!currentState) {
+    // This is a fallback for states not in the static data
+    // In a real app, you'd fetch this from the database
+    const stateName = stateSlug?.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    if (stateName && stateName !== 'Federal') {
+      currentState = {
+        id: stateSlug?.toUpperCase().substring(0, 2) || 'XX',
+        name: stateName,
+        slug: stateSlug || '',
+        status: 'restrictive' as const,
+        recentUpdates: 0,
+        activeDeadlines: 0,
+        legalStatus: {
+          hemp: 'Unknown',
+          thca: 'Unknown', 
+          delta8: 'Unknown',
+          kratom: 'Unknown',
+          psychedelics: 'Unknown',
+          nicotine: 'Unknown'
+        }
+      };
+    }
+  }
   
   // Get agency profile if available
   const agencyProfile = getAgencyProfile(stateSlug || '');
