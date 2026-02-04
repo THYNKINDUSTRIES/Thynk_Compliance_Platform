@@ -294,6 +294,62 @@ ON CONFLICT (code) DO UPDATE SET
   name = EXCLUDED.name,
   type = EXCLUDED.type;
 
+-- Create the data_population_progress table for tracking poller progress
+CREATE TABLE IF NOT EXISTS public.data_population_progress (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id TEXT NOT NULL,
+  source_name TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  records_fetched INTEGER DEFAULT 0,
+  total_estimated INTEGER,
+  current_page INTEGER DEFAULT 0,
+  total_pages INTEGER,
+  error_message TEXT,
+  started_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ,
+  metadata JSONB DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable Row Level Security on data_population_progress
+ALTER TABLE public.data_population_progress ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for data_population_progress
+CREATE POLICY "Allow public read access on data_population_progress" 
+  ON public.data_population_progress 
+  FOR SELECT 
+  USING (true);
+
+CREATE POLICY "Allow anon insert on data_population_progress" 
+  ON public.data_population_progress 
+  FOR INSERT 
+  TO anon 
+  WITH CHECK (true);
+
+CREATE POLICY "Allow anon update on data_population_progress" 
+  ON public.data_population_progress 
+  FOR UPDATE 
+  TO anon 
+  USING (true);
+
+-- Create unique index for data_population_progress
+CREATE UNIQUE INDEX IF NOT EXISTS uq_data_population_progress_session_source ON public.data_population_progress (session_id, source_name);
+
+-- Create updated_at trigger for data_population_progress
+CREATE OR REPLACE FUNCTION update_data_population_progress_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER data_population_progress_updated_at
+  BEFORE UPDATE ON public.data_population_progress
+  FOR EACH ROW
+  EXECUTE FUNCTION update_data_population_progress_updated_at();
+
 -- Create the providers table for compliance service providers
 CREATE TABLE IF NOT EXISTS public.providers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
