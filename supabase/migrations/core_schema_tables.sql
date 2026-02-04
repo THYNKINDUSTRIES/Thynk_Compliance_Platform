@@ -294,4 +294,83 @@ ON CONFLICT (code) DO UPDATE SET
   name = EXCLUDED.name,
   type = EXCLUDED.type;
 
+-- Create the providers table for compliance service providers
+CREATE TABLE IF NOT EXISTS public.providers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL UNIQUE,
+  logo_url TEXT,
+  description TEXT,
+  categories TEXT[] DEFAULT '{}',
+  tier TEXT CHECK (tier IN ('VIP', 'Vetted', 'Standard')) DEFAULT 'Standard',
+  website_url TEXT,
+  contact_email TEXT,
+  contact_phone TEXT,
+  services TEXT[],
+  states_covered TEXT[],
+  pricing_tier TEXT CHECK (pricing_tier IN ('Budget', 'Mid-Range', 'Premium', 'Enterprise')),
+  rating DECIMAL(2,1) CHECK (rating >= 0 AND rating <= 5),
+  review_count INTEGER DEFAULT 0,
+  verified BOOLEAN DEFAULT false,
+  featured BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable Row Level Security on providers
+ALTER TABLE public.providers ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for providers
+CREATE POLICY "Allow public read access on providers" 
+  ON public.providers 
+  FOR SELECT 
+  USING (true);
+
+CREATE POLICY "Allow authenticated insert on providers" 
+  ON public.providers 
+  FOR INSERT 
+  TO authenticated 
+  WITH CHECK (true);
+
+CREATE POLICY "Allow authenticated update on providers" 
+  ON public.providers 
+  FOR UPDATE 
+  TO authenticated 
+  USING (true);
+
+CREATE POLICY "Allow authenticated delete on providers" 
+  ON public.providers 
+  FOR DELETE 
+  TO authenticated 
+  USING (true);
+
+-- Create indexes for providers
+CREATE INDEX IF NOT EXISTS idx_providers_tier ON public.providers(tier);
+CREATE INDEX IF NOT EXISTS idx_providers_categories ON public.providers USING GIN(categories);
+CREATE INDEX IF NOT EXISTS idx_providers_states ON public.providers USING GIN(states_covered);
+CREATE INDEX IF NOT EXISTS idx_providers_featured ON public.providers(featured) WHERE featured = true;
+CREATE INDEX IF NOT EXISTS idx_providers_verified ON public.providers(verified) WHERE verified = true;
+CREATE INDEX IF NOT EXISTS idx_providers_rating ON public.providers(rating DESC);
+
+-- Create updated_at trigger for providers
+CREATE OR REPLACE FUNCTION update_providers_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER providers_updated_at
+  BEFORE UPDATE ON public.providers
+  FOR EACH ROW
+  EXECUTE FUNCTION update_providers_updated_at();
+
+-- Seed providers table with sample data
+INSERT INTO public.providers (name, description, categories, tier, services, states_covered, pricing_tier, rating, review_count, verified, featured)
+VALUES
+  ('ComplianceForge', 'Industry-leading compliance automation platform', ARRAY['Compliance Software', 'Regulatory Tracking'], 'VIP', ARRAY['Compliance Automation', 'Regulatory Alerts'], ARRAY['CA', 'CO', 'WA'], 'Enterprise', 4.9, 287, true, true),
+  ('GreenTrack Solutions', 'Comprehensive seed-to-sale tracking', ARRAY['Seed-to-Sale', 'Inventory Management'], 'VIP', ARRAY['Seed-to-Sale Tracking', 'METRC Integration'], ARRAY['CA', 'CO', 'WA'], 'Premium', 4.8, 412, true, true),
+  ('CannaSafe Labs', 'ISO-certified testing laboratory', ARRAY['Testing', 'Laboratory Services'], 'VIP', ARRAY['Potency Testing', 'Contaminant Screening'], ARRAY['CA', 'CO', 'WA'], 'Premium', 4.9, 523, true, true)
+ON CONFLICT (name) DO NOTHING;
+
 COMMIT;
