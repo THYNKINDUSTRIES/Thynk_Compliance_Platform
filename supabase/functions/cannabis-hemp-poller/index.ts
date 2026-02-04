@@ -1403,6 +1403,24 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   ]
 },
 
+'NC': {
+  agency: 'https://www.ncagr.gov/divisions/plant-industry/hemp-nc',
+  agencyName: 'North Carolina Department of Agriculture – Hemp Program',
+  rssFeeds: [],
+  newsPages: [
+    'https://www.ncagr.gov/divisions/public-affairs/news-roundup',
+    'https://www.ncagr.gov/divisions/plant-industry/hemp-nc',
+    'https://governor.nc.gov/news',
+    'https://www.ncagr.gov/news'
+  ],
+  regulationPages: [
+    'https://www.ncagr.gov/divisions/plant-industry/hemp-nc',
+    'https://www.ams.usda.gov/rules-regulations/hemp',
+    'https://www.ams.usda.gov/rules-regulations/hemp/information-producers',
+    'https://www.ams.usda.gov/rules-regulations/hemp/HempLawsandRegulations'
+  ]
+},
+
 'SD': {
   agency: 'https://medcannabis.sd.gov/',
   agencyName: 'South Dakota Department of Health – Medical Cannabis Program',
@@ -1954,10 +1972,10 @@ function parseNewsPage(html: string, baseUrl: string): Array<{title: string; lin
           title = headingMatch ? stripHTML(headingMatch[1]).trim() : '';
         }
         if (!title || title.length < 5) continue;
-        if (/^(home|about|contact|menu|nav|skip|search|login|sign|directory|job|careers|employment|public.records|privacy|terms|conditions|accessibility|facebook|twitter|instagram|youtube|linkedin|social|media|contact.us|meet.the|priorities|newsletter|newsroom|commissioner|meet.the.commissioner)/i.test(title)) continue;
+        if (/^(home|about|contact|menu|nav|skip|search|login|sign|directory|job|careers|employment|public.records|privacy|terms|conditions|accessibility|facebook|twitter|instagram|youtube|linkedin|social|media|contact.us|meet.the|priorities|newsletter|newsroom|commissioner|meet.the.commissioner|press.releases|proclamations|executive.orders|submit.a.request|request.an.award|attendance|employee.portal|farmland.preservation|board.of.agriculture|boards.and.commissions|ncdacs.at.a.glance|website.feedback|disclaimer|open.budget|see.all)/i.test(title)) continue;
         
         // Exclude navigation/program pages based on URL patterns
-        if (/\/(divisions|programs|services|departments|offices|about|contact|directory|jobs|careers|employment|public.records|privacy|terms|conditions|accessibility|social|media|newsroom|newsletter|priorities|meet|commissioner)\//i.test(link)) continue;
+        if (/\/(divisions|programs|services|departments|offices|about|contact|directory|jobs|careers|employment|public.records|privacy|terms|conditions|accessibility|social|media|newsroom|newsletter|priorities|meet|commissioner|press-releases|proclamations|executive-orders|request|submit|attendance|intranet|adfp|boards|departmentataglance|webform|disclaimer|open-budget)\//i.test(link)) continue;
         
         // Exclude short titles that look like menu items
         if (title.length < 10 && !/\d{4}/.test(title)) continue;
@@ -2223,11 +2241,11 @@ Deno.serve(async (req) => {
 
     const statesToProcess = stateCode
       ? Object.entries(STATE_CANNABIS_SOURCES).filter(([code]) => code === stateCode)
-      : Object.entries(STATE_CANNABIS_SOURCES).slice(0, 2); // Limit to first 2 states for full scan
+      : Object.entries(STATE_CANNABIS_SOURCES); // Process all states for full scan
 
     // Add timeout protection - if no stateCode specified, limit processing time
     const startTime = Date.now();
-    const maxProcessingTime = stateCode ? 30000 : 10000; // 30s for single state, 10s for multi-state
+    const maxProcessingTime = stateCode ? 30000 : 120000; // 30s for single state, 2min for multi-state
 
     const { data: existingItems, error: existingItemsErr } = await supabase
       .from('instrument')
@@ -2241,7 +2259,7 @@ Deno.serve(async (req) => {
     const existingIds = new Set((existingItems || []).map(i => i.external_id));
 
     // Processing limits
-    const maxItemsPerState = stateCode ? 50 : 10; // More items for single state requests
+    const maxItemsPerState = stateCode ? 50 : 25; // More items for single state requests, reasonable for multi-state
     let totalItemsProcessed = 0;
 
     for (const [code, sources] of statesToProcess) {
