@@ -1954,7 +1954,20 @@ function parseNewsPage(html: string, baseUrl: string): Array<{title: string; lin
           title = headingMatch ? stripHTML(headingMatch[1]).trim() : '';
         }
         if (!title || title.length < 5) continue;
-        if (/^(home|about|contact|menu|nav|skip|search|login|sign)/i.test(title)) continue;
+        if (/^(home|about|contact|menu|nav|skip|search|login|sign|directory|job|careers|employment|public.records|privacy|terms|conditions|accessibility|facebook|twitter|instagram|youtube|linkedin|social|media|contact.us|meet.the|priorities|newsletter|newsroom|commissioner|meet.the.commissioner)/i.test(title)) continue;
+        
+        // Exclude navigation/program pages based on URL patterns
+        if (/\/(divisions|programs|services|departments|offices|about|contact|directory|jobs|careers|employment|public.records|privacy|terms|conditions|accessibility|social|media|newsroom|newsletter|priorities|meet|commissioner)\//i.test(link)) continue;
+        
+        // Exclude short titles that look like menu items
+        if (title.length < 10 && !/\d{4}/.test(title)) continue;
+        
+        // Prefer links that contain news/announcement keywords in URL
+        const isLikelyNews = /\/(news|announcements?|press|bulletins?|updates?|alerts?|notices?)\//i.test(link) || 
+                            /(news|announcement|press|bulletin|update|alert|notice)/i.test(title);
+        
+        // If we have many items and this doesn't look like news, skip it
+        if (items.length >= 10 && !isLikelyNews && !/\d{4}/.test(title)) continue;
         const descMatch = match.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
         const description = descMatch ? stripHTML(descMatch[1]).trim().substring(0, 500) : '';
         const dateMatch = match.match(/(?:posted|published|date|updated)[:\s]*([A-Za-z]+\s+\d{1,2},?\s+\d{4}|\d{1,2}\/\d{1,2}\/\d{2,4}|\d{4}-\d{2}-\d{2})/i)
