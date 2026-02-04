@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AppProvider } from "@/contexts/AppContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SubscriptionRoute } from "@/components/SubscriptionRoute";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { CookieConsent } from "@/components/CookieConsent";
 
 import Information from "./pages/Information";

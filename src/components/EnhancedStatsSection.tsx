@@ -34,16 +34,17 @@ export const EnhancedStatsSection: React.FC = () => {
           .from('jurisdiction')
           .select('id');
         
-        // Open comments
+        // Open comments - count instruments with regulations_gov source (have comment periods)
         const { count: openCount } = await supabase
           .from('instrument')
           .select('*', { count: 'exact', head: true })
-          .eq('status', 'open');
+          .eq('source', 'regulations_gov');
         
-        // Upcoming deadlines
+        // Upcoming deadlines - count instruments with future effective dates
         const { count: deadlineCount } = await supabase
           .from('instrument')
           .select('*', { count: 'exact', head: true })
+          .not('effective_at', 'is', null)
           .gte('effective_at', new Date().toISOString());
 
         // Federal vs State breakdown
@@ -69,19 +70,36 @@ export const EnhancedStatsSection: React.FC = () => {
           .select('*', { count: 'exact', head: true })
           .gte('created_at', weekAgo.toISOString());
 
-        // API metrics
-        const { count: apiCount } = await supabase
-          .from('api_metrics')
-          .select('*', { count: 'exact', head: true })
-          .gte('timestamp', today);
+        // API metrics (handle missing table gracefully)
+        let apiCount = 0;
+        try {
+          const { count } = await supabase
+            .from('api_metrics')
+            .select('*', { count: 'exact', head: true })
+            .gte('timestamp', today);
+          apiCount = count || 0;
+        } catch (err) {
+          console.warn('api_metrics table not available:', err);
+        }
 
-        // Last poller run
-        const { data: lastJob } = await supabase
-          .from('job_execution_log')
-          .select('completed_at, execution_time_ms')
-          .order('completed_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
+        // Last poller run (handle missing table gracefully)
+        let lastPollerRun = null;
+        let avgResponseTime = 0;
+        try {
+          const { data: lastJob } = await supabase
+            .from('job_execution_log')
+            .select('completed_at, execution_time_ms')
+            .order('completed_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          
+          if (lastJob) {
+            lastPollerRun = lastJob.completed_at;
+            avgResponseTime = lastJob.execution_time_ms || 0;
+          }
+        } catch (err) {
+          console.warn('job_execution_log table not available:', err);
+        }
 
         setStats({
           totalRegulations: regCount || 0,
@@ -92,9 +110,9 @@ export const EnhancedStatsSection: React.FC = () => {
           stateDocuments: stateCount,
           todayUpdates: todayCount || 0,
           weekUpdates: weekCount || 0,
-          apiCallsToday: apiCount || 0,
-          lastPollerRun: lastJob?.completed_at || null,
-          avgResponseTime: lastJob?.execution_time_ms || 0
+          apiCallsToday: apiCount,
+          lastPollerRun: lastPollerRun,
+          avgResponseTime: avgResponseTime
         });
       } catch (err) {
         console.error('Error fetching stats:', err);

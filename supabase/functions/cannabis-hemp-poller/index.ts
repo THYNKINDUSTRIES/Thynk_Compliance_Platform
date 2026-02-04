@@ -86,48 +86,19 @@ const STATE_CANNABIS_SOURCES: Record<string, {
 },
 
 'AK': {
-  agency: 'https://www.commerce.alaska.gov/web/cbpl/Marijuana.aspx',
+  agency: 'https://www.commerce.alaska.gov/web/amco/',
   agencyName: 'Alaska Marijuana Control Board',
   rssFeeds: [],
   newsPages: [
-    'https://www.commerce.alaska.gov/web/cbpl/Hemp/news/',
-    'https://www.alaska.gov/governor/news/',
-    'https://www.alaska.gov/governor/',
-'https://www.alaska.gov/news',
-    'https://legislature.ak.gov/news.php',
-    'https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx',
-    'https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx/news',
-    'https://www.ak.gov/agriculture/hemp',
-    'https://agriculture.ak.gov/hemp',
-    'https://governor.alaska.gov/news',
-    'https://www.commerce.alaska.gov/news',
-    'https://governor.alaska.gov/newsroom',
-    'https://www.commerce.alaska.gov/newsroom',
-    'https://www.ak.gov/governor/news',
-    'https://www.ak.gov/commerce/news'
-  ,
-    'https://www.alaska.gov/governor/news/',
-    'https://www.alaska.gov/governor/',
-    'https://www.alaska.gov/news',
-    'https://www.alaska.gov/governor/news/',
-    'https://www.alaska.gov/governor/',
-    'https://www.alaska.gov/news',
-    'https://www.alaska.gov/governor/news/',
-    'https://www.alaska.gov/governor/',
-    'https://www.alaska.gov/news'],
+    'https://www.commerce.alaska.gov/web/ArchivedHeadlines',
+    'https://www.commerce.alaska.gov/web/amco/MCBMeetingDocuments',
+    'https://www.alaska.gov/governor/news',
+    'https://www.alaska.gov/news'
+  ],
   regulationPages: [
-    'https://www.commerce.alaska.gov/web/cbpl/Hemp/',
-'https://www.commerce.alaska.gov/web/cbpl/Marijuana/StatutesRegulations.aspx',
-    'https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx',
-    'https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx/regulations',
-    'https://www.commerce.alaska.gov/web/cbpl/Hemp.aspx/rules',
-    'https://www.ak.gov/laws-regulations/hemp',
-    'https://www.commerce.alaska.gov/cbpl/cannabis-rules',
-    'https://www.commerce.alaska.gov/cbpl/hemp-program',
-    'https://www.commerce.alaska.gov/cbpl/hemp-businesses',
-    'https://www.commerce.alaska.gov/cbpl/cannabis-businesses',
-    'https://www.commerce.alaska.gov/cbpl/hemp-rules',
-    'https://www.commerce.alaska.gov/cbpl/cannabis-rules'
+    'https://www.commerce.alaska.gov/web/amco/',
+    'https://www.commerce.alaska.gov/web/cbpl/Marijuana',
+    'https://www.commerce.alaska.gov/web/cbpl/Hemp'
   ]
 },
 
@@ -204,27 +175,20 @@ const STATE_CANNABIS_SOURCES: Record<string, {
 },
 
 'CO': {
-  agency: 'https://sbg.colorado.gov/marijuana',
+  agency: 'https://sbg.colorado.gov/marijuana-home',
   agencyName: 'Colorado Marijuana Enforcement Division',
   rssFeeds: [],
   newsPages: [
-'https://legislature.colorado.gov',
-    'https://www.colorado.gov/news',
-    'https://www.colorado.gov/pacific/agriculture/hemp',
-    'https://www.colorado.gov/pacific/agriculture/hemp/news',
-    'https://www.co.gov/agriculture/hemp',
-    'https://agriculture.co.gov/hemp',
-    'https://www.colorado.gov/agriculture/news',
-    'https://www.colorado.gov/pacific/agriculture/news'
+    'https://cdor.colorado.gov/category/press-release',
+    'https://cdor.colorado.gov/media-center-marijuana-enforcement-division',
+    'https://ag.colorado.gov/category/press-release',
+    'https://www.colorado.gov/governor/news',
+    'https://leg.colorado.gov/news'
   ],
   regulationPages: [
-'https://legislature.colorado.gov',
-    'https://www.colorado.gov/pacific/agriculture/hemp',
-    'https://www.colorado.gov/pacific/agriculture/hemp/regulations',
-    'https://www.colorado.gov/pacific/agriculture/hemp/rules',
-    'https://www.co.gov/laws-regulations/hemp',
-    'https://www.colorado.gov/pacific/agriculture/hemp-rules',
-    'https://www.colorado.gov/pacific/agriculture/marijuana-rules'
+    'https://cdps.colorado.gov/Marijuana/Laws-and-Rules',
+    'https://leg.colorado.gov/agendas-rules-procedures/rules-and-regulations',
+    'https://ag.colorado.gov/plants/industrial-hemp'
   ]
 },
 
@@ -1311,49 +1275,14 @@ const STATE_CANNABIS_SOURCES: Record<string, {
   agencyName: 'Oregon Liquor and Cannabis Commission',
   rssFeeds: [],
   newsPages: [
-    'https://www.oda.state.or.us/news/',
-    'https://www.oda.state.or.us/plant/hemp/news/',
-    'https://www.oregon.gov/governor/news/',
-'https://www.oregon.gov/olcc/Pages/news.aspx',
-    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx',
-    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx/news',
-    'https://www.or.gov/agriculture/hemp',
-    'https://agriculture.or.gov/hemp',
-    'https://www.oregon.gov/ODA/news',
-    'https://www.oregon.gov/ODA/press-releases',
-    'https://www.oregon.gov/news',
-    'https://www.oregon.gov/governor/newsroom',
-    'https://www.oregon.gov/governor/newsroom',
-    'https://www.oregon.gov/ODA/newsroom',
-    'https://www.oregon.gov/olcc/newsroom',
-    'https://www.oregon.gov/agriculture/news'
-  ,
-    'https://www.oregon.gov/olcc/Pages/news.aspx',
-    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx',
-    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx/news',
-    'https://www.oregon.gov/olcc/Pages/news.aspx',
-    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx',
-    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx/news',
-    'https://www.oregon.gov/olcc/Pages/news.aspx',
-    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx',
-    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx/news'],
+    'https://www.oregon.gov/olcc/Pages/News.aspx',
+    'https://www.oregon.gov/governor/news',
+    'https://www.oregon.gov/news'
+  ],
   regulationPages: [
-    'https://www.oda.state.or.us/plant/hemp/',
-    'https://www.oda.state.or.us/plant/',
-    'https://www.oda.state.or.us/',
-'https://www.oregon.gov/olcc/marijuana/Pages/Recreational-Marijuana-Laws-and-Rules.aspx',
+    'https://www.oregon.gov/olcc/marijuana/Pages/Recreational-Marijuana-Laws-and-Rules.aspx',
     'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx',
-    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx/regulations',
-    'https://www.oregon.gov/ODA/programs/Hemp/Pages/default.aspx/rules',
-    'https://www.or.gov/laws-regulations/hemp',
-    'https://www.oregon.gov/ODA/programs/Hemp',
-    'https://www.oregon.gov/olcc/rules',
-    'https://www.oregon.gov/olcc/cannabis-rules',
-    'https://www.oregon.gov/ODA/hemp-rules',
-    'https://www.oregon.gov/olcc/marijuana-businesses',
-    'https://www.oregon.gov/ODA/hemp-businesses',
-    'https://www.oregon.gov/olcc/rules',
-    'https://www.oregon.gov/ODA/hemp-rules'
+    'https://www.oregon.gov/olcc/rules'
   ]
 },
 
@@ -2348,6 +2277,7 @@ Deno.serve(async (req) => {
                 url: item.link,
                 category: analysis.category || 'cannabis',
                 sub_category: analysis.sub_category || 'other',
+                updated_at: new Date().toISOString(),
                 metadata: {
                   ...analysis,
                   agencyName: sources.agencyName,
@@ -2415,6 +2345,7 @@ Deno.serve(async (req) => {
                 url: item.link,
                 category: analysis.category || 'cannabis',
                 sub_category: analysis.sub_category || 'other',
+                updated_at: new Date().toISOString(),
                 metadata: {
                   ...analysis,
                   agencyName: sources.agencyName,

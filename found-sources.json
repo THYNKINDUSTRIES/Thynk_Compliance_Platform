@@ -1,0 +1,91 @@
+{
+  "ND": {
+    "news": [
+      "https://www.ndda.nd.gov/news",
+      "https://www.ndda.nd.gov/hemp",
+      "https://www.nd.gov/news"
+    ],
+    "regulations": [
+      "https://www.ndda.nd.gov/hemp"
+    ]
+  },
+  "SD": {
+    "news": [
+      "https://www.sd.gov/news",
+      "https://www.sd.gov/press-releases",
+      "https://www.sd.gov/announcements",
+      "https://www.sd.gov/hemp",
+      "https://www.sd.gov/industrial-hemp",
+      "https://www.sd.gov/cannabis",
+      "https://www.sd.gov/marijuana"
+    ],
+    "regulations": [
+      "https://www.sd.gov/hemp",
+      "https://www.sd.gov/industrial-hemp",
+      "https://www.sd.gov/cannabis",
+      "https://www.sd.gov/marijuana",
+      "https://www.sd.gov/regulations",
+      "https://www.sd.gov/rules",
+      "https://www.sd.gov/laws"
+    ]
+  },
+  "WY": {
+    "news": [
+      "https://agriculture.wy.gov/news",
+      "https://agriculture.wy.gov/hemp"
+    ],
+    "regulations": [
+      "https://agriculture.wy.gov/hemp"
+    ]
+  },
+  "VT": {
+    "news": [],
+    "regulations": []
+  },
+  "NH": {
+    "news": [],
+    "regulations": []
+  },
+  "ME": {
+    "news": [],
+    "regulations": []
+  },
+  "RI": {
+    "news": [
+      "https://www.ri.gov/news"
+    ],
+    "regulations": []
+  },
+  "DE": {
+    "news": [
+      "https://dda.delaware.gov/news",
+      "https://dda.delaware.gov/press-releases",
+      "https://dda.delaware.gov/announcements",
+      "https://dda.delaware.gov/hemp",
+      "https://dda.delaware.gov/industrial-hemp",
+      "https://dda.delaware.gov/cannabis",
+      "https://dda.delaware.gov/marijuana"
+    ],
+    "regulations": [
+      "https://dda.delaware.gov/hemp",
+      "https://dda.delaware.gov/industrial-hemp",
+      "https://dda.delaware.gov/cannabis",
+      "https://dda.delaware.gov/marijuana",
+      "https://dda.delaware.gov/regulations",
+      "https://dda.delaware.gov/rules",
+      "https://dda.delaware.gov/laws"
+    ]
+  },
+  "HI": {
+    "news": [
+      "https://hdoa.hawaii.gov/hemp"
+    ],
+    "regulations": [
+      "https://hdoa.hawaii.gov/hemp"
+    ]
+  },
+  "AK": {
+    "news": [],
+    "regulations": []
+  }
+}
