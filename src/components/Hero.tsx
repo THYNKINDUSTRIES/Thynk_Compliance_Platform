@@ -19,7 +19,7 @@ export const Hero: React.FC<Props> = ({ onSearch }) => {
             Regulatory Intelligence Platform
           </p>
           <p className="text-lg text-white/90">
-            Real-time regulatory intelligence for hemp, cannabinoids, kratom, psychedelics & more
+            Real-time regulatory intelligence for hemp, cannabinoids, kratom, kava, psychedelics & more
           </p>
         </div>
 

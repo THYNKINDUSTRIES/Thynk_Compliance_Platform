@@ -1,7 +1,7 @@
 # Thynk Compliance Platform - AI Coding Assistant Instructions
 
 ## Project Overview
-This is a comprehensive real-time regulatory intelligence platform tracking cannabis, hemp, kratom, nicotine, and psychedelic regulations across all 50 US states and federal agencies. The platform ingests data from government APIs, processes it with NLP, and provides a modern web interface for compliance monitoring.
+This is a comprehensive real-time regulatory intelligence platform tracking cannabis, hemp, kratom, kava, nicotine, and psychedelic regulations across all 50 US states and federal agencies. The platform ingests data from government APIs, processes it with NLP, and provides a modern web interface for compliance monitoring.
 
 ## Architecture & Tech Stack
 

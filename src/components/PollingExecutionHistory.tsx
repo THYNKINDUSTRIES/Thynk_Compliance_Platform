@@ -58,6 +58,8 @@ const POLLER_TYPES = [
   { value: 'regulations-gov-poller', label: 'Regulations.gov' },
   { value: 'rss-feed-poller', label: 'RSS Feed' },
   { value: 'cannabis-hemp-poller', label: 'Cannabis & Hemp' },
+  { value: 'kratom-poller', label: 'Kratom' },
+  { value: 'kava-poller', label: 'Kava' },
   { value: 'scheduled-poller-cron', label: 'Scheduled Cron' },
 ];
 

@@ -12,7 +12,7 @@ export const FilterPanel: React.FC = () => {
     authorities: [] as string[],
     statuses: ['open', 'closed', 'pending', 'effective'],
     impacts: ['high', 'medium', 'low'],
-    products: ['Hemp', 'Delta-8', 'Delta-9', 'Kratom', 'CBD', 'THC', 'Edibles', 'Vapes'],
+    products: ['Hemp', 'Delta-8', 'Delta-9', 'Kratom', 'Kava', 'CBD', 'THC', 'Edibles', 'Vapes'],
     stages: ['Retail', 'Manufacturing', 'Distribution', 'Testing', 'Cultivation'],
     types: ['Regulation', 'Guidance', 'Notice', 'Rule', 'Order', 'Policy'],
     tags: ['licensing', 'testing', 'packaging', 'cultivation', 'retail', 'medical', 'recreational', 'compliance']

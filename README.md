@@ -2,7 +2,7 @@
 
 **Regulatory intelligence infrastructure for regulated and emerging wellness markets.**
 
-Thynk Compliance Platform (TCP) is a proprietary regulatory intelligence system designed to support regulated businesses in monitoring, understanding, and responding to evolving legal and regulatory frameworks across cannabis, hemp, kratom, nicotine/vapes, psychedelics, and adjacent wellness categories.
+Thynk Compliance Platform (TCP) is a proprietary regulatory intelligence system designed to support regulated businesses in monitoring, understanding, and responding to evolving legal and regulatory frameworks across cannabis, hemp, kratom, kava, nicotine/vapes, psychedelics, and adjacent wellness categories.
 
 TCP continuously monitors regulatory activity across all 50 U.S. states, Washington D.C., and relevant federal agencies. The platform consolidates fragmented regulatory activity into structured, operationally relevant intelligence intended to support compliance, legal review, and internal decision-making.
 

@@ -10,8 +10,10 @@ import { PopulateURLsButton } from '@/components/PopulateURLsButton';
 import { DataIngestionTester } from '@/components/DataIngestionTester';
 import { PollingHealthDashboard } from '@/components/PollingHealthDashboard';
 import { CannabisHempPoller } from '@/components/CannabisHempPoller';
+import { KratomPoller } from '@/components/KratomPoller';
+import { KavaPoller } from '@/components/KavaPoller';
 import { PollerTestPanel } from '@/components/PollerTestPanel';
-import { Database, RefreshCw, CheckCircle, AlertCircle, Loader2, Trash2, MapPin, FlaskConical } from 'lucide-react';
+import { Database, RefreshCw, CheckCircle, AlertCircle, Loader2, Trash2, MapPin, FlaskConical, Leaf } from 'lucide-react';
 
 interface DatabaseStats {
   totalInstruments: number;
@@ -168,10 +170,18 @@ export default function SourceManagement() {
           </div>
 
           <Tabs defaultValue="states" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-7">
               <TabsTrigger value="states" className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
                 State Regulations
+              </TabsTrigger>
+              <TabsTrigger value="kratom" className="flex items-center gap-2">
+                <Leaf className="w-4 h-4" />
+                Kratom
+              </TabsTrigger>
+              <TabsTrigger value="kava" className="flex items-center gap-2">
+                <Sprout className="w-4 h-4" />
+                Kava
               </TabsTrigger>
               <TabsTrigger value="ca-test" className="flex items-center gap-2">
                 <FlaskConical className="w-4 h-4" />
@@ -184,6 +194,14 @@ export default function SourceManagement() {
 
             <TabsContent value="states" className="space-y-6">
               <CannabisHempPoller />
+            </TabsContent>
+
+            <TabsContent value="kratom" className="space-y-6">
+              <KratomPoller />
+            </TabsContent>
+
+            <TabsContent value="kava" className="space-y-6">
+              <KavaPoller />
             </TabsContent>
 
             <TabsContent value="ca-test" className="space-y-6">

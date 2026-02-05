@@ -56,28 +56,33 @@ END$$;
 -- Create simple policies to allow anon role inserts/updates for these tables (for testing).
 -- Review and tighten these before using in production.
 
-CREATE POLICY IF NOT EXISTS anon_insert_instrument ON public.instrument
+DROP POLICY IF EXISTS anon_insert_instrument ON public.instrument;
+CREATE POLICY anon_insert_instrument ON public.instrument
   FOR INSERT
   TO anon
   WITH CHECK (true);
 
-CREATE POLICY IF NOT EXISTS anon_update_instrument ON public.instrument
+DROP POLICY IF EXISTS anon_update_instrument ON public.instrument;
+CREATE POLICY anon_update_instrument ON public.instrument
   FOR UPDATE
   TO anon
   USING (true)
   WITH CHECK (true);
 
-CREATE POLICY IF NOT EXISTS anon_insert_ingestion_log ON public.ingestion_log
+DROP POLICY IF EXISTS anon_insert_ingestion_log ON public.ingestion_log;
+CREATE POLICY anon_insert_ingestion_log ON public.ingestion_log
   FOR INSERT
   TO anon
   WITH CHECK (true);
 
-CREATE POLICY IF NOT EXISTS anon_insert_progress ON public.data_population_progress
+DROP POLICY IF EXISTS anon_insert_progress ON public.data_population_progress;
+CREATE POLICY anon_insert_progress ON public.data_population_progress
   FOR INSERT
   TO anon
   WITH CHECK (true);
 
-CREATE POLICY IF NOT EXISTS anon_update_progress ON public.data_population_progress
+DROP POLICY IF EXISTS anon_update_progress ON public.data_population_progress;
+CREATE POLICY anon_update_progress ON public.data_population_progress
   FOR UPDATE
   TO anon
   USING (true)
