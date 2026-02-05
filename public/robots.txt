@@ -1,36 +1,8 @@
-# Private Beta - Block all search engine indexing
-# Remove these restrictions when launching publicly
+# Allow all search engines to index the site
+# Beta restrictions have been removed
 
 User-agent: *
-Disallow: /
+Allow: /
 
-# Block specific crawlers
-User-agent: Googlebot
-Disallow: /
-
-User-agent: Bingbot
-Disallow: /
-
-User-agent: Slurp
-Disallow: /
-
-User-agent: DuckDuckBot
-Disallow: /
-
-User-agent: Baiduspider
-Disallow: /
-
-User-agent: YandexBot
-Disallow: /
-
-User-agent: facebookexternalhit
-Disallow: /
-
-User-agent: Twitterbot
-Disallow: /
-
-User-agent: LinkedInBot
-Disallow: /
-
-# Sitemap (disabled during beta)
-# Sitemap: https://thynkflow.io/sitemap.xml
+# Sitemap
+Sitemap: https://thynkflow.io/sitemap.xml
