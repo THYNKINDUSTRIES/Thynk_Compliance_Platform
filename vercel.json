@@ -99,7 +99,7 @@
   ],
   "env": {
     "VITE_BETA_MODE": "false",
-    "VITE_STRIPE_PUBLISHABLE_KEY": "pk_test_51SxayRCb5jSgXybswdHZdJ4zTqOe8OcLKjgx8IneS7DLRKr1aib3i23D3oD23YnurkaZe1WeEWqndxU47hze5fzg00nW4kIWz7"
+    "VITE_STRIPE_PUBLISHABLE_KEY": "pk_live_51SxayHE3OgnKs7gnmZpovk5wKD2d4BwkSD4wEQeTxVuLCKDpYBpVGYsbUMumEMjMHKNthYozTDN4meXEXeM2yPX400m8R5AnzM"
   },
   "crons": [
     {
