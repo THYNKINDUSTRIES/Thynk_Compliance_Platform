@@ -61,10 +61,6 @@
           "value": "same-origin"
         },
         {
-          "key": "Cross-Origin-Resource-Policy",
-          "value": "same-origin"
-        },
-        {
           "key": "Origin-Agent-Cluster",
           "value": "?1"
         },
