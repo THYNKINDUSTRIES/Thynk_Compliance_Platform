@@ -136,7 +136,7 @@ const STATE_AGENCIES: Record<string, { name: string; agency: string; hasRSS: boo
 };
 
 
-export function CannabisHempPoller() {
+export function CannabisHempPoller({ onComplete }: { onComplete?: () => void } = {}) {
   const [stateStatuses, setStateStatuses] = useState<StateStatus[]>([]);
   const [pollingLogs, setPollingLogs] = useState<NormalizedPollingLog[]>([]);
   const [recentNewItems, setRecentNewItems] = useState<any[]>([]);
@@ -369,6 +369,11 @@ export function CannabisHempPoller() {
 
       if (totalNewItems > 0) {
         setActiveTab('recent');
+      }
+
+      // Call onComplete callback if provided
+      if (onComplete) {
+        onComplete();
       }
     } catch (error: any) {
       console.error('Polling error:', error);

@@ -5,9 +5,10 @@ import Stripe from 'https://esm.sh/stripe@14.21.0?target=deno';
 
 // CORS headers for all responses
 export const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://www.thynkflow.io',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+  'Access-Control-Allow-Credentials': 'true',
 };
 
 // @ts-ignore - Deno global for Supabase Edge Functions
@@ -119,7 +120,7 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
 
   // Update subscription status
   await supabase
-    .from('profiles')
+    .from('user_profiles')
     .update({
       subscription_status: status === 'active' ? 'paid' : status,
       trial_active: false, // Trial ends when subscription starts
@@ -133,7 +134,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   const status = subscription.status;
 
   const { data: profile } = await supabase
-    .from('profiles')
+    .from('user_profiles')
     .select('id')
     .eq('stripe_customer_id', customerId)
     .single();
@@ -141,7 +142,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   if (!profile) return;
 
   await supabase
-    .from('profiles')
+    .from('user_profiles')
     .update({
       subscription_status: status === 'active' ? 'paid' : status,
       subscription_id: subscription.id
@@ -153,7 +154,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string;
 
   const { data: profile } = await supabase
-    .from('profiles')
+    .from('user_profiles')
     .select('id')
     .eq('stripe_customer_id', customerId)
     .single();
@@ -161,7 +162,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   if (!profile) return;
 
   await supabase
-    .from('profiles')
+    .from('user_profiles')
     .update({
       subscription_status: 'cancelled',
       subscription_id: null
@@ -197,7 +198,7 @@ async function handleSetupIntentSucceeded(setupIntent: Stripe.SetupIntent) {
   if (customerId) {
     // Update profile with customer ID if not already set
     await supabase
-      .from('profiles')
+      .from('user_profiles')
       .update({ stripe_customer_id: customerId })
       .eq('stripe_customer_id', customerId); // Only update if not set
   }

@@ -10,7 +10,6 @@ import { DataPopulationProgress } from './DataPopulationProgress';
 export function DataPopulationTrigger() {
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [toastShown, setToastShown] = useState(false); // ← toast guard
   const { toast } = useToast();
 
   const handleTrigger = async () => {
@@ -22,7 +21,6 @@ export function DataPopulationTrigger() {
       if (error) throw error;
       if (data?.sessionId) {
         setSessionId(data.sessionId);
-        setToastShown(false); // ← reset for new run
         toast({
           title: 'Data Population Started',
           description: 'Fetching regulations from all sources. This may take several minutes.',
@@ -42,17 +40,18 @@ export function DataPopulationTrigger() {
 
   const [lastCompletedAt, setLastCompletedAt] = useState<string | null>(null);
 
-  const handleComplete = (completedAt: string) => { // ← accept param from progress
-  if (lastCompletedAt === completedAt) return; // ← same completion → skip
+  const handleComplete = () => {
+    const now = new Date().toISOString();
+    if (lastCompletedAt === now) return;
 
-  toast({
-    title: 'Data Population Complete',
-    description: 'All regulations have been successfully imported.',
-    duration: 10000,
-  });
+    toast({
+      title: 'Data Population Complete',
+      description: 'All regulations have been successfully imported.',
+      duration: 10000,
+    });
 
-  setLastCompletedAt(completedAt);
-};
+    setLastCompletedAt(now);
+  };
 
 
   return (

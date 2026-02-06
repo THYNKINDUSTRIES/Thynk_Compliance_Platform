@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Header } from './Header';
-import { Hero } from './Hero';
 import { SearchBar } from './SearchBar';
 import { Footer } from './Footer';
 import { LatestUpdates } from './LatestUpdates';
@@ -8,7 +7,7 @@ import { useAppContext } from '@/contexts/AppContext';
 import { useRegulations } from '@/hooks/useRegulations';
 import { supabase } from '@/lib/supabase';
 import { clearCache } from '@/lib/cache';
-import { Loader2, AlertCircle, ArrowUpDown, Check, RefreshCw, AlertTriangle, Database, MapPin, Play } from 'lucide-react';
+import { Loader2, ArrowUpDown, Check, RefreshCw, AlertTriangle, Database, MapPin } from 'lucide-react';
 
 import { RegulationCard } from './RegulationCard';
 import { FilterPanel } from './FilterPanel';
@@ -67,18 +66,77 @@ const AppLayout: React.FC = () => {
 
   const [stateData, setStateData] = useState<(StateInfo & { lastUpdated?: string; totalInstruments?: number })[]>([]);
   const [statesLoading, setStatesLoading] = useState(true);
-  const [stats, setStats] = useState({
-    totalRegulations: 0,
-    activeJurisdictions: 0,
-    openComments: 0,
-    upcomingDeadlines: 0,
-    federalAgencies: 0,
-    productCategories: 0,
-    vettedProviders: 0,
-    dailyUpdates: 0
-  });
-  const [statsLoading, setStatsLoading] = useState(true);
-  const [statsError, setStatsError] = useState<string | null>(null);
+
+  // Function to fetch state data - extracted for reusability
+  const fetchStateData = async () => {
+    console.log('🗺️ Fetching state data...');
+    setStatesLoading(true);
+    try {
+      const { data: jurisdictions, error } = await supabase
+        .from('jurisdiction')
+        .select(`
+          id,
+          name,
+          slug,
+          type
+        `)
+        .eq('type', 'state')
+        .order('name');
+
+      if (error) throw error;
+
+      // Get instrument counts for each jurisdiction
+      const statesWithData = await Promise.all(
+        (jurisdictions || []).map(async (j) => {
+          const { count } = await supabase
+            .from('instrument')
+            .select('*', { count: 'exact', head: true })
+            .eq('jurisdiction_id', j.id);
+
+          // Get latest instrument - handle empty results gracefully
+          let lastUpdated = null;
+          try {
+            const { data: latestInstruments } = await supabase
+              .from('instrument')
+              .select('updated_at')
+              .eq('jurisdiction_id', j.id)
+              .order('updated_at', { ascending: false })
+              .limit(1);
+            
+            if (latestInstruments && latestInstruments.length > 0) {
+              lastUpdated = latestInstruments[0]?.updated_at ?? null;
+            }
+          } catch (e) {
+            // Ignore errors for individual state lookups
+          }
+
+          // Map to StateInfo format
+          const stateAbbr = getStateAbbreviation(j.name);
+          return {
+            id: stateAbbr,
+            name: j.name,
+            slug: j.slug,
+            status: count && count > 5 ? 'permissive' : count && count > 2 ? 'moderate' : 'restrictive',
+            recentUpdates: count || 0,
+            activeDeadlines: 0,
+            totalInstruments: count || 0,
+            lastUpdated
+          } as StateInfo & { lastUpdated?: string; totalInstruments?: number };
+        })
+      );
+
+      console.log('✅ State data fetched:', statesWithData.length);
+      setStateData(statesWithData);
+    } catch (err) {
+      console.error('❌ Error fetching state data:', err);
+    } finally {
+      setStatesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStateData();
+  }, []);
 
   // Helper function to apply a single sort criterion
   const applySortCriterion = (data: any[], criterion: string) => {
@@ -127,12 +185,12 @@ const AppLayout: React.FC = () => {
         );
       case 'impact-high':
         return sorted.sort((a, b) => {
-          const impactOrder = { high: 3, medium: 2, low: 1 };
+          const impactOrder: Record<string, number> = { high: 3, medium: 2, low: 1 };
           return (impactOrder[b.impact] || 0) - (impactOrder[a.impact] || 0);
         });
       case 'impact-low':
         return sorted.sort((a, b) => {
-          const impactOrder = { high: 3, medium: 2, low: 1 };
+          const impactOrder: Record<string, number> = { high: 3, medium: 2, low: 1 };
           return (impactOrder[a.impact] || 0) - (impactOrder[b.impact] || 0);
         });
       default:
@@ -214,186 +272,6 @@ const AppLayout: React.FC = () => {
     return labels[value] || value;
   };
 
-
-
-
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      console.log('🔍 Fetching platform statistics...');
-      try {
-        setStatsLoading(true);
-        setStatsError(null);
-
-        const { count: regCount, error: regError } = await supabase
-          .from('instrument')
-          .select('*', { count: 'exact', head: true });
-        
-        if (regError) {
-          console.error('❌ Error fetching regulations count:', regError);
-          throw regError;
-        }
-        console.log('✅ Total regulations:', regCount);
-        
-        const { data: jurisdictions, error: jurError } = await supabase
-          .from('jurisdiction')
-          .select('id');
-        
-        if (jurError) {
-          console.error('❌ Error fetching jurisdictions:', jurError);
-        }
-        console.log('✅ Active jurisdictions:', jurisdictions?.length || 0);
-        
-        const { count: openCount, error: openError } = await supabase
-          .from('instrument')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'open');
-        
-        if (openError) {
-          console.error('❌ Error fetching open comments:', openError);
-        }
-        console.log('✅ Open comments:', openCount || 0);
-        
-        const { count: deadlineCount, error: deadlineError } = await supabase
-          .from('instrument')
-          .select('*', { count: 'exact', head: true })
-          .gte('effective_at', new Date().toISOString());
-
-        if (deadlineError) {
-          console.error('❌ Error fetching deadlines:', deadlineError);
-        }
-        console.log('✅ Upcoming deadlines:', deadlineCount || 0);
-
-        const today = new Date().toISOString().split('T')[0];
-        const { count: todayCount, error: todayError } = await supabase
-          .from('instrument')
-          .select('*', { count: 'exact', head: true })
-          .gte('created_at', today);
-
-        if (todayError) {
-          console.error('❌ Error fetching today updates:', todayError);
-        }
-        // Fetch provider count from Supabase - handle missing table gracefully
-        let providerCount = 0;
-        try {
-          // First check if table exists by doing a simple query
-          const { data, error: providerError } = await supabase
-            .from('providers')
-            .select('id', { count: 'exact', head: true })
-            .limit(1);
-          
-          if (!providerError) {
-            // Table exists, now try to get vetted count
-            const { count } = await supabase
-              .from('providers')
-              .select('*', { count: 'exact', head: true })
-              .in('tier', ['VIP', 'Vetted']);
-            providerCount = count || 0;
-            console.log('✅ Vetted providers:', providerCount);
-          } else {
-            // Table doesn't exist or other error - use default silently
-            console.log('ℹ️ Providers table not available:', providerError.code);
-          }
-        } catch (e) {
-          // Silently handle - providers table is optional
-          console.log('ℹ️ Providers query skipped');
-        }
-
-
-        setStats({
-          totalRegulations: regCount || 0,
-          activeJurisdictions: jurisdictions?.length || 0,
-          openComments: openCount || 0,
-          upcomingDeadlines: deadlineCount || 0,
-          federalAgencies: 12,
-          productCategories: 8,
-          vettedProviders: providerCount,
-          dailyUpdates: todayCount || 0
-        });
-
-        console.log('✅ All statistics fetched successfully');
-      } catch (err: any) {
-        console.error('❌ Fatal error fetching stats:', err);
-        setStatsError(err.message);
-      } finally {
-        setStatsLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, []);
-
-
-  useEffect(() => {
-    const fetchStateData = async () => {
-      console.log('🗺️ Fetching state data...');
-      setStatesLoading(true);
-      try {
-        const { data: jurisdictions, error } = await supabase
-          .from('jurisdiction')
-          .select(`
-            id,
-            name,
-            slug,
-            type
-          `)
-          .eq('type', 'state')
-          .order('name');
-
-        if (error) throw error;
-
-        // Get instrument counts for each jurisdiction
-        const statesWithData = await Promise.all(
-          (jurisdictions || []).map(async (j) => {
-            const { count } = await supabase
-              .from('instrument')
-              .select('*', { count: 'exact', head: true })
-              .eq('jurisdiction_id', j.id);
-
-            // Get latest instrument - handle empty results gracefully
-            let lastUpdated = null;
-            try {
-              const { data: latestInstruments } = await supabase
-                .from('instrument')
-                .select('created_at')
-                .eq('jurisdiction_id', j.id)
-                .order('created_at', { ascending: false })
-                .limit(1);
-              
-              if (latestInstruments && latestInstruments.length > 0) {
-                lastUpdated = latestInstruments[0].created_at;
-              }
-            } catch (e) {
-              // Ignore errors for individual state lookups
-            }
-
-            // Map to StateInfo format
-            const stateAbbr = getStateAbbreviation(j.name);
-            return {
-              id: stateAbbr,
-              name: j.name,
-              slug: j.slug,
-              status: count && count > 5 ? 'permissive' : count && count > 2 ? 'moderate' : 'restrictive',
-              recentUpdates: count || 0,
-              activeDeadlines: 0,
-              totalInstruments: count || 0,
-              lastUpdated
-            } as StateInfo & { lastUpdated?: string; totalInstruments?: number };
-          })
-        );
-
-        console.log('✅ State data fetched:', statesWithData.length);
-        setStateData(statesWithData);
-      } catch (err) {
-        console.error('❌ Error fetching state data:', err);
-      } finally {
-        setStatesLoading(false);
-      }
-    };
-
-    fetchStateData();
-  }, []);
-
   const getStateAbbreviation = (name: string): string => {
     const stateMap: Record<string, string> = {
       'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR',
@@ -421,9 +299,24 @@ const AppLayout: React.FC = () => {
   };
 
   const handleCategoryClick = (productId: string) => {
-    console.log('🏷️ Category clicked:', productId);
-    updateFilter('products', [productId]);
-    window.scrollTo({ top: 800, behavior: 'smooth' });
+    const currentProducts = filters.products || [];
+    const isAlreadyActive = currentProducts.includes(productId);
+    
+    if (isAlreadyActive) {
+      // Remove this product (toggle off)
+      const updated = currentProducts.filter((p: string) => p !== productId);
+      console.log('🏷️ Category deselected:', productId, '→ remaining:', updated);
+      updateFilter('products', updated);
+    } else {
+      // Add this product (toggle on) — replace previous selection for single-select feel
+      console.log('🏷️ Category selected:', productId);
+      updateFilter('products', [productId]);
+    }
+    
+    // Scroll to the regulation feed
+    setTimeout(() => {
+      document.getElementById('regulation-feed')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const handleStateClick = (state: any) => {
@@ -458,7 +351,7 @@ const AppLayout: React.FC = () => {
         )}
       </div>
 
-      <ProductCategories onCategoryClick={handleCategoryClick} />
+      <ProductCategories onCategoryClick={handleCategoryClick} activeProducts={filters.products} />
       <EnhancedStatsSection />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -500,7 +393,7 @@ const AppLayout: React.FC = () => {
                 </TabsContent>
                 
                 <TabsContent value="states">
-                  <CannabisHempPoller />
+                  <CannabisHempPoller onComplete={() => fetchStateData()} />
                 </TabsContent>
               </Tabs>
             </CardContent>
@@ -538,8 +431,36 @@ const AppLayout: React.FC = () => {
 
           <div className="lg:col-span-3">
 
-            <div className="mb-6">
+            <div id="regulation-feed" className="mb-6 scroll-mt-4">
               <div className="flex flex-col gap-4">
+                {/* Active product filter banner */}
+                {filters.products.length > 0 && (
+                  <div className="flex items-center gap-2 flex-wrap bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg px-4 py-3">
+                    <span className="text-sm font-medium text-amber-800">Filtering by:</span>
+                    {filters.products.map((p: string) => (
+                      <span key={p} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-600 text-white text-sm font-medium">
+                        {p}
+                        <button
+                          onClick={() => {
+                            const updated = filters.products.filter((x: string) => x !== p);
+                            updateFilter('products', updated);
+                          }}
+                          className="ml-1 hover:bg-amber-700 rounded-full p-0.5"
+                          aria-label={`Remove ${p} filter`}
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    ))}
+                    <button
+                      onClick={() => updateFilter('products', [])}
+                      className="text-sm text-amber-700 hover:text-amber-900 underline ml-2"
+                    >
+                      Clear all
+                    </button>
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">Regulatory Feed</h2>

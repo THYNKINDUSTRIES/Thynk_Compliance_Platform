@@ -14,7 +14,7 @@ export const SubscriptionRoute = ({
   children,
   requirePaid = false
 }: SubscriptionRouteProps) => {
-  const { user, profile, loading, isTrialActive, isPaidUser, trialDaysRemaining } = useAuth();
+  const { user, loading, isTrialActive, isPaidUser, trialDaysRemaining } = useAuth();
 
   // Show loading spinner while checking auth
   if (loading) {

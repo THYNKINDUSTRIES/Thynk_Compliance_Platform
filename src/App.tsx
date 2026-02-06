@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,39 +10,49 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { SubscriptionRoute } from "@/components/SubscriptionRoute";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { CookieConsent } from "@/components/CookieConsent";
+import { Loader2 } from "lucide-react";
 
-import Information from "./pages/Information";
-import Index from "./pages/Index";
-import StateDetail from "./pages/StateDetail";
-import StateAgencyProfile from "./pages/StateAgencyProfile";
-import FederalDetail from "./pages/FederalDetail";
-import RegulationDetail from "./pages/RegulationDetail";
-import SourceManagement from "./pages/SourceManagement";
-import AlertPreferences from "./pages/AlertPreferences";
-import Dashboard from "./pages/Dashboard";
-import Analytics from "./pages/Analytics";
-import Workflows from "./pages/Workflows";
-import NotificationPreferences from "./pages/NotificationPreferences";
-import NotFound from "./pages/NotFound";
-import Settings from "./pages/Settings";
-import Unsubscribe from "./pages/Unsubscribe";
-import ComplianceChecklists from "./pages/ComplianceChecklists";
-import TemplateLibrary from "./pages/TemplateLibrary";
-import APIMonitoring from "./pages/APIMonitoring";
-import Contact from "./pages/Contact";
-import Support from "./pages/Support";
-import StateComparison from "./pages/StateComparison";
-import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
-import PasswordReset from "./pages/PasswordReset";
-import Profile from "./pages/Profile";
-import VerifyEmail from "./pages/VerifyEmail";
-import DeploymentDashboard from "./pages/DeploymentDashboard";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import BetaInvites from "./pages/BetaInvites";
-import LegislatureBills from "./pages/LegislatureBills";
+// Lazy-loaded pages — each becomes its own chunk
+const Information = lazy(() => import("./pages/Information"));
+const Index = lazy(() => import("./pages/Index"));
+const StateDetail = lazy(() => import("./pages/StateDetail"));
+const StateAgencyProfile = lazy(() => import("./pages/StateAgencyProfile"));
+const FederalDetail = lazy(() => import("./pages/FederalDetail"));
+const RegulationDetail = lazy(() => import("./pages/RegulationDetail"));
+const SourceManagement = lazy(() => import("./pages/SourceManagement"));
+const AlertPreferences = lazy(() => import("./pages/AlertPreferences"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Analytics = lazy(() => import("./pages/Analytics"));
+const Workflows = lazy(() => import("./pages/Workflows"));
+const NotificationPreferences = lazy(() => import("./pages/NotificationPreferences"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
+const ComplianceChecklists = lazy(() => import("./pages/ComplianceChecklists"));
+const TemplateLibrary = lazy(() => import("./pages/TemplateLibrary"));
+const APIMonitoring = lazy(() => import("./pages/APIMonitoring"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Support = lazy(() => import("./pages/Support"));
+const StateComparison = lazy(() => import("./pages/StateComparison"));
+const Login = lazy(() => import("./pages/Login"));
+const SignUp = lazy(() => import("./pages/SignUp"));
+const PasswordReset = lazy(() => import("./pages/PasswordReset"));
+const Profile = lazy(() => import("./pages/Profile"));
+const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
+const DeploymentDashboard = lazy(() => import("./pages/DeploymentDashboard"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const BetaInvites = lazy(() => import("./pages/BetaInvites"));
+const LegislatureBills = lazy(() => import("./pages/LegislatureBills"));
 
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDF8F3] to-[#F5EDE3]">
+    <div className="text-center">
+      <Loader2 className="h-10 w-10 animate-spin text-[#794108] mx-auto" />
+      <p className="mt-3 text-sm text-gray-500">Loading…</p>
+    </div>
+  </div>
+);
 
 const queryClient = new QueryClient();
 
@@ -54,6 +65,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              <Suspense fallback={<PageLoader />}>
               <Routes>
                 {/* Public routes - no authentication required */}
                 <Route path="/" element={<Information />} />
@@ -96,6 +108,7 @@ const App = () => (
 
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              </Suspense>
               {/* Cookie Consent Banner - shows for first-time visitors */}
               <CookieConsent />
             </BrowserRouter>

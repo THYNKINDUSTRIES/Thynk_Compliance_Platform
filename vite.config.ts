@@ -45,8 +45,11 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs', '@radix-ui/react-select', '@radix-ui/react-tooltip', '@radix-ui/react-popover'],
           supabase: ['@supabase/supabase-js'],
+          charts: ['recharts'],
+          export: ['exceljs', 'jspdf', 'jspdf-autotable', 'html2canvas', 'xlsx'],
+          query: ['@tanstack/react-query'],
         },
       },
     },
