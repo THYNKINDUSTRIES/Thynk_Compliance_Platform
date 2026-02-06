@@ -41,8 +41,7 @@ const Information = () => {
             </Button>
             <Button 
               size="lg" 
-              variant="outline" 
-              className="border-white text-white hover:bg-white/10" 
+              className="bg-blue-600 text-white hover:bg-blue-700 border-blue-600" 
               onClick={handleExploreMap}
             >
               Explore the Map
@@ -58,15 +57,15 @@ const Information = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             <div className="flex flex-col items-center justify-center gap-2 p-4 bg-white rounded-lg shadow-sm">
               <CheckCircle2 className="w-6 h-6 text-green-600" />
-              <span className="text-sm font-medium text-center">15+ years in hemp, cannabis, kratom, and psychedelics</span>
+              <span className="text-sm font-medium text-center">15+ years in hemp, cannabis, kratom, and psychedelics policy</span>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 p-4 bg-white rounded-lg shadow-sm">
               <CheckCircle2 className="w-6 h-6 text-green-600" />
-              <span className="text-sm font-medium text-center">Advised 47+ government agencies</span>
+              <span className="text-sm font-medium text-center">Advised on more than 40 government agencies</span>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 p-4 bg-white rounded-lg shadow-sm">
               <CheckCircle2 className="w-6 h-6 text-green-600" />
-              <span className="text-sm font-medium text-center">100% DEA license application success rate</span>
+              <span className="text-sm font-medium text-center">100% License Application Success Rate</span>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 p-4 bg-white rounded-lg shadow-sm">
               <CheckCircle2 className="w-6 h-6 text-green-600" />
