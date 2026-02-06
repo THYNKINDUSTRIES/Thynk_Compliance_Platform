@@ -11,6 +11,7 @@ import { SubscriptionRoute } from "@/components/SubscriptionRoute";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { CookieConsent } from "@/components/CookieConsent";
 import { Loader2 } from "lucide-react";
+import { Analytics } from "@vercel/analytics/react";
 
 // Lazy-loaded pages — each becomes its own chunk
 const Information = lazy(() => import("./pages/Information"));
@@ -116,6 +117,7 @@ const App = () => (
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
+    <Analytics />
   </ThemeProvider>
 );
 
