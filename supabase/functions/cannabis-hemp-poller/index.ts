@@ -6,6 +6,7 @@ export const corsHeaders = {
   'Access-Control-Max-Age': '86400'
 };
 
+// @ts-ignore - Deno import for Supabase Edge Functions
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const STATE_CANNABIS_SOURCES: Record<string, {
@@ -2147,7 +2148,8 @@ async function fetchWithRetry(url: string, retries = 2): Promise<string | null> 
   return null;
 }
 
-Deno.serve(async (req) => {
+// @ts-ignore - Deno global for Supabase Edge Functions
+Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
@@ -2176,14 +2178,19 @@ Deno.serve(async (req) => {
       console.log('Fallback generated session_id:', session_id);
     }
 
+    // @ts-ignore - Deno global for Supabase Edge Functions
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     // Prefer non-SUPABASE alias used in CI/Dashboard, then the official service role env,
     // then runtime alias `Supabase_API_Public`, and finally the anon key.
     // Order: `SERVICE_ROLE_KEY` -> `SUPABASE_SERVICE_ROLE_KEY` -> `Supabase_API_Public` -> `SUPABASE_ANON_KEY`.
     // Do NOT commit secrets to the repo.
+    // @ts-ignore - Deno global for Supabase Edge Functions
     const supabaseKey = Deno.env.get('SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('Supabase_API_Public') || Deno.env.get('SUPABASE_ANON_KEY');
+    // @ts-ignore - Deno global for Supabase Edge Functions
     const keySource = Deno.env.get('SERVICE_ROLE_KEY')
+      // @ts-ignore - Deno global for Supabase Edge Functions
       ? 'service_role_alias_SERVICE_ROLE_KEY'
+      // @ts-ignore - Deno global for Supabase Edge Functions
       : (Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ? 'service_role_SUPABASE_SERVICE_ROLE_KEY' : (Deno.env.get('Supabase_API_Public') ? 'alias_Supabase_API_Public' : (Deno.env.get('SUPABASE_ANON_KEY') ? 'anon' : 'none')));
 
     if (!supabaseUrl || !supabaseKey) {
@@ -2256,7 +2263,7 @@ Deno.serve(async (req) => {
       errors.push(`existing_items:${existingItemsErr.message}`);
     }
 
-    const existingIds = new Set((existingItems || []).map(i => i.external_id));
+    const existingIds = new Set((existingItems || []).map((i: { external_id: string }) => i.external_id));
 
     // Processing limits
     const maxItemsPerState = stateCode ? 50 : 25; // More items for single state requests, reasonable for multi-state
@@ -2270,7 +2277,7 @@ Deno.serve(async (req) => {
       }
 
       console.log(`Processing state: ${code} (${sources.agencyName})`);
-      const jurisdiction = jurisdictions?.find(j => j.code === code);
+      const jurisdiction = jurisdictions?.find((j: { id: string; name: string; code: string }) => j.code === code);
       if (!jurisdiction) {
         console.log(`No jurisdiction found for ${code}, skipping`);
         continue;
@@ -2479,6 +2486,7 @@ async function analyzeWithOpenAI(
   isComplianceRelated: boolean;
   urgency: string;
 }> {
+  // @ts-ignore - Deno global for Supabase Edge Functions
   const openaiKey = Deno.env.get('OPENAI_API_KEY');
   if (!openaiKey) {
     console.log('No OpenAI key — falling back to default analysis');

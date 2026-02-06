@@ -12,7 +12,6 @@ import {
   CheckCircle,
   AlertCircle,
   Clock,
-  MapPin,
   FileText,
   Bell,
   BookOpen,
@@ -20,9 +19,7 @@ import {
   Gavel,
   Loader2,
   Play,
-  Calendar,
   ExternalLink,
-  Sparkles,
   AlertTriangle,
   Shield,
   TrendingUp,
@@ -137,7 +134,7 @@ export const KratomPoller: React.FC = () => {
       const documents = data || [];
       const documentTypes = [...new Set(documents.map(d => d.document_type).filter(Boolean))];
       const lastUpdated = documents.length > 0
-        ? documents.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0].created_at
+        ? documents.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())[0]?.created_at || null
         : null;
 
       setStats({
@@ -310,7 +307,7 @@ export const KratomPoller: React.FC = () => {
               ) : (
                 recentDocuments.map((doc) => {
                   const docType = DOCUMENT_TYPE_CONFIG[doc.document_type] || DOCUMENT_TYPE_CONFIG.announcement;
-                  const DocIcon = docType.icon;
+                  const DocIcon = docType!.icon;
 
                   return (
                     <Card key={doc.id} className="mb-3">
@@ -319,8 +316,8 @@ export const KratomPoller: React.FC = () => {
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               <DocIcon className="w-4 h-4" />
-                              <Badge variant="secondary" className={docType.color}>
-                                {docType.label}
+                              <Badge variant="secondary" className={docType!.color}>
+                                {docType!.label}
                               </Badge>
                               <Badge variant="outline">{doc.jurisdiction}</Badge>
                             </div>

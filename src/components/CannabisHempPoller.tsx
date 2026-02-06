@@ -26,8 +26,7 @@ import {
   AlertTriangle,
   Shield,
   TrendingUp,
-  Zap,
-  Leaf
+  Zap
 } from 'lucide-react';
 
 interface StateStatus {
@@ -37,22 +36,6 @@ interface StateStatus {
   lastUpdated: string | null;
   documentCount: number;
   documentTypes: string[];
-}
-
-// Updated interface to match actual ingestion_log table schema
-// The table uses 'started_at' not 'created_at'
-interface PollingLog {
-  id: string;
-  source_id?: string;
-  source?: string;
-  status: string;
-  records_fetched: number;
-  records_created: number;
-  started_at?: string;  // Primary timestamp column
-  timestamp?: string;   // Fallback timestamp column
-  created_at?: string;  // Legacy fallback
-  error_message?: string;
-  metadata: any;
 }
 
 // Normalized log for display - uses created_at for consistent timestamp handling
@@ -151,21 +134,6 @@ const STATE_AGENCIES: Record<string, { name: string; agency: string; hasRSS: boo
   'ID': { name: 'Idaho', agency: 'Department of Agriculture', hasRSS: false },
   'WY': { name: 'Wyoming', agency: 'Department of Agriculture', hasRSS: false },
 };
-
-// Edge function names - cannabis-hemp-poller is the primary poller
-const EDGE_FUNCTIONS = {
-  PRIMARY: 'cannabis-hemp-poller',
-};
-
-// Source IDs that identify cannabis/hemp poller logs
-const POLLER_SOURCE_IDS = [
-  'cannabis-hemp-poller',
-  'cannabis_hemp_poller',
-  'enhanced-state-poller',
-  'state-news-scraper',
-  'state_rss',
-  'state_news',
-];
 
 
 export function CannabisHempPoller() {
@@ -633,7 +601,7 @@ export function CannabisHempPoller() {
                       const config = DOCUMENT_TYPE_CONFIG[docType] || DOCUMENT_TYPE_CONFIG['announcement'];
                       const urgency = item.metadata?.urgency || 'medium';
                       const urgencyConfig = URGENCY_CONFIG[urgency] || URGENCY_CONFIG['medium'];
-                      const Icon = config.icon;
+                      const Icon = config!.icon;
                       const stateCode = item.jurisdiction?.code || 'Unknown';
                       const stateName = item.jurisdiction?.name || stateCode;
 
@@ -643,8 +611,8 @@ export function CannabisHempPoller() {
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
                                 <Badge variant="outline" className="text-xs font-medium">{stateCode}</Badge>
-                                <Badge className={`${config.color} border-0 text-xs`}><Icon className="w-3 h-3 mr-1" />{config.label}</Badge>
-                                <Badge className={`${urgencyConfig.color} text-xs`}>{urgencyConfig.label}</Badge>
+                                <Badge className={`${config!.color} border-0 text-xs`}><Icon className="w-3 h-3 mr-1" />{config!.label}</Badge>
+                                <Badge className={`${urgencyConfig!.color} text-xs`}>{urgencyConfig!.label}</Badge>
                               </div>
                               <h4 className="font-medium text-gray-900 line-clamp-2">{item.title}</h4>
                               <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">

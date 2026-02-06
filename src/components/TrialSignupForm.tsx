@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, CreditCard, Shield, Clock } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
 import { initFingerprint, handleTrialSignup } from '@/lib/trialSystem';
 
 // Available jurisdictions for trial selection
@@ -32,7 +31,7 @@ export const TrialSignupForm = () => {
     // Initialize FingerprintJS
     initFingerprint().then(() => {
       setFingerprintLoaded(true);
-    }).catch(err => {
+    }).catch((err: unknown) => {
       console.error('Fingerprint init error:', err);
       setError('Failed to initialize security features. Please refresh and try again.');
     });

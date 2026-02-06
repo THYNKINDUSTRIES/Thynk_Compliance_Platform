@@ -6,6 +6,7 @@ export const corsHeaders = {
   'Access-Control-Max-Age': '86400'
 };
 
+// @ts-ignore - Deno import for Supabase Edge Functions
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const STATE_KRATOM_SOURCES: Record<string, {
@@ -383,6 +384,7 @@ async function analyzeContentWithAI(title: string, description: string, link: st
   documentType: string;
   confidence: number;
 }> {
+  // @ts-ignore - Deno global for Supabase Edge Functions
   const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
   if (!openaiApiKey) {
     console.error('Missing OPENAI_API_KEY');
@@ -482,7 +484,8 @@ Only respond with valid JSON, no other text.`;
   }
 }
 
-Deno.serve(async (req) => {
+// @ts-ignore - Deno global for Supabase Edge Functions
+Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
@@ -508,10 +511,15 @@ Deno.serve(async (req) => {
       console.log('Fallback generated session_id:', session_id);
     }
 
+    // @ts-ignore - Deno global for Supabase Edge Functions
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    // @ts-ignore - Deno global for Supabase Edge Functions
     const supabaseKey = Deno.env.get('SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('Supabase_API_Public') || Deno.env.get('SUPABASE_ANON_KEY');
+    // @ts-ignore - Deno global for Supabase Edge Functions
     const keySource = Deno.env.get('SERVICE_ROLE_KEY')
+      // @ts-ignore - Deno global for Supabase Edge Functions
       ? 'service_role_alias_SERVICE_ROLE_KEY'
+      // @ts-ignore - Deno global for Supabase Edge Functions
       : (Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ? 'service_role_SUPABASE_SERVICE_ROLE_KEY' : (Deno.env.get('Supabase_API_Public') ? 'alias_Supabase_API_Public' : (Deno.env.get('SUPABASE_ANON_KEY') ? 'anon' : 'none')));
 
     if (!supabaseUrl || !supabaseKey) {

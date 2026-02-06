@@ -1,12 +1,25 @@
 // THYNKFLOW Trial System - Client-side Integration
 // Include this in your signup and dashboard pages
 
-// 1. FingerprintJS Integration
-// Add this script tag to your HTML head:
-// <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
+// Type declarations for global libraries
+declare global {
+  interface Window {
+    ThynkTrial: {
+      handleTrialSignup: (email: string, selectedJurisdiction: string) => Promise<void>;
+      checkTrialStatus: () => Promise<any>;
+      applyTrialRestrictions: (data: any, trialStatus: any) => any[];
+      checkExportPermission: (trialStatus: any) => boolean;
+    };
+  }
+
+  const FingerprintJS: any;
+  const Stripe: any;
+  const supabaseAuthToken: string;
+  function showError(message: string): void;
+}
 
 // Initialize FingerprintJS
-let fingerprintVisitorId = null;
+let fingerprintVisitorId: string | null = null;
 
 async function initFingerprint() {
   try {
@@ -23,10 +36,10 @@ async function initFingerprint() {
 
 // 2. Stripe Elements Integration
 // Initialize Stripe (add your publishable key)
-const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_your_stripe_publishable_key';
+const stripePublishableKey = (import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_your_stripe_publishable_key';
 const stripe = Stripe(stripePublishableKey);
-let elements;
-let paymentElement;
+let elements: any;
+let paymentElement: any;
 
 function initializeStripeElements() {
   elements = stripe.elements();
@@ -38,7 +51,7 @@ function initializeStripeElements() {
 }
 
 // 3. Trial Signup Flow
-async function handleTrialSignup(email, selectedJurisdiction) {
+async function handleTrialSignup(email: string, selectedJurisdiction: string) {
   try {
     // Ensure fingerprint is loaded
     if (!fingerprintVisitorId) {
@@ -96,7 +109,7 @@ async function handleTrialSignup(email, selectedJurisdiction) {
 
   } catch (error) {
     console.error('Signup error:', error);
-    showError('Signup failed: ' + error.message);
+    showError('Signup failed: ' + (error instanceof Error ? error.message : String(error)));
   }
 }
 
@@ -129,7 +142,7 @@ async function checkTrialStatus() {
 }
 
 // 5. UI Helpers
-function showSalesContactPrompt(reason) {
+function showSalesContactPrompt(reason: string) {
   const modal = document.createElement('div');
   modal.innerHTML = `
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -175,12 +188,12 @@ function showTrialTeaser() {
 }
 
 // 6. Data Filtering for Trial Users
-function applyTrialRestrictions(data, trialStatus) {
+function applyTrialRestrictions(data: any, trialStatus: any) {
   if (!trialStatus.is_trial_active || trialStatus.is_authorized_domain) {
     return data; // Full access
   }
 
-  return data.filter(item => {
+  return data.filter((item: any) => {
     // Filter by selected jurisdiction
     if (item.jurisdiction_code !== trialStatus.selected_jurisdiction) {
       return false;
@@ -192,7 +205,7 @@ function applyTrialRestrictions(data, trialStatus) {
     cutoffDate.setHours(cutoffDate.getHours() - 24);
 
     return itemDate <= cutoffDate;
-  }).map(item => ({
+  }).map((item: any) => ({
     ...item,
     full_text: undefined, // Hide full text
     change_log: undefined, // Hide change log
@@ -201,7 +214,7 @@ function applyTrialRestrictions(data, trialStatus) {
 }
 
 // 7. Export Blocking
-function checkExportPermission(trialStatus) {
+function checkExportPermission(trialStatus: any) {
   if (trialStatus.is_trial_active && !trialStatus.is_authorized_domain) {
     showError('Export functionality requires a paid subscription.');
     return false;
@@ -232,3 +245,6 @@ window.ThynkTrial = {
   applyTrialRestrictions,
   checkExportPermission
 };
+
+// ES6 exports for module imports
+export { initFingerprint, handleTrialSignup, checkTrialStatus, applyTrialRestrictions, checkExportPermission };

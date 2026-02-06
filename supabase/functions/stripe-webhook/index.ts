@@ -1,4 +1,6 @@
+// @ts-ignore - Deno import for Supabase Edge Functions
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+// @ts-ignore - Deno import for Supabase Edge Functions
 import Stripe from 'https://esm.sh/stripe@14.21.0?target=deno';
 
 // CORS headers for all responses
@@ -8,19 +10,25 @@ export const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
 };
 
+// @ts-ignore - Deno global for Supabase Edge Functions
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
   apiVersion: '2023-10-16',
   httpClient: Stripe.createFetchHttpClient(),
 });
 
+// @ts-ignore - Deno global for Supabase Edge Functions
 const supabase = createClient(
+  // @ts-ignore - Deno global for Supabase Edge Functions
   Deno.env.get('SUPABASE_URL') ?? '',
+  // @ts-ignore - Deno global for Supabase Edge Functions
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 );
 
+// @ts-ignore - Deno global for Supabase Edge Functions
 const endpointSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
-Deno.serve(async (req) => {
+// @ts-ignore - Deno global for Supabase Edge Functions
+Deno.serve(async (req: Request) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
