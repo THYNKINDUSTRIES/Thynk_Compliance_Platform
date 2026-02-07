@@ -290,13 +290,27 @@ Deno.serve(async (req: Request) => {
     // @ts-ignore - Deno global for Supabase Edge Functions
     const apiKey = Deno.env.get('FEDERAL_REGISTER_API_KEY');
     const headers: HeadersInit = apiKey ? { 'X-Api-Key': apiKey } : {};
+    // Look up real federal jurisdiction ID
+    let federalJurisdictionId = '00000000-0000-0000-0000-000000000001';
+    try {
+      const { data: fedJ } = await supabase
+        .from('jurisdiction')
+        .select('id')
+        .eq('slug', 'federal')
+        .maybeSingle();
+      if (fedJ?.id) federalJurisdictionId = fedJ.id;
+      console.info('Federal jurisdiction ID:', federalJurisdictionId);
+    } catch (e: any) {
+      console.warn('Could not look up federal jurisdiction:', e.message);
+    }
+
     const searchTerms = ['cannabis', 'marijuana', 'hemp', 'CBD', 'THC', 'kratom', 'nicotine', 'tobacco', 'vaping'];
     let recordsProcessed = 0;
     const batch: any[] = [];
 
     for (const term of searchTerms) {
       for (let page = 1; page <= 5; page++) {
-        const url = `https://www.federalregister.gov/api/v1/documents.json?per_page=100&page=${page}&order=newest&publication_date[gte]=${startDate}&conditions[term]=${encodeURIComponent(term)}&fields[]=title&fields[]=publication_date&fields[]=document_number&fields[]=html_url&fields[]=agencies&fields[]=abstract`;
+        const url = `https://www.federalregister.gov/api/v1/documents.json?per_page=100&page=${page}&order=newest&publication_date[gte]=${startDate}&conditions[term]=${encodeURIComponent(term)}&fields[]=title&fields[]=publication_date&fields[]=document_number&fields[]=html_url&fields[]=agencies&fields[]=abstract&fields[]=type&fields[]=comment_url&fields[]=dates&fields[]=comments_close_on`;
 
         let response: Response;
         try {
@@ -331,10 +345,19 @@ Deno.serve(async (req: Request) => {
             title: doc.title || 'Untitled',
             description: doc.abstract || '',
             effective_date: doc.publication_date,
-            jurisdiction_id: '00000000-0000-0000-0000-000000000001',
+            jurisdiction_id: federalJurisdictionId,
             source: 'federal_register',
             url: verifiedUrl,
-            metadata: { agencies: doc.agencies || null, original_url: doc.html_url, verified_url: verifiedUrl }
+            metadata: {
+              agencies: doc.agencies || null,
+              original_url: doc.html_url,
+              verified_url: verifiedUrl,
+              document_type: doc.type === 'Proposed Rule' ? 'proposed_rule' : doc.type === 'Notice' ? 'notice' : doc.type === 'Rule' ? 'rule' : (doc.type || 'unknown'),
+              comment_url: doc.comment_url || null,
+              comment_end_date: doc.comments_close_on || null,
+              commentEndDate: doc.comments_close_on || null,
+              dates: doc.dates || null,
+            }
           });
           recordsProcessed++;
 

@@ -49,36 +49,53 @@ export function OpenCommentPeriods() {
   const loadOpenComments = async () => {
     try {
       setError(null);
-      // Try regulations_gov source first, fall back to any source with comment metadata
+      // Fetch recent regulations — look for ones with open comment periods or open status
       const { data, error: queryError } = await supabase
         .from('instrument')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(500);
+        .limit(1000);
 
       if (queryError) throw queryError;
 
-      // Filter for relevant regulations with open comment periods
+      // Filter for relevant regulations with comment opportunities
       const today = new Date();
       const filtered = (data || []).filter((reg: OpenComment) => {
         // Check multiple places for comment end date
         const commentEnd = reg.metadata?.commentEndDate 
           || reg.metadata?.comment_end_date
-          || reg.metadata?.attributes?.commentEndDate;
-        if (!commentEnd) return false;
+          || reg.metadata?.attributes?.commentEndDate
+          || reg.metadata?.comment_deadline;
         
-        try {
-          const endDate = new Date(commentEnd);
-          if (endDate < today) return false;
-        } catch {
-          return false;
+        // If we have a comment end date, check it's still open
+        if (commentEnd) {
+          try {
+            const endDate = new Date(commentEnd);
+            if (endDate < today) return false;
+          } catch {
+            return false;
+          }
+          const agencyId = reg.metadata?.attributes?.agencyId || '';
+          return isRelevantRegulation(reg.title || '', reg.description || '', agencyId);
         }
 
-        // Filter for relevance to cannabis, hemp, kratom, etc.
-        const agencyId = reg.metadata?.attributes?.agencyId || '';
-        return isRelevantRegulation(reg.title || '', reg.description || '', agencyId);
+        // For federal_register source: proposed/notice rules are often open for comment
+        if (reg.metadata?.document_type === 'proposed_rule' || reg.metadata?.document_type === 'notice') {
+          const agencyId = reg.metadata?.attributes?.agencyId || reg.metadata?.agencies?.[0]?.name || '';
+          return isRelevantRegulation(reg.title || '', reg.description || '', agencyId);
+        }
+
+        // For regulations with status 'Open' or 'Proposed'
+        const status = (reg as any).status?.toLowerCase() || '';
+        if (status === 'open' || status === 'proposed') {
+          const agencyId = reg.metadata?.attributes?.agencyId || '';
+          return isRelevantRegulation(reg.title || '', reg.description || '', agencyId);
+        }
+
+        return false;
       }).sort((a, b) => {
-        const getCommentEnd = (r: OpenComment) => r.metadata?.commentEndDate || r.metadata?.comment_end_date || r.metadata?.attributes?.commentEndDate || 0;
+        // Sort by comment deadline if available, then by effective_date
+        const getCommentEnd = (r: OpenComment) => r.metadata?.commentEndDate || r.metadata?.comment_end_date || r.metadata?.attributes?.commentEndDate || r.metadata?.comment_deadline || r.effective_date || 0;
         const dateA = new Date(getCommentEnd(a));
         const dateB = new Date(getCommentEnd(b));
         return dateA.getTime() - dateB.getTime();
@@ -157,9 +174,9 @@ export function OpenCommentPeriods() {
       ) : (
         <div className="grid gap-4">
           {regulations.map((reg) => {
-            const commentEnd = reg.metadata?.commentEndDate;
+            const commentEnd = reg.metadata?.commentEndDate || reg.metadata?.comment_end_date || reg.metadata?.comment_deadline || reg.metadata?.attributes?.commentEndDate;
             const daysLeft = commentEnd ? getDaysRemaining(commentEnd) : null;
-            const agencyId = reg.metadata?.attributes?.agencyId || 'Federal';
+            const agencyId = reg.metadata?.attributes?.agencyId || reg.metadata?.agencies?.[0]?.name || (reg as any).source || 'Federal';
             
             return (
               <Card key={reg.id} className="p-6 hover:shadow-lg transition-shadow border-l-4 border-l-primary">

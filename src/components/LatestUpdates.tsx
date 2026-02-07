@@ -31,10 +31,12 @@ export const LatestUpdates: React.FC = () => {
           title,
           jurisdiction:jurisdiction_id(name),
           published_at,
+          effective_date,
+          created_at,
           status,
           impact
         `)
-        .order('published_at', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(5);
 
       if (fetchError) {
@@ -57,7 +59,7 @@ export const LatestUpdates: React.FC = () => {
           title: cleanTitle,
           jurisdiction: (item.jurisdiction as { name?: string })?.name || 'Unknown',
           type: item.status?.toLowerCase() === 'open' ? 'urgent' : item.impact?.toLowerCase() === 'high' ? 'important' : 'info',
-          time: item.published_at ? formatRelativeTime(item.published_at) : 'Recently'
+          time: formatRelativeTime(item.published_at || item.effective_date || item.created_at || '')
         };
       });
 
