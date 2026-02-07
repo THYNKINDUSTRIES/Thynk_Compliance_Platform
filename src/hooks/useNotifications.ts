@@ -55,12 +55,24 @@ export function useNotifications() {
         .order('created_at', { ascending: false })
         .limit(50);
 
-      if (error) throw error;
+      if (error) {
+        // 42P01 = table doesn't exist, PGRST204 = no content — both are expected if notifications table is missing
+        if (error.code === '42P01' || error.message?.includes('relation') || error.code === 'PGRST204') {
+          // Table doesn't exist yet — silently return empty
+          setNotifications([]);
+          setUnreadCount(0);
+          return;
+        }
+        throw error;
+      }
 
       setNotifications(data || []);
       setUnreadCount(data?.filter(n => !n.is_read).length || 0);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
+    } catch (error: any) {
+      // Only log non-404 errors
+      if (error?.code !== '42P01' && !error?.message?.includes('relation')) {
+        console.error('Error fetching notifications:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -73,10 +85,13 @@ export function useNotifications() {
         .update({ is_read: true, read_at: new Date().toISOString() })
         .eq('id', notificationId);
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42P01' || error.message?.includes('relation')) return;
+        throw error;
+      }
       fetchNotifications();
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
+    } catch (error: any) {
+      if (error?.code !== '42P01') console.error('Error marking notification as read:', error);
     }
   };
 
@@ -91,10 +106,13 @@ export function useNotifications() {
         .eq('user_id', user.id)
         .eq('is_read', false);
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42P01' || error.message?.includes('relation')) return;
+        throw error;
+      }
       fetchNotifications();
-    } catch (error) {
-      console.error('Error marking all as read:', error);
+    } catch (error: any) {
+      if (error?.code !== '42P01') console.error('Error marking all as read:', error);
     }
   };
 

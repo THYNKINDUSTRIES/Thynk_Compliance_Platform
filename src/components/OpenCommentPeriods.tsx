@@ -49,19 +49,22 @@ export function OpenCommentPeriods() {
   const loadOpenComments = async () => {
     try {
       setError(null);
+      // Try regulations_gov source first, fall back to any source with comment metadata
       const { data, error: queryError } = await supabase
         .from('instrument')
         .select('*')
-        .eq('source', 'regulations_gov')
         .order('created_at', { ascending: false })
-        .limit(200);
+        .limit(500);
 
       if (queryError) throw queryError;
 
       // Filter for relevant regulations with open comment periods
       const today = new Date();
       const filtered = (data || []).filter((reg: OpenComment) => {
-        const commentEnd = reg.metadata?.commentEndDate;
+        // Check multiple places for comment end date
+        const commentEnd = reg.metadata?.commentEndDate 
+          || reg.metadata?.comment_end_date
+          || reg.metadata?.attributes?.commentEndDate;
         if (!commentEnd) return false;
         
         try {
@@ -75,8 +78,9 @@ export function OpenCommentPeriods() {
         const agencyId = reg.metadata?.attributes?.agencyId || '';
         return isRelevantRegulation(reg.title || '', reg.description || '', agencyId);
       }).sort((a, b) => {
-        const dateA = new Date(a.metadata?.commentEndDate || 0);
-        const dateB = new Date(b.metadata?.commentEndDate || 0);
+        const getCommentEnd = (r: OpenComment) => r.metadata?.commentEndDate || r.metadata?.comment_end_date || r.metadata?.attributes?.commentEndDate || 0;
+        const dateA = new Date(getCommentEnd(a));
+        const dateB = new Date(getCommentEnd(b));
         return dateA.getTime() - dateB.getTime();
       }).slice(0, 50);
 

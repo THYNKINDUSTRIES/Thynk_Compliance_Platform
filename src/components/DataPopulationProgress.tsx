@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -27,33 +27,42 @@ interface Props {
 export function DataPopulationProgress({ sessionId, onComplete }: Props) {
   const [progress, setProgress] = useState<ProgressRecord[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
+  const completeFiredRef = useRef(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    fetchProgress();
-    const interval = setInterval(fetchProgress, 2000);
-    return () => clearInterval(interval);
-  }, [sessionId]);
+    completeFiredRef.current = false;
 
-  const fetchProgress = async () => {
-    const { data } = await supabase
-      .from('data_population_progress')
-      .select('*')
-      .eq('session_id', sessionId)
-      .order('created_at');
+    const fetchProgress = async () => {
+      const { data } = await supabase
+        .from('data_population_progress')
+        .select('*')
+        .eq('session_id', sessionId)
+        .order('created_at');
 
-    if (data) {
-      setProgress(data);
+      if (data) {
+        setProgress(data);
 
-      const allComplete = data.every(r => r.status === 'completed' || r.status === 'error');
+        const allComplete = data.length > 0 && data.every(r => r.status === 'completed' || r.status === 'error');
 
-      // Call onComplete only on transition to complete
-      if (allComplete && onComplete) {
-        if (progress.length === 0 || !progress.every(r => r.status === 'completed' || r.status === 'error')) {
-          onComplete();
+        if (allComplete && !completeFiredRef.current) {
+          completeFiredRef.current = true;
+          // Stop polling — we're done
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+          onComplete?.();
         }
       }
-    }
-  };
+    };
+
+    fetchProgress();
+    intervalRef.current = setInterval(fetchProgress, 2000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [sessionId]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {

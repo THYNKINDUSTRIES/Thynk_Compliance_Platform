@@ -247,13 +247,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         // Create profile - email_verified is true since Supabase email confirmation may be disabled
         // onboarding_completed is false for new users
+        const now = new Date();
+        const trialEnd = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days from now
+        
         const { error: profileError } = await supabase.from('user_profiles').upsert({
           id: data.user.id,
           email: data.user.email,
           full_name: fullName,
           email_verified: true,
           role: 'user',
-          onboarding_completed: false
+          onboarding_completed: false,
+          subscription_status: 'trial',
+          trial_started_at: now.toISOString(),
+          trial_ends_at: trialEnd.toISOString(),
         }, { onConflict: 'id' });
         
         if (profileError) {

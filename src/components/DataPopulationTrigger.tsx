@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -38,19 +38,17 @@ export function DataPopulationTrigger() {
     }
   };
 
-  const [lastCompletedAt, setLastCompletedAt] = useState<string | null>(null);
+  const toastFiredRef = useRef(false);
 
   const handleComplete = () => {
-    const now = new Date().toISOString();
-    if (lastCompletedAt === now) return;
+    if (toastFiredRef.current) return;
+    toastFiredRef.current = true;
 
     toast({
       title: 'Data Population Complete',
       description: 'All regulations have been successfully imported.',
-      duration: 10000,
+      duration: 5000,
     });
-
-    setLastCompletedAt(now);
   };
 
 

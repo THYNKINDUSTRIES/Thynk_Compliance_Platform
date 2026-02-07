@@ -4,10 +4,11 @@ import { SearchBar } from './SearchBar';
 import { Footer } from './Footer';
 import { LatestUpdates } from './LatestUpdates';
 import { useAppContext } from '@/contexts/AppContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useRegulations } from '@/hooks/useRegulations';
 import { supabase } from '@/lib/supabase';
 import { clearCache } from '@/lib/cache';
-import { Loader2, ArrowUpDown, Check, RefreshCw, AlertTriangle, Database, MapPin } from 'lucide-react';
+import { Loader2, ArrowUpDown, Check, RefreshCw, AlertTriangle, Database, MapPin, Shield, Zap, BarChart3, Bell } from 'lucide-react';
 
 import { RegulationCard } from './RegulationCard';
 import { FilterPanel } from './FilterPanel';
@@ -32,7 +33,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 const AppLayout: React.FC = () => {
   const navigate = useNavigate();
   const { filters, updateFilter, clearFilters } = useAppContext();
+  const { user, isAdmin, isTrialActive, isPaidUser, trialDaysRemaining } = useAuth();
   const { regulations, loading, error, fromCache, refresh } = useRegulations(filters);
+  const isFullAccess = isPaidUser || isTrialActive;
   const [sortBy, setSortBy] = useState<string>('date-desc');
   const [secondarySortBy, setSecondarySortBy] = useState<string>('none');
   const [isClearing, setIsClearing] = useState(false);
@@ -359,7 +362,64 @@ const AppLayout: React.FC = () => {
       </div>
       
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Data Population Section with Tabs */}
+        {/* Upgrade CTA for non-authenticated or expired visitors */}
+        {!isFullAccess && (
+          <div className="mb-8">
+            <Card className="border-blue-200 bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 shadow-lg overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100/30 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <CardContent className="relative pt-8 pb-8 px-8">
+                <div className="flex flex-col lg:flex-row items-center gap-8">
+                  <div className="flex-1 text-center lg:text-left">
+                    <div className="flex items-center gap-2 justify-center lg:justify-start mb-3">
+                      <Shield className="h-6 w-6 text-blue-600" />
+                      <h3 className="text-2xl font-bold text-gray-900">Unlock Full Platform Access</h3>
+                    </div>
+                    <p className="text-gray-600 mb-6 max-w-lg">
+                      You're previewing live regulatory data. Subscribe to unlock dashboards, custom alerts, compliance checklists, and more.
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <Zap className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                        <span>Real-time alerts</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <BarChart3 className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                        <span>Analytics dashboard</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <Bell className="h-4 w-4 text-purple-500 flex-shrink-0" />
+                        <span>Custom notifications</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        <span>Compliance checklists</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+                      {!user ? (
+                        <>
+                          <Button onClick={() => navigate('/signup')} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8">
+                            Start Free Trial
+                          </Button>
+                          <Button onClick={() => navigate('/login')} variant="outline" size="lg" className="border-blue-300 text-blue-700 hover:bg-blue-50">
+                            Sign In
+                          </Button>
+                        </>
+                      ) : (
+                        <Button onClick={() => navigate('/profile')} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8">
+                          Upgrade Now
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Data Population Section - Admin Only */}
+        {isAdmin && (
         <div className="mb-8">
           <Card className="border-[#E5DFD6] shadow-lg">
             <CardHeader className="bg-gradient-to-r from-[#FDF8F3] to-[#F5EDE3] border-b border-[#E5DFD6]">
@@ -399,6 +459,7 @@ const AppLayout: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+        )}
         
         <div className="mb-6 text-center">
           <Button 

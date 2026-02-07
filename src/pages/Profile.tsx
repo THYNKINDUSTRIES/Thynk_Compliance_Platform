@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -111,6 +111,13 @@ export default function Profile() {
   const { user, profile, updateProfile, updatePassword, onboardingCompleted, resetOnboarding } = useAuth();
   const [fullName, setFullName] = useState(profile?.full_name || '');
   const [saving, setSaving] = useState(false);
+
+  // Sync fullName when profile loads asynchronously
+  useEffect(() => {
+    if (profile?.full_name && !fullName) {
+      setFullName(profile.full_name);
+    }
+  }, [profile?.full_name]);
   
   // Password change state
   const [newPassword, setNewPassword] = useState('');

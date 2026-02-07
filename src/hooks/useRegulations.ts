@@ -45,6 +45,30 @@ export interface Regulation {
 // Cache key prefix for regulations
 const CACHE_PREFIX = 'regulations';
 
+// Product keyword map — used to infer products from title/description when metadata is missing
+const PRODUCT_KEYWORDS: Record<string, string[]> = {
+  'Hemp': ['hemp', 'cbd', 'cannabidiol', 'industrial hemp'],
+  'Cannabis': ['cannabis', 'marijuana', 'marihuana', 'weed'],
+  'Delta-8': ['delta-8', 'delta 8', 'd8', 'delta-8-thc', 'delta-8 thc'],
+  'Kratom': ['kratom', 'mitragynine', 'mitragyna speciosa'],
+  'Psychedelics': ['psychedelic', 'psilocybin', 'psilocin', 'ketamine', 'mdma', 'mescaline', 'lsd', 'ayahuasca', 'ibogaine', 'dmt'],
+  'Nicotine': ['nicotine', 'vape', 'vaping', 'e-cigarette', 'tobacco', 'cigarette', 'cigar', 'smokeless'],
+  'Edibles': ['edible', 'edibles', 'infused food', 'cannabis-infused', 'thc gummies', 'thc beverage'],
+  'Kava': ['kava', 'kava kava', 'kavalactone', 'piper methysticum'],
+};
+
+// Infer products from text content
+const inferProducts = (title: string, description: string): string[] => {
+  const text = `${title} ${description}`.toLowerCase();
+  const matched: string[] = [];
+  for (const [product, keywords] of Object.entries(PRODUCT_KEYWORDS)) {
+    if (keywords.some(kw => text.includes(kw))) {
+      matched.push(product);
+    }
+  }
+  return matched;
+};
+
 // Transform raw data to Regulation format
 const transformData = (data: any[]): Regulation[] => {
   return data.map(item => {
@@ -66,6 +90,12 @@ const transformData = (data: any[]): Regulation[] => {
       products = [item.metadata.category];
     } else if (item.metadata?.products && Array.isArray(item.metadata.products)) {
       products = item.metadata.products;
+    }
+
+    // Fallback: infer products from title/description when metadata is missing
+    if (products.length === 0) {
+      const desc = item.summary || item.abstract || item.description || item.content || '';
+      products = inferProducts(item.title || '', desc);
     }
 
     // Extract tags from metadata if available
@@ -93,7 +123,7 @@ const transformData = (data: any[]): Regulation[] => {
       jurisdiction_id: item.jurisdiction_id,
       authority: item.authority || item.agency || item.source || item.metadata?.agency_name || 'Unknown',
       status: item.status || 'Active',
-      type: item.type || item.document_type || item.instrument_type || 'Rule',
+      type: item.type || item.document_type || item.instrument_type || item.metadata?.document_type || 'Rule',
       impactLevel: item.impact_level || item.metadata?.impact || item.metadata?.cannabis_status || 'Medium',
       effectiveDate: effectiveDate,
       publishedDate: publishedDate,
@@ -236,7 +266,7 @@ export const useRegulations = (filters?: RegulationFilters) => {
 
           const { data: searchResults, error: searchError } = await supabase.rpc('search_instruments', {
             search_query: safeFilters.search,
-            result_limit: 100,
+            result_limit: 500,
           });
 
           if (searchError) {
@@ -250,7 +280,7 @@ export const useRegulations = (filters?: RegulationFilters) => {
               `)
               .or(`title.ilike.%${safeFilters.search}%,description.ilike.%${safeFilters.search}%`)
               .order('effective_date', { ascending: false })
-              .limit(100);
+              .limit(500);
 
             if (fallbackError) throw fallbackError;
             transformedData = transformData(data || []);
@@ -288,7 +318,7 @@ export const useRegulations = (filters?: RegulationFilters) => {
               jurisdiction:jurisdiction_id(id, name, code)
             `)
             .order('effective_date', { ascending: false })
-            .limit(100);
+            .limit(500);
 
           if (queryError) {
             console.error('❌ Query error:', queryError);

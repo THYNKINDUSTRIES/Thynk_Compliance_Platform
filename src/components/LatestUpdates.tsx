@@ -47,13 +47,19 @@ export const LatestUpdates: React.FC = () => {
         return;
       }
 
-      const formattedUpdates: Update[] = data.map(item => ({
-        id: item.id,
-        title: item.title || 'New Regulation',
-        jurisdiction: (item.jurisdiction as { name?: string })?.name || 'Unknown',
-        type: item.status === 'open' ? 'urgent' : item.impact === 'high' ? 'important' : 'info',
-        time: item.published_at ? formatRelativeTime(item.published_at) : 'Recently'
-      }));
+      const formattedUpdates: Update[] = data.map(item => {
+        // Strip any HTML tags from title to prevent broken rendering
+        const rawTitle = item.title || 'New Regulation';
+        const cleanTitle = rawTitle.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').trim();
+        
+        return {
+          id: item.id,
+          title: cleanTitle,
+          jurisdiction: (item.jurisdiction as { name?: string })?.name || 'Unknown',
+          type: item.status?.toLowerCase() === 'open' ? 'urgent' : item.impact?.toLowerCase() === 'high' ? 'important' : 'info',
+          time: item.published_at ? formatRelativeTime(item.published_at) : 'Recently'
+        };
+      });
 
       setUpdates(formattedUpdates);
     } catch (err) {
