@@ -103,13 +103,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Subscription helpers
   const isTrialActive = profile ? (
-    profile.subscription_status === 'trial' &&
-    new Date(profile.trial_ends_at) > new Date()
+    profile.role === 'admin' ||
+    (profile.subscription_status === 'trial' &&
+    new Date(profile.trial_ends_at) > new Date())
   ) : false;
 
   const isPaidUser = profile ? (
-    profile.subscription_status === 'active' &&
-    (!profile.subscription_ends_at || new Date(profile.subscription_ends_at) > new Date())
+    profile.role === 'admin' ||
+    (profile.subscription_status === 'active' &&
+    (!profile.subscription_ends_at || new Date(profile.subscription_ends_at) > new Date()))
   ) : false;
 
   const trialDaysRemaining = profile ? (

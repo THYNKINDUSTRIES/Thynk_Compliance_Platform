@@ -14,7 +14,12 @@ export const SubscriptionRoute = ({
   children,
   requirePaid = false
 }: SubscriptionRouteProps) => {
-  const { user, loading, isTrialActive, isPaidUser, trialDaysRemaining } = useAuth();
+  const { user, loading, isAdmin, isTrialActive, isPaidUser, trialDaysRemaining } = useAuth();
+
+  // Admin accounts bypass all subscription checks
+  if (!loading && user && isAdmin) {
+    return <>{children}</>;
+  }
 
   // Show loading spinner while checking auth
   if (loading) {
