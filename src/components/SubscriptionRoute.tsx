@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { isAdminDomain } from '@/lib/betaAccess';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,8 +17,8 @@ export const SubscriptionRoute = ({
 }: SubscriptionRouteProps) => {
   const { user, loading, isAdmin, isTrialActive, isPaidUser, trialDaysRemaining } = useAuth();
 
-  // Admin accounts bypass all subscription checks
-  if (!loading && user && isAdmin) {
+  // Admin accounts bypass all subscription checks (check profile role AND email domain as fallback)
+  if (!loading && user && (isAdmin || isAdminDomain(user.email))) {
     return <>{children}</>;
   }
 

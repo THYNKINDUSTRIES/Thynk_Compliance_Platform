@@ -232,31 +232,49 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   useEffect(() => {
+    let isMounted = true;
+
     // Get initial session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!isMounted) return;
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        await fetchProfile(session.user.id);
+        try {
+          await fetchProfile(session.user.id);
+        } catch (err) {
+          console.error('Failed to fetch profile on init:', err);
+        }
       } else {
         setOnboardingCompleted(true); // No user = no onboarding
       }
-      setLoading(false);
+      if (isMounted) setLoading(false);
+    }).catch((err) => {
+      console.error('Failed to get session:', err);
+      if (isMounted) setLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!isMounted) return;
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        await fetchProfile(session.user.id);
+        try {
+          await fetchProfile(session.user.id);
+        } catch (err) {
+          console.error('Failed to fetch profile on auth change:', err);
+        }
       } else {
         setProfile(null);
         setOnboardingCompleted(true); // No user = no onboarding
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, [fetchProfile]);
 
   const signUp = async (email: string, password: string, fullName: string) => {
