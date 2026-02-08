@@ -59,6 +59,7 @@ export const Header: React.FC = () => {
               <Link to="/dashboard" className="text-white hover:text-gray-300 transition-colors font-medium">Dashboard</Link>
               <Link to="/legislature-bills" className="text-white hover:text-gray-300 transition-colors font-medium">Bills</Link>
               <Link to="/analytics" className="text-white hover:text-gray-300 transition-colors font-medium">Analytics</Link>
+              <Link to="/forecasting" className="text-white hover:text-gray-300 transition-colors font-medium">AI Forecasting</Link>
               <Link to="/workflows" className="text-white hover:text-gray-300 transition-colors font-medium">Workflows</Link>
               <Link to="/api-monitoring" className="text-white hover:text-gray-300 transition-colors font-medium">API</Link>
               <Link to="/deployment" className="text-white hover:text-gray-300 transition-colors font-medium">Deploy</Link>
@@ -86,6 +87,7 @@ export const Header: React.FC = () => {
               <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Dashboard</Link>
               <Link to="/legislature-bills" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Bills</Link>
               <Link to="/analytics" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Analytics</Link>
+              <Link to="/forecasting" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">AI Forecasting</Link>
               <Link to="/workflows" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Workflows</Link>
               <Link to="/api-monitoring" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">API</Link>
               <Link to="/deployment" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Deploy</Link>

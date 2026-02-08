@@ -44,6 +44,7 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const BetaInvites = lazy(() => import("./pages/BetaInvites"));
 const LegislatureBills = lazy(() => import("./pages/LegislatureBills"));
+const Forecasting = lazy(() => import("./pages/Forecasting"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDF8F3] to-[#F5EDE3]">
@@ -91,6 +92,7 @@ const App = () => (
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/dashboard" element={<SubscriptionRoute><Dashboard /></SubscriptionRoute>} />
                 <Route path="/analytics" element={<SubscriptionRoute requirePaid><Analytics /></SubscriptionRoute>} />
+                <Route path="/forecasting" element={<SubscriptionRoute requirePaid><Forecasting /></SubscriptionRoute>} />
                 <Route path="/alerts" element={<SubscriptionRoute><AlertPreferences /></SubscriptionRoute>} />
                 <Route path="/workflows" element={<SubscriptionRoute><Workflows /></SubscriptionRoute>} />
                 <Route path="/workflows/:id" element={<SubscriptionRoute><Workflows /></SubscriptionRoute>} />
