@@ -43,6 +43,17 @@ Deno.serve(async (req: Request) => {
   try { body = await req.json(); } catch { /* empty body OK */ }
   const action = body.action || 'get';
 
+  // ── ACTION: check_admins — verify admin accounts (debug helper) ─────────
+  if (action === 'check_admins') {
+    const { data } = await supabase
+      .from('user_profiles')
+      .select('id, email, role, subscription_status, trial_ends_at, subscription_ends_at')
+      .eq('role', 'admin');
+    return new Response(JSON.stringify({ admins: data || [] }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
   // ── ACTION: setup — create tables if they don't exist ────────────────────
   if (action === 'setup') {
     try {

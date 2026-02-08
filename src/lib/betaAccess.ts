@@ -9,6 +9,18 @@
 import { supabase } from './supabase';
 
 // Beta mode configuration - SET TO FALSE FOR PUBLIC ACCESS
+// Domains that automatically get admin role + active subscription (no payment needed)
+export const ADMIN_DOMAINS = ['@thynk.guru', '@cultivalaw.com'] as const;
+
+/**
+ * Check if an email belongs to an admin domain (auto-elevated on signup)
+ */
+export function isAdminDomain(email: string | null | undefined): boolean {
+  if (!email) return false;
+  const lower = email.toLowerCase();
+  return ADMIN_DOMAINS.some(d => lower.endsWith(d));
+}
+
 export const BETA_CONFIG = {
   enabled: false, // ← BETA MODE IS OFF - All users can access
   allowedEmailDomains: ['@thynk.guru', '@cultivalaw.com', '@discountpharms.com'],

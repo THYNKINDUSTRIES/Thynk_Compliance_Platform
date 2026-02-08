@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
-import { hasBetaAccess } from '@/lib/betaAccess';
+import { hasBetaAccess, isAdminDomain } from '@/lib/betaAccess';
 
 interface UserProfile {
   id: string;
@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Use a simpler query to avoid RLS recursion issues
       const { data, error } = await supabase
         .from('user_profiles')
-        .select('id, email, full_name, role, email_verified, saved_searches, onboarding_completed, onboarding_completed_at, subscription_status, trial_started_at, trial_ends_at, subscription_started_at, subscription_ends_at, stripe_customer_id, stripe_subscription_id, created_at, updated_at')
+        .select('id, email, full_name, role, email_verified, saved_searches, onboarding_completed, onboarding_completed_at, subscription_status, trial_started_at, trial_ends_at, trial_end_date, subscription_started_at, subscription_ends_at, stripe_customer_id, stripe_subscription_id, created_at, updated_at')
         .eq('id', userId)
         .maybeSingle(); // Use maybeSingle to avoid errors on empty results
 
@@ -176,12 +176,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           onboarding_completed_at: data.onboarding_completed_at ?? null,
           subscription_status: data.subscription_status ?? 'trial',
           trial_started_at: data.trial_started_at ?? data.created_at,
-          trial_ends_at: data.trial_ends_at ?? new Date(new Date(data.created_at).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          trial_ends_at: data.trial_ends_at ?? data.trial_end_date ?? new Date(new Date(data.created_at).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString(),
           subscription_started_at: data.subscription_started_at ?? null,
           subscription_ends_at: data.subscription_ends_at ?? null,
           stripe_customer_id: data.stripe_customer_id ?? null,
           stripe_subscription_id: data.stripe_subscription_id ?? null
         };
+
+        // Auto-upgrade comp accounts: if user is not yet active and their email is in comp_accounts, upgrade them
+        if (profileWithDefaults.subscription_status !== 'active' && profileWithDefaults.role !== 'admin' && profileWithDefaults.email) {
+          try {
+            const { data: compData } = await supabase
+              .from('comp_accounts')
+              .select('expires_at, is_active')
+              .eq('email', profileWithDefaults.email.toLowerCase())
+              .eq('is_active', true)
+              .maybeSingle();
+            if (compData && (!compData.expires_at || new Date(compData.expires_at) > new Date())) {
+              const now = new Date();
+              const neverExpires = new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000);
+              const accessExpiry = compData.expires_at || neverExpires.toISOString();
+              // Upgrade the profile in DB
+              await supabase.from('user_profiles').update({
+                subscription_status: 'active',
+                subscription_started_at: now.toISOString(),
+                subscription_ends_at: accessExpiry,
+              }).eq('id', userId);
+              // Update local profile
+              profileWithDefaults.subscription_status = 'active';
+              profileWithDefaults.subscription_started_at = now.toISOString();
+              profileWithDefaults.subscription_ends_at = typeof accessExpiry === 'string' ? accessExpiry : accessExpiry;
+            }
+          } catch (compErr) {
+            // Don't fail profile fetch if comp check fails (table might not exist yet)
+            console.warn('Comp account check failed:', compErr);
+          }
+        }
+
         setProfile(profileWithDefaults);
         
         // Check onboarding status from profile or localStorage
@@ -247,21 +278,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // If user was created, create their profile
     if (data.user) {
       try {
-        // Create profile - email_verified is true since Supabase email confirmation may be disabled
-        // onboarding_completed is false for new users
+        // Check if this email gets automatic admin privileges
+        const autoAdmin = isAdminDomain(data.user.email);
+        
+        // Check if this email is in the comp_accounts table (free paid access)
+        let isCompAccount = false;
+        let compExpiresAt: string | null = null;
+        if (!autoAdmin && data.user.email) {
+          const { data: compData } = await supabase
+            .from('comp_accounts')
+            .select('expires_at, is_active')
+            .eq('email', data.user.email.toLowerCase())
+            .eq('is_active', true)
+            .maybeSingle();
+          if (compData) {
+            // Check if comp hasn't expired
+            if (!compData.expires_at || new Date(compData.expires_at) > new Date()) {
+              isCompAccount = true;
+              compExpiresAt = compData.expires_at;
+            }
+          }
+        }
+
+        const grantFullAccess = autoAdmin || isCompAccount;
         const now = new Date();
         const trialEnd = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days from now
+        const neverExpires = new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000); // 100 years
+        const accessExpiry = compExpiresAt ? compExpiresAt : neverExpires.toISOString();
         
         const { error: profileError } = await supabase.from('user_profiles').upsert({
           id: data.user.id,
           email: data.user.email,
           full_name: fullName,
           email_verified: true,
-          role: 'user',
-          onboarding_completed: false,
-          subscription_status: 'trial',
+          role: autoAdmin ? 'admin' : 'user',
+          onboarding_completed: grantFullAccess ? true : false,
+          subscription_status: grantFullAccess ? 'active' : 'trial',
           trial_started_at: now.toISOString(),
-          trial_ends_at: trialEnd.toISOString(),
+          trial_ends_at: grantFullAccess ? accessExpiry : trialEnd.toISOString(),
+          trial_end_date: grantFullAccess ? accessExpiry : trialEnd.toISOString(),
+          subscription_started_at: grantFullAccess ? now.toISOString() : null,
+          subscription_ends_at: grantFullAccess ? accessExpiry : null,
         }, { onConflict: 'id' });
         
         if (profileError) {
