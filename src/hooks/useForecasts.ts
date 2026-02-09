@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://kruwbjaszdwzttblxqwr.supabase.co';
 
@@ -45,20 +46,31 @@ export interface ForecastFilters {
 }
 
 async function invokeForecastFunction(body: Record<string, unknown>) {
-  const res = await fetch(`${SUPABASE_URL}/functions/v1/regulatory-forecast`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || '',
-      'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token || import.meta.env.VITE_SUPABASE_ANON_KEY || ''}`,
-    },
-    body: JSON.stringify(body),
-  });
+  let res: Response;
+  try {
+    const session = await supabase.auth.getSession();
+    const token = session.data.session?.access_token || import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+    res = await fetch(`${SUPABASE_URL}/functions/v1/regulatory-forecast`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || '',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (networkErr: any) {
+    throw new Error(networkErr?.message || 'Network error — could not reach forecast service');
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error(err.error || err.message || 'Forecast request failed');
+    throw new Error(err.error || err.message || `Forecast request failed (${res.status})`);
   }
-  return res.json();
+  const data = await res.json();
+  if (data && data.success === false) {
+    throw new Error(data.error || 'Forecast service returned an error');
+  }
+  return data;
 }
 
 /**
@@ -122,19 +134,44 @@ export function useGenerateForecasts() {
 export function useRunScenario() {
   const [result, setResult] = useState<ScenarioResult | null>(null);
 
+  const mutation = useMutation({
+    mutationFn: async (params: {
+      product: string;
+      jurisdiction?: string;
+      assumption: string;
+      timeframe?: string;
+    }) => {
+      const data = await invokeForecastFunction({ action: 'scenario', ...params });
+      return data.scenario as ScenarioResult;
+    },
+    onSuccess: (scenarioResult) => {
+      setResult(scenarioResult);
+      toast.success('Scenario analysis complete');
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Failed to run scenario');
+    },
+  });
+
   const runScenario = useCallback(async (params: {
     product: string;
     jurisdiction?: string;
     assumption: string;
     timeframe?: string;
   }) => {
-    const data = await invokeForecastFunction({ action: 'scenario', ...params });
-    const scenarioResult = data.scenario as ScenarioResult;
-    setResult(scenarioResult);
-    return scenarioResult;
-  }, []);
+    return mutation.mutateAsync(params);
+  }, [mutation]);
 
-  const clearScenario = useCallback(() => setResult(null), []);
+  const clearScenario = useCallback(() => {
+    setResult(null);
+    mutation.reset();
+  }, [mutation]);
 
-  return { result, runScenario, clearScenario };
+  return {
+    result,
+    runScenario,
+    clearScenario,
+    loading: mutation.isPending,
+    error: mutation.error,
+  };
 }

@@ -184,8 +184,7 @@ function StatCard({ icon, label, value, subtext, color }: {
 }
 
 function ScenarioBuilder() {
-  const { result, runScenario, clearScenario } = useRunScenario();
-  const [loading, setLoading] = useState(false);
+  const { result, runScenario, clearScenario, loading } = useRunScenario();
   const [product, setProduct] = useState('cannabis');
   const [assumption, setAssumption] = useState('');
   const [timeframe, setTimeframe] = useState('Next 12 months');
@@ -195,14 +194,10 @@ function ScenarioBuilder() {
       toast.error('Please enter a scenario assumption');
       return;
     }
-    setLoading(true);
     try {
       await runScenario({ product, assumption, timeframe });
-      toast.success('Scenario analysis complete');
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to run scenario');
-    } finally {
-      setLoading(false);
+    } catch {
+      // error already handled by hook's onError
     }
   };
 

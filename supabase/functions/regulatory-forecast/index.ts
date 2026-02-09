@@ -13,6 +13,7 @@
  * Uses OpenAI GPT-4o-mini to analyze regulatory patterns and predict future changes.
  */
 
+// Static export kept for any external references; actual CORS uses dynamic getCorsHeaders() below
 export const corsHeaders = {
   'Access-Control-Allow-Origin': 'https://www.thynkflow.io',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -24,8 +25,23 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const PRODUCTS = ['cannabis', 'hemp', 'kratom', 'kava', 'nicotine', 'psychedelics'] as const;
 
+const ALLOWED_ORIGINS = ['https://www.thynkflow.io', 'https://thynkflow.io', 'http://localhost:5173', 'http://localhost:3000'];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('origin') || '';
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
+
 // @ts-ignore Deno global
 Deno.serve(async (req: Request) => {
+  const corsHeaders = getCorsHeaders(req);
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
