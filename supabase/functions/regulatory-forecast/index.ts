@@ -30,12 +30,14 @@ Deno.serve(async (req: Request) => {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
 
+  try {
   // @ts-ignore
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   // @ts-ignore
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  // @ts-ignore
-  const openaiKey = Deno.env.get('OPENAI_API_KEY') || '';
+  // @ts-ignore — strip non-ASCII chars that can cause ByteString errors in fetch headers
+  const rawOpenaiKey = Deno.env.get('OPENAI_API_KEY') || '';
+  const openaiKey = rawOpenaiKey.replace(/[^\x20-\x7E]/g, '').trim();
 
   const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -43,13 +45,32 @@ Deno.serve(async (req: Request) => {
   try { body = await req.json(); } catch { /* empty body OK */ }
   const action = body.action || 'get';
 
-  // ── ACTION: check_admins — verify admin accounts (debug helper) ─────────
+  // ── ACTION: check_admins — verify admin accounts & API status (debug helper)
   if (action === 'check_admins') {
+    // Test OpenAI connectivity
+    let openaiStatus = 'not tested';
+    if (openaiKey) {
+      try {
+        const testResp = await fetch('https://api.openai.com/v1/models', {
+          headers: { 'Authorization': `Bearer ${openaiKey}` },
+        });
+        openaiStatus = testResp.ok ? 'connected' : `error: ${testResp.status}`;
+      } catch (e: any) {
+        openaiStatus = `exception: ${e.message}`;
+      }
+    } else {
+      openaiStatus = 'no key set';
+    }
+
     const { data } = await supabase
       .from('user_profiles')
       .select('id, email, role, subscription_status, trial_ends_at, subscription_ends_at')
       .eq('role', 'admin');
-    return new Response(JSON.stringify({ admins: data || [] }), {
+    return new Response(JSON.stringify({ 
+      admins: data || [],
+      openai_key_set: !!openaiKey,
+      openai_status: openaiStatus,
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
@@ -265,7 +286,14 @@ Respond in JSON:
     });
 
     if (!aiResp.ok) {
-      return new Response(JSON.stringify({ success: false, error: `OpenAI error: ${aiResp.status}` }), {
+      const errBody = await aiResp.text().catch(() => '');
+      console.error(`OpenAI scenario error: ${aiResp.status} - ${errBody}`);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: aiResp.status === 401 
+          ? 'OpenAI API key is invalid or expired. Please update the OPENAI_API_KEY secret.' 
+          : `OpenAI error: ${aiResp.status}` 
+      }), {
         status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -528,4 +556,12 @@ Respond with a JSON array of predictions:
   return new Response(JSON.stringify({ error: 'Unknown action. Use: get, generate, scenario, setup' }), {
     status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
+
+  } catch (err: any) {
+    console.error('❌ Unhandled error in regulatory-forecast:', err);
+    return new Response(JSON.stringify({ success: false, error: err.message || 'Internal server error' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
 });
