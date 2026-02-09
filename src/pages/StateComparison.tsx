@@ -6,7 +6,7 @@ import { ArrowLeft, Scale, FileText, Calendar, AlertCircle, Building2, TestTube,
 import { generateComparisonPDF } from '@/lib/pdfGenerator';
 
 import { US_STATES } from '@/data/states';
-import { MORE_STATES } from '@/data/moreStates';
+
 import { arizonaDetail } from '@/data/azData';
 import { californiaDetail } from '@/data/caData';
 import { coloradoDetail } from '@/data/coData';
@@ -38,7 +38,7 @@ export default function StateComparison() {
   const { state1, state2 } = useParams<{ state1: string; state2: string }>();
   const navigate = useNavigate();
 
-  const allStates = [...US_STATES, ...MORE_STATES];
+  const allStates = US_STATES;
   const stateData1 = allStates.find(s => s.slug === state1);
   const stateData2 = allStates.find(s => s.slug === state2);
   const detail1 = state1 ? stateDetailsMap[state1] : null;

@@ -34,46 +34,53 @@ export function useJurisdictionFreshness() {
 
   async function fetchFreshness() {
     try {
-      // Query directly from tables instead of the problematic view
-      const { data, error } = await supabase
+      // First get all jurisdictions
+      const { data: jurisdictions, error: jError } = await supabase
         .from('jurisdiction')
-        .select(`
-          id as jurisdiction_id,
-          name as jurisdiction_name,
-          slug as jurisdiction_slug,
-          instrument!left (
-            id,
-            published_at,
-            created_at
-          )
-        `);
+        .select('id, name, slug')
+        .order('name');
 
-      if (error) {
-        console.error('Error fetching freshness:', error);
+      if (jError) {
+        console.error('Error fetching jurisdictions:', jError);
         setFreshness([]);
         return;
       }
 
-      // Process the data to match the interface
-      const processedData = (data || []).map(jurisdiction => {
-        const instruments = jurisdiction.instrument || [];
-        const lastUpdated = instruments.length > 0 
-          ? instruments.reduce((latest, inst) => {
-              const instDate = inst.published_at || inst.created_at;
-              return instDate && (!latest || new Date(instDate) > new Date(latest)) 
-                ? instDate 
-                : latest;
-            }, null)
-          : null;
+      // For each jurisdiction, get instrument count and latest date
+      const processedData: JurisdictionFreshness[] = await Promise.all(
+        (jurisdictions || []).map(async (j) => {
+          // Get count
+          const { count } = await supabase
+            .from('instrument')
+            .select('*', { count: 'exact', head: true })
+            .eq('jurisdiction_id', j.id);
 
-        return {
-          jurisdiction_id: jurisdiction.jurisdiction_id,
-          jurisdiction_name: jurisdiction.jurisdiction_name,
-          jurisdiction_slug: jurisdiction.jurisdiction_slug,
-          last_updated: lastUpdated,
-          total_instruments: instruments.length
-        };
-      });
+          // Get latest instrument date
+          let lastUpdated: string | null = null;
+          try {
+            const { data: latest } = await supabase
+              .from('instrument')
+              .select('created_at, updated_at, effective_date')
+              .eq('jurisdiction_id', j.id)
+              .order('created_at', { ascending: false })
+              .limit(1);
+
+            if (latest && latest.length > 0) {
+              lastUpdated = latest[0].updated_at || latest[0].created_at || latest[0].effective_date || null;
+            }
+          } catch {
+            // Ignore individual lookup errors
+          }
+
+          return {
+            jurisdiction_id: j.id,
+            jurisdiction_name: j.name,
+            jurisdiction_slug: j.slug,
+            last_updated: lastUpdated,
+            total_instruments: count || 0
+          };
+        })
+      );
 
       setFreshness(processedData);
     } catch (err) {

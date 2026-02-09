@@ -238,9 +238,10 @@ export const useRegulations = (filters?: RegulationFilters) => {
 
       try {
         // Generate cache key based on filters that affect the API query
-        // We only cache the base query, client filters are applied after
+        // Include jurisdiction in cache key since it affects the server query
         const apiFilters = {
           search: safeFilters.search,
+          jurisdiction: safeFilters.jurisdiction,
         };
         const cacheKey = generateCacheKey(CACHE_PREFIX, apiFilters);
 
@@ -310,8 +311,23 @@ export const useRegulations = (filters?: RegulationFilters) => {
           }
         } else {
           // Regular query with jurisdiction join
-          console.log('📋 Fetching all regulations with jurisdiction join...');
-          const { data, error: queryError } = await supabase
+          console.log('📋 Fetching regulations with jurisdiction join...');
+          
+          // If a specific jurisdiction is requested, resolve its ID first for server-side filtering
+          let jurisdictionId: string | null = null;
+          if (safeFilters.jurisdiction) {
+            const { data: jData } = await supabase
+              .from('jurisdiction')
+              .select('id')
+              .ilike('name', safeFilters.jurisdiction)
+              .limit(1);
+            
+            if (jData && jData.length > 0) {
+              jurisdictionId = jData[0].id;
+            }
+          }
+          
+          let query = supabase
             .from('instrument')
             .select(`
               *,
@@ -319,6 +335,13 @@ export const useRegulations = (filters?: RegulationFilters) => {
             `)
             .order('effective_date', { ascending: false })
             .limit(500);
+          
+          // Apply server-side jurisdiction filter
+          if (jurisdictionId) {
+            query = query.eq('jurisdiction_id', jurisdictionId);
+          }
+
+          const { data, error: queryError } = await query;
 
           if (queryError) {
             console.error('❌ Query error:', queryError);

@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronDown, ChevronUp, Save, X, Search } from 'lucide-react';
 import { PRODUCTS, STAGES, INSTRUMENT_TYPES } from '@/data/products';
 import { US_STATES } from '@/data/states';
-import { MORE_STATES } from '@/data/moreStates';
+
 
 interface FilterPreset {
   id: string;
@@ -37,7 +37,7 @@ interface Props {
   onLoadPreset: (preset: FilterPreset) => void;
 }
 
-const ALL_STATES = [...US_STATES, ...MORE_STATES].map(s => s.name).sort();
+const ALL_STATES = US_STATES.map(s => s.name).sort();
 const AUTHORITIES = ['FDA', 'DEA', 'USDA', 'EPA', 'FTC', 'DOT', 'OSHA', 'ATF', 'State Agency'];
 const STATUSES = ['Proposed', 'Final', 'Active', 'Pending', 'Archived', 'Effective', 'Repealed'];
 const IMPACTS = ['High', 'Medium', 'Low'];

@@ -29,7 +29,7 @@ import { nevadaDetail } from '@/data/nvData';
 import { massachusettsDetail } from '@/data/maData';
 import { newJerseyDetail } from '@/data/njData';
 import { virginiaDetail } from '@/data/vaData';
-import { MORE_STATES } from '@/data/moreStates';
+
 import { US_STATES } from '@/data/states';
 
 import { useRegulations } from '@/hooks/useRegulations';
@@ -46,7 +46,7 @@ const StateDetail = () => {
   const [compareState, setCompareState] = useState<string>('');
   
   // Combine all states
-  const allStates = [...US_STATES, ...MORE_STATES];
+  const allStates = US_STATES;
   let currentState = allStates.find(s => s.slug === stateSlug);
   
   // If not found in static data, try to find in jurisdictions (for states not in static data)

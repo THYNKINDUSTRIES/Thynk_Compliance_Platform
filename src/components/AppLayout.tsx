@@ -19,7 +19,7 @@ import { Button } from './ui/button';
 import { useNavigate } from 'react-router-dom';
 import { DataPopulationTrigger } from './DataPopulationTrigger';
 import { CannabisHempPoller } from './CannabisHempPoller';
-import { StateInfo } from '@/data/states';
+import { StateInfo, US_STATES } from '@/data/states';
 import { EnhancedStatsSection } from './EnhancedStatsSection';
 import { OpenCommentPeriods } from './OpenCommentPeriods';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
@@ -89,6 +89,9 @@ const AppLayout: React.FC = () => {
       if (error) throw error;
 
       // Get instrument counts for each jurisdiction
+      // Build a lookup of static state data for rich legal status info
+      const staticLookup = new Map(US_STATES.map(s => [s.name, s]));
+      
       const statesWithData = await Promise.all(
         (jurisdictions || []).map(async (j) => {
           const { count } = await supabase
@@ -101,29 +104,36 @@ const AppLayout: React.FC = () => {
           try {
             const { data: latestInstruments } = await supabase
               .from('instrument')
-              .select('updated_at')
+              .select('updated_at, created_at')
               .eq('jurisdiction_id', j.id)
-              .order('updated_at', { ascending: false })
+              .order('created_at', { ascending: false })
               .limit(1);
             
             if (latestInstruments && latestInstruments.length > 0) {
-              lastUpdated = latestInstruments[0]?.updated_at ?? null;
+              lastUpdated = latestInstruments[0]?.updated_at || latestInstruments[0]?.created_at || null;
             }
           } catch (e) {
             // Ignore errors for individual state lookups
           }
 
-          // Map to StateInfo format
+          // Merge with static state data for rich legal status info
+          const staticState = staticLookup.get(j.name);
           const stateAbbr = getStateAbbreviation(j.name);
+          const instrumentCount = count || 0;
+          
           return {
             id: stateAbbr,
             name: j.name,
             slug: j.slug,
-            status: count && count > 5 ? 'permissive' : count && count > 2 ? 'moderate' : 'restrictive',
-            recentUpdates: count || 0,
-            activeDeadlines: 0,
-            totalInstruments: count || 0,
-            lastUpdated
+            status: staticState?.status || (instrumentCount > 5 ? 'permissive' : instrumentCount > 2 ? 'moderate' : 'restrictive'),
+            recentUpdates: instrumentCount,
+            activeDeadlines: staticState?.activeDeadlines || 0,
+            totalInstruments: instrumentCount,
+            lastUpdated,
+            legalStatus: staticState?.legalStatus || {
+              hemp: 'Unknown', thca: 'Unknown', delta8: 'Unknown',
+              kratom: 'Unknown', psychedelics: 'Unknown', nicotine: 'Unknown'
+            }
           } as StateInfo & { lastUpdated?: string; totalInstruments?: number };
         })
       );
