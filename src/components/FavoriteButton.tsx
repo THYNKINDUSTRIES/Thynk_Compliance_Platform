@@ -23,14 +23,23 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({ regulationId, co
   const checkFavoriteStatus = async () => {
     if (!user) return;
     
-    const { data } = await supabase
-      .from('user_favorites')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('instrument_id', regulationId)
-      .limit(1);
+    try {
+      const { data, error } = await supabase
+        .from('user_favorites')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('instrument_id', regulationId)
+        .limit(1);
 
-    setIsFavorite(data && data.length > 0);
+      if (error) {
+        // Table might not exist yet
+        console.log('user_favorites not available:', error.message);
+        return;
+      }
+      setIsFavorite(data && data.length > 0);
+    } catch {
+      // Silently handle missing table
+    }
   };
 
 
