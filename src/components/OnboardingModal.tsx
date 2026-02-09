@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { 
   LayoutDashboard, 
@@ -122,6 +122,7 @@ export default function OnboardingModal({ isOpen, onComplete, userName }: Onboar
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleSkip()}>
       <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
+        <DialogTitle className="sr-only">{step.title}</DialogTitle>
         {/* Progress Bar */}
         <div className="w-full h-1 bg-gray-200">
           <div 
