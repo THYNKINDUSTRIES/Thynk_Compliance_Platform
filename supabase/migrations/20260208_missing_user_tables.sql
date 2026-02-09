@@ -73,7 +73,9 @@ ALTER TABLE public.user_profiles
   ADD COLUMN IF NOT EXISTS comment_reminders_enabled BOOLEAN DEFAULT true,
   ADD COLUMN IF NOT EXISTS comment_reminder_7_days BOOLEAN DEFAULT true,
   ADD COLUMN IF NOT EXISTS comment_reminder_3_days BOOLEAN DEFAULT true,
-  ADD COLUMN IF NOT EXISTS comment_reminder_1_day BOOLEAN DEFAULT true;
+  ADD COLUMN IF NOT EXISTS comment_reminder_1_day BOOLEAN DEFAULT true,
+  ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT,
+  ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT;
 
 
 -- 4) comment_deadline_reminders table (used by FavoriteButton)
