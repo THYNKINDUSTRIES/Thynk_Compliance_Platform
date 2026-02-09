@@ -68,8 +68,12 @@ CREATE POLICY "user_alerts_delete" ON public.user_alerts
   FOR DELETE TO authenticated USING ((SELECT auth.uid()) = user_id);
 
 
--- 3) Add comment reminder columns to user_profiles (if missing)
+-- 3) Add missing columns to user_profiles
 ALTER TABLE public.user_profiles
+  ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS saved_searches JSONB DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS onboarding_completed_at TIMESTAMPTZ,
   ADD COLUMN IF NOT EXISTS comment_reminders_enabled BOOLEAN DEFAULT true,
   ADD COLUMN IF NOT EXISTS comment_reminder_7_days BOOLEAN DEFAULT true,
   ADD COLUMN IF NOT EXISTS comment_reminder_3_days BOOLEAN DEFAULT true,

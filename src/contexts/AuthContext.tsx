@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Use a simpler query to avoid RLS recursion issues
       const { data, error } = await supabase
         .from('user_profiles')
-        .select('id, email, full_name, role, email_verified, saved_searches, onboarding_completed, onboarding_completed_at, subscription_status, trial_started_at, trial_ends_at, trial_end_date, subscription_started_at, subscription_ends_at, created_at, updated_at')
+        .select('id, email, full_name, role, subscription_status, trial_started_at, trial_ends_at, trial_end_date, subscription_started_at, subscription_ends_at, created_at, updated_at')
         .eq('id', userId)
         .maybeSingle(); // Use maybeSingle to avoid errors on empty results
 
@@ -169,9 +169,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       
       if (data) {
-        // Ensure onboarding_completed has a default value
+        // Ensure all fields have defaults (some columns may not exist in DB yet)
         const profileWithDefaults: UserProfile = {
           ...data,
+          email_verified: data.email_verified ?? true,
+          saved_searches: data.saved_searches ?? [],
           onboarding_completed: data.onboarding_completed ?? false,
           onboarding_completed_at: data.onboarding_completed_at ?? null,
           subscription_status: data.subscription_status ?? 'trial',
@@ -179,8 +181,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           trial_ends_at: data.trial_ends_at ?? data.trial_end_date ?? new Date(new Date(data.created_at).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString(),
           subscription_started_at: data.subscription_started_at ?? null,
           subscription_ends_at: data.subscription_ends_at ?? null,
-          stripe_customer_id: null,
-          stripe_subscription_id: null
+          stripe_customer_id: data.stripe_customer_id ?? null,
+          stripe_subscription_id: data.stripe_subscription_id ?? null
         };
 
         // Auto-upgrade comp accounts: if user is not yet active and their email is in comp_accounts, upgrade them
