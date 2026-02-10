@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
-  TrendingUp, TrendingDown, Minus, AlertTriangle, Shield, Sparkles,
+  TrendingUp, Minus, AlertTriangle, Shield, Sparkles,
   RefreshCw, Brain, Lightbulb, Target, ChevronRight, Loader2,
   ArrowUpRight, ArrowDownRight, BarChart3, Zap, Scale, Beaker
 } from 'lucide-react';
@@ -58,7 +58,6 @@ const DIRECTION_LABELS: Record<string, string> = {
 
 function ConfidenceGauge({ value }: { value: number }) {
   const color = value >= 75 ? 'text-green-600' : value >= 50 ? 'text-yellow-600' : 'text-red-600';
-  const bgColor = value >= 75 ? 'bg-green-500' : value >= 50 ? 'bg-yellow-500' : 'bg-red-500';
 
   return (
     <div className="flex items-center gap-3">
