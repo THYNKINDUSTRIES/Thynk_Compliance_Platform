@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { isAdminDomain } from '@/lib/betaAccess';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, CreditCard, Lock } from 'lucide-react';
+import { Clock, CreditCard, Lock, Loader2 } from 'lucide-react';
 
 interface SubscriptionRouteProps {
   children: React.ReactNode;
@@ -15,7 +17,8 @@ export const SubscriptionRoute = ({
   children,
   requirePaid = false
 }: SubscriptionRouteProps) => {
-  const { user, loading, isAdmin, isTrialActive, isPaidUser, trialDaysRemaining } = useAuth();
+  const { user, profile, loading, isAdmin, isTrialActive, isPaidUser, trialDaysRemaining, refreshProfile } = useAuth();
+  const [activating, setActivating] = useState(false);
 
   // Admin accounts bypass all subscription checks (check profile role AND email domain as fallback)
   if (!loading && user && (isAdmin || isAdminDomain(user.email))) {
@@ -83,6 +86,31 @@ export const SubscriptionRoute = ({
     );
   }
 
+  // Activate a 3-day trial directly
+  const handleActivateTrial = async () => {
+    if (!user || !profile) return;
+    setActivating(true);
+    try {
+      const now = new Date();
+      const trialEnd = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+      const { error } = await supabase.from('user_profiles').update({
+        subscription_status: 'trial',
+        trial_started_at: now.toISOString(),
+        trial_ends_at: trialEnd.toISOString(),
+        trial_end_date: trialEnd.toISOString(),
+      }).eq('id', user.id);
+      if (!error) {
+        await refreshProfile();
+      } else {
+        console.error('Trial activation error:', error);
+      }
+    } catch (err) {
+      console.error('Trial activation error:', err);
+    } finally {
+      setActivating(false);
+    }
+  };
+
   // Show trial expired or upgrade prompt
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
@@ -109,9 +137,16 @@ export const SubscriptionRoute = ({
               </Badge>
             </div>
           )}
-          <Button className="w-full" onClick={() => window.location.href = '/profile'}>
-            <CreditCard className="h-4 w-4 mr-2" />
-            {isTrialActive ? 'Upgrade Now' : 'Start Free Trial'}
+          <Button 
+            className="w-full" 
+            onClick={isTrialActive ? () => window.location.href = '/profile' : handleActivateTrial}
+            disabled={activating}
+          >
+            {activating ? (
+              <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Activating...</>
+            ) : (
+              <><CreditCard className="h-4 w-4 mr-2" /> {isTrialActive ? 'Upgrade Now' : 'Start Free Trial'}</>
+            )}
           </Button>
           <Button variant="outline" className="w-full" onClick={() => window.location.href = '/app'}>
             Back to Home

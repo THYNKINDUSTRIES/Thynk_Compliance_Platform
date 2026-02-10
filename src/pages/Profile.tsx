@@ -12,7 +12,37 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 
 function SubscriptionTab() {
-  const { profile, isTrialActive, isPaidUser, trialDaysRemaining } = useAuth();
+  const { profile, isTrialActive, isPaidUser, trialDaysRemaining, refreshProfile } = useAuth();
+
+  const handleSubscriptionAction = async () => {
+    if (!isTrialActive && !isPaidUser && profile) {
+      // Trial expired or not started — activate a fresh 3-day trial
+      try {
+        const { supabase } = await import('@/lib/supabase');
+        const now = new Date();
+        const trialEnd = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+        const { error } = await supabase.from('user_profiles').update({
+          subscription_status: 'trial',
+          trial_started_at: now.toISOString(),
+          trial_ends_at: trialEnd.toISOString(),
+          trial_end_date: trialEnd.toISOString(),
+        }).eq('id', profile.id);
+        if (error) {
+          toast({ title: 'Error', description: 'Failed to activate trial. Please try again.', variant: 'destructive' });
+          console.error('Trial activation error:', error);
+        } else {
+          toast({ title: 'Trial Activated!', description: 'Your 3-day free trial has started.' });
+          await refreshProfile();
+        }
+      } catch (err) {
+        console.error('Trial activation error:', err);
+        toast({ title: 'Error', description: 'Something went wrong. Please try again.', variant: 'destructive' });
+      }
+    } else {
+      // Already on trial — upgrade to paid (Stripe checkout placeholder)
+      toast({ title: 'Coming Soon', description: 'Paid subscription checkout is coming soon.' });
+    }
+  };
 
   const getSubscriptionStatus = () => {
     if (isPaidUser) return { status: 'Active', color: 'text-green-600', bg: 'bg-green-50' };
@@ -82,12 +112,9 @@ function SubscriptionTab() {
 
           {!isPaidUser && (
             <div className="flex gap-3">
-              <Button className="bg-[#794108] hover:bg-[#E89C5C]">
+              <Button className="bg-[#794108] hover:bg-[#E89C5C]" onClick={handleSubscriptionAction}>
                 <CreditCard className="w-4 h-4 mr-2" />
                 {isTrialActive ? 'Upgrade to Pro' : 'Start Free Trial'}
-              </Button>
-              <Button variant="outline">
-                Compare Plans
               </Button>
             </div>
           )}

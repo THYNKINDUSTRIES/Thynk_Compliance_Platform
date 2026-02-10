@@ -316,10 +316,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
+        // Set loading while profile is being fetched to prevent
+        // SubscriptionRoute from flashing the paywall
+        setLoading(true);
         try {
           await fetchProfile(session.user.id);
         } catch (err) {
           console.error('Failed to fetch profile on auth change:', err);
+        } finally {
+          if (isMounted) setLoading(false);
         }
       } else {
         setProfile(null);
