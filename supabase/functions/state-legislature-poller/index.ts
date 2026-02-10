@@ -110,6 +110,7 @@ Deno.serve(async (req: Request) => {
   let totalSkipped = 0;
   const errors: string[] = [];
   const batch: Map<string, any> = new Map();
+  const billsBatch: Map<string, any> = new Map();
 
   // ── Build jurisdiction lookup ────────────────────────────────────────────
   const jurisdictionMap: Record<string, string> = {};
@@ -176,6 +177,53 @@ Deno.serve(async (req: Request) => {
             products: detectedProducts,
             latest_action_date: bill.latest_action_date,
           },
+        });
+
+        // Also build legislature_bills record with richer schema
+        const stateCode = STATE_ABBREV[jurisdictionName] || jurisdictionName.slice(0, 2).toUpperCase();
+        const actions = (bill.actions || []) as any[];
+        const latestAction = actions.length > 0 ? actions[actions.length - 1] : null;
+        const chamberVal = bill.from_organization?.classification || bill.chamber || '';
+
+        billsBatch.set(externalId, {
+          external_id: externalId,
+          bill_number: identifier,
+          title: title.slice(0, 500),
+          description: (abstract || '').slice(0, 2000) || null,
+          state_code: stateCode,
+          session: session,
+          session_year: parseInt(session) || new Date().getFullYear(),
+          status: bill.latest_action_description?.toLowerCase().includes('pass') ? 'passed'
+            : bill.latest_action_description?.toLowerCase().includes('fail') ? 'failed'
+            : bill.latest_action_description?.toLowerCase().includes('engross') ? 'engrossed'
+            : bill.latest_action_description?.toLowerCase().includes('enroll') ? 'enrolled'
+            : bill.latest_action_description?.toLowerCase().includes('veto') ? 'vetoed'
+            : bill.latest_action_description?.toLowerCase().includes('refer') ? 'refer'
+            : 'introduced',
+          status_date: bill.latest_action_date || updatedAt,
+          last_action: bill.latest_action_description || null,
+          last_action_date: bill.latest_action_date || null,
+          chamber: chamberVal.toLowerCase() || null,
+          bill_type: bill.classification?.[0] || 'bill',
+          sponsors: (bill.sponsorships || []).filter((s: any) => s.primary).map((s: any) => ({
+            name: s.name, party: s.party || null, role: s.classification || 'sponsor',
+          })),
+          cosponsors: (bill.sponsorships || []).filter((s: any) => !s.primary).map((s: any) => ({
+            name: s.name, party: s.party || null, role: 'cosponsor',
+          })),
+          subjects: bill.subject || [],
+          votes: [],
+          history: actions.map((a: any) => ({
+            date: a.date, action: a.description, chamber: a.organization?.classification || null,
+            importance: a.classification?.includes('passage') ? 3 : a.classification?.includes('committee') ? 2 : 1,
+          })),
+          amendments: [],
+          source: 'openstates',
+          source_url: openstatesUrl,
+          full_text_url: bill.sources?.[0]?.url || null,
+          is_cannabis_related: true,
+          cannabis_keywords: detectedProducts,
+          metadata: { openstates_id: bill.id, products: detectedProducts },
         });
       }
 
@@ -248,6 +296,50 @@ Deno.serve(async (req: Request) => {
               relevance: bill.relevance,
             },
           });
+
+          // Also build legislature_bills record with richer schema
+          const sessionYear = bill.session?.session_id
+            ? parseInt(bill.session?.session_name) || new Date().getFullYear()
+            : new Date().getFullYear();
+
+          billsBatch.set(externalId, {
+            external_id: externalId,
+            bill_number: billNumber,
+            title: title.slice(0, 500),
+            description: (bill.description || lastAction || '').slice(0, 2000) || null,
+            state_code: state,
+            session: bill.session?.session_name || `${sessionYear}`,
+            session_year: sessionYear,
+            status: bill.status_desc?.toLowerCase().includes('pass') ? 'passed'
+              : bill.status_desc?.toLowerCase().includes('fail') ? 'failed'
+              : bill.status_desc?.toLowerCase().includes('engross') ? 'engrossed'
+              : bill.status_desc?.toLowerCase().includes('enroll') ? 'enrolled'
+              : bill.status_desc?.toLowerCase().includes('veto') ? 'vetoed'
+              : bill.status_desc?.toLowerCase().includes('refer') ? 'refer'
+              : 'introduced',
+            status_date: lastActionDate,
+            last_action: lastAction || null,
+            last_action_date: lastActionDate,
+            chamber: bill.bill_type?.toLowerCase().includes('s') ? 'senate' : 'house',
+            bill_type: bill.bill_type_id === 1 ? 'bill' : bill.bill_type_id === 2 ? 'resolution' : 'bill',
+            sponsors: [],
+            cosponsors: [],
+            subjects: [],
+            votes: [],
+            history: [],
+            amendments: [],
+            source: 'legiscan',
+            source_url: legiScanUrl,
+            full_text_url: bill.text_url || null,
+            is_cannabis_related: true,
+            cannabis_keywords: detectedProducts,
+            metadata: {
+              legiscan_bill_id: bill.bill_id,
+              relevance: bill.relevance,
+              products: detectedProducts,
+              status_desc: bill.status_desc,
+            },
+          });
         }
 
         await new Promise(r => setTimeout(r, 500));
@@ -260,7 +352,7 @@ Deno.serve(async (req: Request) => {
     errors.push('No LEGISCAN_API_KEY configured');
   }
 
-  // ── Flush batches ──────────────────────────────────────────────────────────
+  // ── Flush instrument batches ────────────────────────────────────────────────
   const allRecords = Array.from(batch.values());
   for (let i = 0; i < allRecords.length; i += 50) {
     const chunk = allRecords.slice(i, i + 50);
@@ -279,12 +371,34 @@ Deno.serve(async (req: Request) => {
     }
   }
 
+  // ── Flush legislature_bills batches ────────────────────────────────────────
+  let billsInserted = 0;
+  const allBills = Array.from(billsBatch.values());
+  for (let i = 0; i < allBills.length; i += 50) {
+    const chunk = allBills.slice(i, i + 50);
+    try {
+      const { error: billError } = await supabase
+        .from('legislature_bills')
+        .upsert(chunk, { onConflict: 'external_id' });
+      if (billError) {
+        console.error('Legislature bills upsert error:', billError);
+        errors.push(`Legislature bills upsert: ${billError.message}`);
+      } else {
+        billsInserted += chunk.length;
+      }
+    } catch (err: any) {
+      errors.push(`Legislature bills exception: ${err.message}`);
+    }
+  }
+
   const summary = {
     success: errors.filter(e => !e.includes('No ')).length === 0,
     totalFetched,
     totalInserted,
+    billsInserted,
     totalSkipped,
     uniqueRecords: allRecords.length,
+    uniqueBills: allBills.length,
     sources: {
       openstates: openStatesKey ? 'polled' : 'skipped (no key)',
       legiscan: legiScanKey ? 'polled' : 'skipped (no key)',
