@@ -1355,7 +1355,7 @@ for func in "${NEW_FUNCTIONS[@]}"; do
   # Test OPTIONS
   response=$(curl -s -o /dev/null -w "%{http_code}" -X OPTIONS \
     "$SUPABASE_URL/functions/v1/$func" \
-    -H "Origin: https://your-app.com" \
+    -H "Origin: https://THYNKFLOW.IO" \
     -H "Access-Control-Request-Method: POST")
   
   if [ "$response" == "204" ] || [ "$response" == "200" ]; then
