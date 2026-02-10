@@ -73,9 +73,9 @@ export default function SignUp() {
 
       setSuccess(true);
       
-      // Redirect to dashboard where onboarding modal will appear
+      // Redirect to app — profile and trial are already set up
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/app');
       }, 1500);
     } catch (err: any) {
       console.error('Signup error:', err);

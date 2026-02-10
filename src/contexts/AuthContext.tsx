@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { hasBetaAccess, isAdminDomain } from '@/lib/betaAccess';
@@ -97,6 +97,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [onboardingCompleted, setOnboardingCompleted] = useState(true); // Default to true to prevent flash
+
+  // Refs to prevent duplicate work
+  const currentUserIdRef = useRef<string | null>(null);
+  const selfHealAttemptedRef = useRef<string | null>(null);
+  const suppressAuthChangeRef = useRef(false);
 
   // Check beta access based on user email
   const userHasBetaAccess = hasBetaAccess(user?.email);
@@ -220,8 +225,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Check onboarding status from profile or localStorage
         const localOnboarding = getOnboardingStatus(userId);
         setOnboardingCompleted(profileWithDefaults.onboarding_completed || localOnboarding);
-      } else {
-        // No profile found - self-heal by creating one
+      } else if (selfHealAttemptedRef.current !== userId) {
+        // No profile found - self-heal by creating one (once per user)
+        selfHealAttemptedRef.current = userId;
         console.warn('No profile found for user', userId, '- attempting to create one');
         const { data: { user: authUser } } = await supabase.auth.getUser();
         if (authUser) {
@@ -275,6 +281,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           } as UserProfile);
         }
         setOnboardingCompleted(getOnboardingStatus(userId));
+      } else {
+        // Self-heal already attempted for this user — don't retry
+        setOnboardingCompleted(getOnboardingStatus(userId));
       }
     } catch (err) {
       console.error('Error fetching profile:', err);
@@ -296,6 +305,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (session?.user) {
         try {
           await fetchProfile(session.user.id);
+          currentUserIdRef.current = session.user.id;
         } catch (err) {
           console.error('Failed to fetch profile on init:', err);
         }
@@ -313,20 +323,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!isMounted) return;
+
+      // Skip if signUp is handling session setup itself
+      if (suppressAuthChangeRef.current) return;
+
+      const newUserId = session?.user?.id ?? null;
+
+      // Skip if we already loaded this user's profile (prevents
+      // INITIAL_SESSION from re-triggering after getSession)
+      if (newUserId && newUserId === currentUserIdRef.current && profile) return;
+
       setSession(session);
       setUser(session?.user ?? null);
+
       if (session?.user) {
-        // Set loading while profile is being fetched to prevent
-        // SubscriptionRoute from flashing the paywall
+        // Reset self-heal ref when user changes
+        if (newUserId !== currentUserIdRef.current) {
+          selfHealAttemptedRef.current = null;
+        }
         setLoading(true);
         try {
           await fetchProfile(session.user.id);
+          currentUserIdRef.current = session.user.id;
         } catch (err) {
           console.error('Failed to fetch profile on auth change:', err);
         } finally {
           if (isMounted) setLoading(false);
         }
       } else {
+        currentUserIdRef.current = null;
         setProfile(null);
         setOnboardingCompleted(true); // No user = no onboarding
       }
@@ -358,8 +383,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (data.user) {
       try {
         // CRITICAL: Ensure the session from signUp is active before making DB calls.
-        // supabase.auth.signUp() returns a session when autoconfirm is enabled,
-        // but the internal client may not have updated yet. Explicitly set it.
+        // Suppress onAuthStateChange while we set session + create profile to
+        // prevent a race where the listener tries to fetchProfile before we're done.
+        suppressAuthChangeRef.current = true;
         if (data.session) {
           await supabase.auth.setSession({
             access_token: data.session.access_token,
@@ -440,10 +466,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           user_id: data.user.id,
           digest_enabled: false
         }, { onConflict: 'user_id' }).catch(console.error);
+
+        // Set local state so the user is immediately active
+        currentUserIdRef.current = data.user.id;
+        setUser(data.user);
+        if (data.session) setSession(data.session);
+        await fetchProfile(data.user.id);
         
       } catch (err) {
         console.error('Post-signup setup error:', err);
         // Don't fail - user account is created successfully
+      } finally {
+        // Re-enable auth change listener
+        suppressAuthChangeRef.current = false;
       }
     }
     

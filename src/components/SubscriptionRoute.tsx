@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { isAdminDomain } from '@/lib/betaAccess';
 import { supabase } from '@/lib/supabase';
@@ -73,11 +73,11 @@ export const SubscriptionRoute = ({
                 {trialDaysRemaining} days left in trial
               </Badge>
             </div>
-            <Button className="w-full" onClick={() => window.location.href = '/profile'}>
+            <Button className="w-full" onClick={() => navigate('/profile')}>
               <CreditCard className="h-4 w-4 mr-2" />
               Upgrade to Pro
             </Button>
-            <Button variant="outline" className="w-full" onClick={() => window.history.back()}>
+            <Button variant="outline" className="w-full" onClick={() => navigate(-1)}>
               Go Back
             </Button>
           </CardContent>
@@ -86,9 +86,14 @@ export const SubscriptionRoute = ({
     );
   }
 
-  // Activate a 3-day trial directly
+  const navigate = useNavigate();
+
+  // Whether the user has already used their trial (prevent infinite restarts)
+  const trialAlreadyUsed = profile?.trial_started_at != null;
+
+  // Activate a 3-day trial (only if never had one before)
   const handleActivateTrial = async () => {
-    if (!user || !profile) return;
+    if (!user || !profile || trialAlreadyUsed) return;
     setActivating(true);
     try {
       const now = new Date();
@@ -111,7 +116,7 @@ export const SubscriptionRoute = ({
     }
   };
 
-  // Show trial expired or upgrade prompt
+  // Show upgrade / trial prompt
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
       <Card className="max-w-md w-full">
@@ -119,36 +124,40 @@ export const SubscriptionRoute = ({
           <div className="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
             <Clock className="h-8 w-8 text-orange-600" />
           </div>
-          <CardTitle className="text-xl">
-            {isTrialActive ? 'Trial Access Required' : 'Subscription Required'}
-          </CardTitle>
+          <CardTitle className="text-xl">Subscription Required</CardTitle>
           <CardDescription>
-            {isTrialActive
-              ? 'Your trial has expired. Upgrade to continue accessing premium features.'
-              : 'This feature requires a paid subscription. Start your free trial or upgrade now.'
+            {trialAlreadyUsed
+              ? 'Your trial has ended. Upgrade to continue accessing premium features.'
+              : 'Start your free 3-day trial to access this feature.'
             }
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {!isTrialActive && (
+          {!trialAlreadyUsed && (
             <div className="text-center">
               <Badge variant="outline" className="mb-2">
                 3-day free trial available
               </Badge>
             </div>
           )}
-          <Button 
-            className="w-full" 
-            onClick={isTrialActive ? () => window.location.href = '/profile' : handleActivateTrial}
-            disabled={activating}
-          >
-            {activating ? (
-              <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Activating...</>
-            ) : (
-              <><CreditCard className="h-4 w-4 mr-2" /> {isTrialActive ? 'Upgrade Now' : 'Start Free Trial'}</>
-            )}
-          </Button>
-          <Button variant="outline" className="w-full" onClick={() => window.location.href = '/app'}>
+          {trialAlreadyUsed ? (
+            <Button className="w-full" onClick={() => navigate('/profile')}>
+              <CreditCard className="h-4 w-4 mr-2" /> Upgrade Now
+            </Button>
+          ) : (
+            <Button 
+              className="w-full" 
+              onClick={handleActivateTrial}
+              disabled={activating}
+            >
+              {activating ? (
+                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Activating...</>
+              ) : (
+                <><CreditCard className="h-4 w-4 mr-2" /> Start Free Trial</>
+              )}
+            </Button>
+          )}
+          <Button variant="outline" className="w-full" onClick={() => navigate('/app')}>
             Back to Home
           </Button>
         </CardContent>
