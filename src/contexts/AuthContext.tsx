@@ -221,7 +221,59 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const localOnboarding = getOnboardingStatus(userId);
         setOnboardingCompleted(profileWithDefaults.onboarding_completed || localOnboarding);
       } else {
-        // No profile found - new user, check localStorage
+        // No profile found - self-heal by creating one
+        console.warn('No profile found for user', userId, '- attempting to create one');
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          const now = new Date();
+          const trialEnd = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+          const autoAdmin = isAdminDomain(authUser.email);
+          
+          const newProfile: Record<string, any> = {
+            id: authUser.id,
+            email: authUser.email,
+            full_name: authUser.user_metadata?.full_name || null,
+            role: autoAdmin ? 'admin' : 'user',
+            subscription_status: autoAdmin ? 'active' : 'trial',
+            trial_started_at: authUser.created_at || now.toISOString(),
+            trial_ends_at: autoAdmin 
+              ? new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000).toISOString() 
+              : trialEnd.toISOString(),
+          };
+
+          // Try to insert the profile into the DB (ignoreDuplicates avoids
+          // overwriting a row the handle_new_user trigger may have created)
+          const { error: insertError } = await supabase
+            .from('user_profiles')
+            .upsert(newProfile, { onConflict: 'id', ignoreDuplicates: true });
+          
+          if (insertError) {
+            console.error('Failed to self-heal profile:', insertError);
+          }
+
+          // Set the local profile state regardless so the UI works
+          setProfile({
+            id: authUser.id,
+            email: authUser.email || '',
+            full_name: authUser.user_metadata?.full_name || null,
+            role: autoAdmin ? 'admin' : 'user',
+            email_verified: authUser.email_confirmed_at !== null,
+            saved_searches: [],
+            onboarding_completed: false,
+            onboarding_completed_at: null,
+            subscription_status: autoAdmin ? 'active' : 'trial',
+            trial_started_at: authUser.created_at || now.toISOString(),
+            trial_ends_at: autoAdmin 
+              ? new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000).toISOString() 
+              : trialEnd.toISOString(),
+            subscription_started_at: autoAdmin ? now.toISOString() : null,
+            subscription_ends_at: null,
+            stripe_customer_id: null,
+            stripe_subscription_id: null,
+            created_at: authUser.created_at || now.toISOString(),
+            updated_at: now.toISOString()
+          } as UserProfile);
+        }
         setOnboardingCompleted(getOnboardingStatus(userId));
       }
     } catch (err) {
@@ -298,6 +350,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // If user was created, create their profile
     if (data.user) {
       try {
+        // CRITICAL: Ensure the session from signUp is active before making DB calls.
+        // supabase.auth.signUp() returns a session when autoconfirm is enabled,
+        // but the internal client may not have updated yet. Explicitly set it.
+        if (data.session) {
+          await supabase.auth.setSession({
+            access_token: data.session.access_token,
+            refresh_token: data.session.refresh_token,
+          });
+        }
+
         // Check if this email gets automatic admin privileges
         const autoAdmin = isAdminDomain(data.user.email);
         
@@ -326,24 +388,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const neverExpires = new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000); // 100 years
         const accessExpiry = compExpiresAt ? compExpiresAt : neverExpires.toISOString();
         
-        const { error: profileError } = await supabase.from('user_profiles').upsert({
+        const profileData: Record<string, any> = {
           id: data.user.id,
           email: data.user.email,
           full_name: fullName,
-          email_verified: true,
           role: autoAdmin ? 'admin' : 'user',
-          onboarding_completed: grantFullAccess ? true : false,
           subscription_status: grantFullAccess ? 'active' : 'trial',
           trial_started_at: now.toISOString(),
           trial_ends_at: grantFullAccess ? accessExpiry : trialEnd.toISOString(),
           trial_end_date: grantFullAccess ? accessExpiry : trialEnd.toISOString(),
           subscription_started_at: grantFullAccess ? now.toISOString() : null,
           subscription_ends_at: grantFullAccess ? accessExpiry : null,
-        }, { onConflict: 'id' });
+        };
+
+        const { error: profileError } = await supabase.from('user_profiles').upsert(
+          profileData, 
+          { onConflict: 'id' }
+        );
         
         if (profileError) {
           console.error('Profile creation error:', profileError);
-          // Don't fail signup if profile creation fails - it can be retried
+          
+          // Retry once without optional columns in case of schema mismatch
+          const { error: retryError } = await supabase.from('user_profiles').upsert({
+            id: data.user.id,
+            email: data.user.email,
+            full_name: fullName,
+            role: autoAdmin ? 'admin' : 'user',
+            subscription_status: grantFullAccess ? 'active' : 'trial',
+            trial_started_at: now.toISOString(),
+            trial_ends_at: grantFullAccess ? accessExpiry : trialEnd.toISOString(),
+          }, { onConflict: 'id' });
+          
+          if (retryError) {
+            console.error('Profile creation retry also failed:', retryError);
+          }
         }
         
         // Mark onboarding as not completed for new user
