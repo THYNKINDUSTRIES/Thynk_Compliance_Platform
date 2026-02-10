@@ -304,6 +304,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       if (isMounted) setLoading(false);
     }).catch((err) => {
+      // AbortError is expected when component unmounts/remounts (React StrictMode)
+      if (err?.name === 'AbortError') return;
       console.error('Failed to get session:', err);
       if (isMounted) setLoading(false);
     });
