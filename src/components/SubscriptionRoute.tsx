@@ -19,6 +19,35 @@ export const SubscriptionRoute = ({
 }: SubscriptionRouteProps) => {
   const { user, profile, loading, isAdmin, isTrialActive, isPaidUser, trialDaysRemaining, refreshProfile } = useAuth();
   const [activating, setActivating] = useState(false);
+  const navigate = useNavigate();
+
+  // Whether the user has already used their trial (prevent infinite restarts)
+  const trialAlreadyUsed = profile?.trial_started_at != null;
+
+  // Activate a 3-day trial (only if never had one before)
+  const handleActivateTrial = async () => {
+    if (!user || !profile || trialAlreadyUsed) return;
+    setActivating(true);
+    try {
+      const now = new Date();
+      const trialEnd = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+      const { error } = await supabase.from('user_profiles').update({
+        subscription_status: 'trial',
+        trial_started_at: now.toISOString(),
+        trial_ends_at: trialEnd.toISOString(),
+        trial_end_date: trialEnd.toISOString(),
+      }).eq('id', user.id);
+      if (!error) {
+        await refreshProfile();
+      } else {
+        console.error('Trial activation error:', error);
+      }
+    } catch (err) {
+      console.error('Trial activation error:', err);
+    } finally {
+      setActivating(false);
+    }
+  };
 
   // Admin accounts bypass all subscription checks (check profile role AND email domain as fallback)
   if (!loading && user && (isAdmin || isAdminDomain(user.email))) {
@@ -85,36 +114,6 @@ export const SubscriptionRoute = ({
       </div>
     );
   }
-
-  const navigate = useNavigate();
-
-  // Whether the user has already used their trial (prevent infinite restarts)
-  const trialAlreadyUsed = profile?.trial_started_at != null;
-
-  // Activate a 3-day trial (only if never had one before)
-  const handleActivateTrial = async () => {
-    if (!user || !profile || trialAlreadyUsed) return;
-    setActivating(true);
-    try {
-      const now = new Date();
-      const trialEnd = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-      const { error } = await supabase.from('user_profiles').update({
-        subscription_status: 'trial',
-        trial_started_at: now.toISOString(),
-        trial_ends_at: trialEnd.toISOString(),
-        trial_end_date: trialEnd.toISOString(),
-      }).eq('id', user.id);
-      if (!error) {
-        await refreshProfile();
-      } else {
-        console.error('Trial activation error:', error);
-      }
-    } catch (err) {
-      console.error('Trial activation error:', err);
-    } finally {
-      setActivating(false);
-    }
-  };
 
   // Show upgrade / trial prompt
   return (
