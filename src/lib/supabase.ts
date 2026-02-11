@@ -3,36 +3,15 @@ import { createClient } from '@supabase/supabase-js';
 /**
  * Supabase Client Configuration
  * 
- * Uses environment variables for configuration:
- * - VITE_SUPABASE_URL: Your Supabase project URL
- * - VITE_SUPABASE_ANON_KEY: Public anon key for client-side operations
- * - VITE_SUPABASE_SERVICE_ROLE_KEY: Service role key (ONLY for preview/admin mode)
- * 
- * SECURITY NOTE: 
- * - In production, always use the anon key for client-side code
- * - Service role key bypasses RLS and should only be used in trusted environments
+ * The anon key is a public key — safe to embed in client-side code.
+ * RLS policies on the database protect data, not this key.
  */
 
-// Supabase project configuration
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://kruwbjaszdwzttblxqwr.supabase.co';
+// Supabase project configuration (public values, safe to hardcode)
+const supabaseUrl = 'https://kruwbjaszdwzttblxqwr.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtydXdiamFzemR3enR0Ymx4cXdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExNjcwOTIsImV4cCI6MjA3Njc0MzA5Mn0.BOmy4m7qoukUVyG1j8kDyyuA__mp9BeYdiDXL_OW-ZQ';
 
-// Determine which key to use based on environment
-const isPreviewMode = import.meta.env.MODE === 'preview' || import.meta.env.VITE_PREVIEW_MODE === 'true';
-const useServiceRole = isPreviewMode && import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
-
-const supabaseKey = useServiceRole
-  ? import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
-  : (import.meta.env.VITE_SUPABASE_ANON_KEY || '');
-
-// Log configuration (without exposing keys)
-if (import.meta.env.DEV) {
-  console.log('[Supabase] Initializing client:', {
-    url: supabaseUrl,
-    mode: import.meta.env.MODE,
-    isPreviewMode,
-    usingServiceRole: useServiceRole ? 'YES (service_role)' : 'NO (anon)',
-  });
-}
+const supabaseKey = supabaseAnonKey;
 
 // Create Supabase client
 const supabase = createClient(supabaseUrl, supabaseKey, {
