@@ -15,6 +15,13 @@ interface OpenComment {
   url: string;
   metadata: any;
   effective_date: string;
+  created_at: string;
+}
+
+interface ProcessedOpenComment extends OpenComment {
+  commentEnd?: string;
+  publishedDate?: string;
+  isExpired: boolean;
 }
 
 // Keywords that indicate relevance to our industry
@@ -36,11 +43,12 @@ function isRelevantRegulation(title: string, description: string, agencyId?: str
 }
 
 export function OpenCommentPeriods() {
-  const [regulations, setRegulations] = useState<OpenComment[]>([]);
+  const [regulations, setRegulations] = useState<ProcessedOpenComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedReg, setSelectedReg] = useState<OpenComment | null>(null);
   const [commentDialogOpen, setCommentDialogOpen] = useState(false);
+  const [archivedRegulations, setArchivedRegulations] = useState<ProcessedOpenComment[]>([]);
 
   useEffect(() => {
     loadOpenComments();
@@ -60,48 +68,53 @@ export function OpenCommentPeriods() {
 
       // Filter for relevant regulations with comment opportunities
       const today = new Date();
-      const filtered = (data || []).filter((reg: OpenComment) => {
-        // Check multiple places for comment end date
+      const processed = (data || []).map((reg: OpenComment) => {
         const commentEnd = reg.metadata?.commentEndDate 
           || reg.metadata?.comment_end_date
           || reg.metadata?.attributes?.commentEndDate
           || reg.metadata?.comment_deadline;
-        
-        // If we have a comment end date, check it's still open
-        if (commentEnd) {
-          try {
-            const endDate = new Date(commentEnd);
-            if (endDate < today) return false;
-          } catch {
-            return false;
-          }
-          const agencyId = reg.metadata?.attributes?.agencyId || '';
-          return isRelevantRegulation(reg.title || '', reg.description || '', agencyId);
+        const publishedDate = reg.metadata?.published_date
+          || reg.metadata?.attributes?.published_date
+          || reg.metadata?.attributes?.publishedDate
+          || reg.effective_date
+          || reg.created_at;
+        const isExpired = !!commentEnd && new Date(commentEnd).getTime() < today.getTime();
+        return {
+          ...reg,
+          commentEnd,
+          publishedDate,
+          isExpired,
+        } as ProcessedOpenComment;
+      });
+
+      const relevant = processed.filter((reg) => {
+        const agencyId = reg.metadata?.attributes?.agencyId || reg.metadata?.agencies?.[0]?.name || (reg as any).source || '';
+        const isRelevant = isRelevantRegulation(reg.title || '', reg.description || '', agencyId);
+
+        if (reg.commentEnd) {
+          return isRelevant;
         }
 
-        // For federal_register source: proposed/notice rules are often open for comment
         if (reg.metadata?.document_type === 'proposed_rule' || reg.metadata?.document_type === 'notice') {
-          const agencyId = reg.metadata?.attributes?.agencyId || reg.metadata?.agencies?.[0]?.name || '';
-          return isRelevantRegulation(reg.title || '', reg.description || '', agencyId);
+          return isRelevant;
         }
 
-        // For regulations with status 'Open' or 'Proposed'
         const status = (reg as any).status?.toLowerCase() || '';
         if (status === 'open' || status === 'proposed') {
-          const agencyId = reg.metadata?.attributes?.agencyId || '';
-          return isRelevantRegulation(reg.title || '', reg.description || '', agencyId);
+          return isRelevant;
         }
 
         return false;
-      }).sort((a, b) => {
-        // Sort by comment deadline if available, then by effective_date
-        const getCommentEnd = (r: OpenComment) => r.metadata?.commentEndDate || r.metadata?.comment_end_date || r.metadata?.attributes?.commentEndDate || r.metadata?.comment_deadline || r.effective_date || 0;
-        const dateA = new Date(getCommentEnd(a));
-        const dateB = new Date(getCommentEnd(b));
-        return dateA.getTime() - dateB.getTime();
-      }).slice(0, 50);
+      });
 
-      setRegulations(filtered);
+      const getSortDate = (reg: ProcessedOpenComment) => new Date(reg.publishedDate || reg.commentEnd || reg.effective_date || reg.created_at || 0).getTime();
+      const sorted = relevant.sort((a, b) => getSortDate(b) - getSortDate(a));
+
+      const active = sorted.filter((reg) => !reg.isExpired).slice(0, 50);
+      const archived = sorted.filter((reg) => reg.isExpired).slice(0, 20);
+
+      setRegulations(active);
+      setArchivedRegulations(archived);
     } catch (error: any) {
       const errorMsg = error.message || 'Failed to load open comment periods';
       setError(errorMsg);
@@ -174,7 +187,7 @@ export function OpenCommentPeriods() {
       ) : (
         <div className="grid gap-4">
           {regulations.map((reg) => {
-            const commentEnd = reg.metadata?.commentEndDate || reg.metadata?.comment_end_date || reg.metadata?.comment_deadline || reg.metadata?.attributes?.commentEndDate;
+            const commentEnd = reg.commentEnd;
             const daysLeft = commentEnd ? getDaysRemaining(commentEnd) : null;
             const agencyId = reg.metadata?.attributes?.agencyId || reg.metadata?.agencies?.[0]?.name || (reg as any).source || 'Federal';
             
@@ -190,7 +203,6 @@ export function OpenCommentPeriods() {
                             {daysLeft} days left
                           </Badge>
                         )}
-                        {/* Show relevant product tags */}
                         {RELEVANT_KEYWORDS.filter(kw => 
                           `${reg.title} ${reg.description}`.toLowerCase().includes(kw)
                         ).slice(0, 3).map(kw => (
@@ -203,6 +215,12 @@ export function OpenCommentPeriods() {
                       <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                         {reg.description || 'No description available'}
                       </p>
+                      {reg.publishedDate && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <Calendar className="h-4 w-4" />
+                          <span>Published: {new Date(reg.publishedDate).toLocaleDateString()}</span>
+                        </div>
+                      )}
                       {commentEnd && (
                         <div className="flex items-center gap-2 text-sm">
                           <Calendar className="h-4 w-4" />
@@ -237,6 +255,53 @@ export function OpenCommentPeriods() {
             );
           })}
         </div>
+      )}
+
+      {archivedRegulations.length > 0 && (
+        <section className="space-y-3 border-t pt-6">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-destructive" />
+            <h3 className="text-lg font-semibold">Archived Comment Periods</h3>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            These comment periods have ended. They're listed for reference but no longer accept public comments.
+          </p>
+          <div className="grid gap-4">
+            {archivedRegulations.map((reg) => {
+              const agencyId = reg.metadata?.attributes?.agencyId || reg.metadata?.agencies?.[0]?.name || (reg as any).source || 'Federal';
+              const commentEnd = reg.commentEnd;
+              return (
+                <Card key={`archived-${reg.id}`} className="p-6 border border-dashed border-muted-foreground bg-muted">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge className={getAgencyBadgeColor(agencyId)}>{agencyId}</Badge>
+                      <Badge variant="destructive">Archived</Badge>
+                    </div>
+                    <h4 className="font-semibold">{reg.title}</h4>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {reg.description || 'No description available'}
+                    </p>
+                    {reg.publishedDate && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Calendar className="h-4 w-4" />
+                        <span>Published: {new Date(reg.publishedDate).toLocaleDateString()}</span>
+                      </div>
+                    )}
+                    {commentEnd && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Calendar className="h-4 w-4" />
+                        <span>Comment ended: {new Date(commentEnd).toLocaleDateString()}</span>
+                      </div>
+                    )}
+                    <p className="text-sm text-muted-foreground">
+                      Links are frozen for archival reference and will not route to live submission pages.
+                    </p>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        </section>
       )}
 
       <Dialog open={commentDialogOpen} onOpenChange={setCommentDialogOpen}>
