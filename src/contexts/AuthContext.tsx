@@ -462,10 +462,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setOnboardingCompleted(false);
         
         // Create notification preferences (optional, don't fail if it errors)
-        await supabase.from('notification_preferences').upsert({
-          user_id: data.user.id,
-          digest_enabled: false
-        }, { onConflict: 'user_id' }).catch(console.error);
+        try {
+          await supabase.from('notification_preferences').upsert({
+            user_id: data.user.id,
+            digest_enabled: false
+          }, { onConflict: 'user_id' });
+        } catch (notifErr) {
+          console.warn('Notification prefs creation skipped:', notifErr);
+        }
 
         // Set local state so the user is immediately active
         currentUserIdRef.current = data.user.id;

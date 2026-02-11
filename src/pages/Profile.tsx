@@ -9,6 +9,7 @@ import { User, Mail, Lock, Shield, RefreshCw, CheckCircle, AlertCircle, Play, Cr
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
 import { toast } from '@/hooks/use-toast';
 
 function SubscriptionTab() {
@@ -18,7 +19,6 @@ function SubscriptionTab() {
     if (!isTrialActive && !isPaidUser && profile) {
       // Trial expired or not started — activate a fresh 3-day trial
       try {
-        const { supabase } = await import('@/lib/supabase');
         const now = new Date();
         const trialEnd = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
         const { error } = await supabase.from('user_profiles').update({
