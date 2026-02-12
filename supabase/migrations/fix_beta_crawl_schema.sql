@@ -11,26 +11,35 @@ ALTER TABLE public.user_favorites
   ADD COLUMN IF NOT EXISTS instrument_id UUID,
   ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 
--- 2a) Backfill instrument_id from regulation_id -> instrument.external_id
--- Assumption: user_favorites.regulation_id (text) matches instrument.external_id (text).
--- If this assumption is incorrect, replace the join condition appropriately.
--- Only update rows where instrument_id IS NULL and regulation_id IS NOT NULL.
-WITH to_update AS (
-  SELECT uf.id AS uf_id, i.id AS instrument_id
-  FROM public.user_favorites uf
-  JOIN public.instrument i ON i.external_id = uf.regulation_id
-  WHERE uf.instrument_id IS NULL AND uf.regulation_id IS NOT NULL
-)
-UPDATE public.user_favorites uf
-SET instrument_id = t.instrument_id
-FROM to_update t
-WHERE uf.id = t.uf_id;
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'user_favorites'
+      AND column_name = 'regulation_id'
+  ) THEN
+    -- 2a) Backfill instrument_id from regulation_id -> instrument.external_id
+    WITH to_update AS (
+      SELECT uf.id AS uf_id, i.id AS instrument_id
+      FROM public.user_favorites uf
+      JOIN public.instrument i ON i.external_id = uf.regulation_id
+      WHERE uf.instrument_id IS NULL AND uf.regulation_id IS NOT NULL
+    )
+    UPDATE public.user_favorites uf
+    SET instrument_id = t.instrument_id
+    FROM to_update t
+    WHERE uf.id = t.uf_id;
+
+    -- 2c) Drop the legacy regulation_id column now that instrument_id is authoritative
+    ALTER TABLE public.user_favorites
+      DROP COLUMN regulation_id;
+  END IF;
+END
+$$;
 
 -- 2b) Deduplicate rows that would violate UNIQUE(user_id, instrument_id)
--- Strategy:
---  - Find duplicates (same user_id + instrument_id non-null).
---  - Keep the earliest created_at row, delete others.
--- Do nothing if there are no duplicates.
 WITH ranked AS (
   SELECT id, user_id, instrument_id,
          ROW_NUMBER() OVER (PARTITION BY user_id, instrument_id ORDER BY created_at NULLS FIRST, id) AS rn
@@ -41,15 +50,7 @@ DELETE FROM public.user_favorites u
 USING ranked r
 WHERE u.id = r.id AND r.rn > 1;
 
--- 2c) Optional: if you want to remove regulation_id after confirm, you can drop it.
--- This migration preserves regulation_id. If you want to drop it uncomment below after verifying backfill.
--- ALTER TABLE public.user_favorites DROP COLUMN IF EXISTS regulation_id;
-
 -- 2d) Make instrument_id NOT NULL once backfill and dedupe are complete.
--- This will fail if any instrument_id IS NULL; run the SELECT below to verify before executing.
--- Verification (manual step suggestion):
---   SELECT COUNT(*) FROM public.user_favorites WHERE instrument_id IS NULL;
--- If zero, run the ALTER below. For safety we attempt it and if it fails the migration will stop.
 ALTER TABLE public.user_favorites
   ALTER COLUMN instrument_id SET NOT NULL;
 
