@@ -40,8 +40,12 @@ SUPABASE_URL=your_project_url
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRO_PRICE_ID=price_your_subscription_price_id
+SITE_URL=https://www.thynkflow.io
 AUTHORIZED_DOMAINS=thynk.guru,cultivalaw.com,discountpharms.com
 ```
+
+For the frontend bundle, also set `VITE_STRIPE_PUBLISHABLE_KEY` (matching `STRIPE_PUBLISHABLE_KEY`) so Vite can expose the key to client code.
 
 ### 2. Database Setup
 

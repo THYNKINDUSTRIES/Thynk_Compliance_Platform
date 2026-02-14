@@ -12,8 +12,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { toast } from '@/hooks/use-toast';
 
+declare const Stripe: any;
+
 function SubscriptionTab() {
-  const { profile, isTrialActive, isPaidUser, trialDaysRemaining, refreshProfile } = useAuth();
+  const { profile, session, isTrialActive, isPaidUser, trialDaysRemaining, refreshProfile } = useAuth();
 
   const handleSubscriptionAction = async () => {
     if (!isTrialActive && !isPaidUser && profile) {
@@ -39,8 +41,46 @@ function SubscriptionTab() {
         toast({ title: 'Error', description: 'Something went wrong. Please try again.', variant: 'destructive' });
       }
     } else {
-      // Already on trial — upgrade to paid (Stripe checkout placeholder)
-      toast({ title: 'Coming Soon', description: 'Paid subscription checkout is coming soon.' });
+      // Already on trial — redirect to Stripe checkout
+      const accessToken = session?.access_token;
+      if (!accessToken) {
+        toast({ title: 'Session expired', description: 'Please sign out and sign back in to continue.', variant: 'destructive' });
+        return;
+      }
+
+      try {
+        const response = await fetch('/functions/v1/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            success_url: `${window.location.origin}/app?checkout=success`,
+            cancel_url: `${window.location.origin}/app?checkout=cancel`,
+          }),
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok) {
+          throw new Error(payload.error || 'Unable to start checkout.');
+        }
+
+        const publishableKey = payload.publishableKey || import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+        if (!publishableKey || !payload.sessionId) {
+          throw new Error('Stripe configuration is missing.');
+        }
+
+        const stripeInstance = Stripe(publishableKey);
+        const { error } = await stripeInstance.redirectToCheckout({ sessionId: payload.sessionId });
+        if (error) {
+          throw error;
+        }
+      } catch (err) {
+        console.error('Checkout redirect failed:', err);
+        toast({ title: 'Checkout failed', description: err instanceof Error ? err.message : 'Unable to start Stripe checkout.', variant: 'destructive' });
+      }
     }
   };
 

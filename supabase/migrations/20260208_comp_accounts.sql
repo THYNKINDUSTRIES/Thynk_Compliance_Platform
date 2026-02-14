@@ -42,6 +42,8 @@ CREATE POLICY "comp_accounts_admin_write" ON comp_accounts
 -- =============================================================================
 -- Seed some comp accounts (add your emails here!)
 -- =============================================================================
--- INSERT INTO comp_accounts (email, notes) VALUES
---   ('friend@example.com', 'Early supporter'),
---   ('partner@company.com', 'Strategic partner');
+ INSERT INTO comp_accounts (email, notes) VALUES
+  ('cade@airliecbd.com', 'Early supporter'),
+  ('Aaron@Cultivalaw.com', 'Strategic partner'),
+  ('drew@thynk.guru', 'Internal testing'),
+  ('chrisgirard3185@gmail.com', 'Internal testing');

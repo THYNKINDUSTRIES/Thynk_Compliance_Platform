@@ -36,7 +36,10 @@ async function initFingerprint() {
 
 // 2. Stripe Elements Integration
 // Initialize Stripe (add your publishable key)
-const stripePublishableKey = (import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_your_stripe_publishable_key';
+const stripePublishableKey =
+  (import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY ||
+  (import.meta as any).env.STRIPE_PUBLISHABLE_KEY ||
+  'pk_test_your_stripe_publishable_key';
 const stripe = Stripe(stripePublishableKey);
 let elements: any;
 let paymentElement: any;
