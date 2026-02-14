@@ -1,10 +1,34 @@
-export const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://www.thynkflow.io', // Production domain
+const BASE_CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Credentials': 'true',
   'Access-Control-Max-Age': '86400'
 };
+
+const STATIC_CORS_ORIGINS = [
+  'https://www.thynkflow.io',
+  'https://thynkflow.io',
+  'https://app.thynkflow.io',
+  'https://preview.thynkflow.io',
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5174'
+];
+
+const envCorsOrigins = (Deno.env.get('ALLOWED_CORS_ORIGINS') || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const ALLOWED_CORS_ORIGINS = new Set([...STATIC_CORS_ORIGINS, ...envCorsOrigins]);
+const DEFAULT_CORS_ORIGIN = envCorsOrigins[0] || STATIC_CORS_ORIGINS[0];
+
+const buildCorsHeaders = (origin?: string | null) => ({
+  ...BASE_CORS_HEADERS,
+  'Access-Control-Allow-Origin': origin && ALLOWED_CORS_ORIGINS.has(origin)
+    ? origin
+    : DEFAULT_CORS_ORIGIN,
+});
 
 // @ts-ignore - Deno import for Supabase Edge Functions
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
@@ -2150,8 +2174,10 @@ async function fetchWithRetry(url: string, retries = 2): Promise<string | null> 
 
 // @ts-ignore - Deno global for Supabase Edge Functions
 Deno.serve(async (req: Request) => {
+  const requestCorsHeaders = buildCorsHeaders(req.headers.get('origin'));
+
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: corsHeaders });
+    return new Response(null, { status: 204, headers: requestCorsHeaders });
   }
 
   try {
@@ -2197,7 +2223,7 @@ Deno.serve(async (req: Request) => {
       console.error('Missing SUPABASE_URL or SUPABASE keys. Ensure SERVICE_ROLE_KEY or SUPABASE_SERVICE_ROLE_KEY is set.');
       return new Response(JSON.stringify({ success: false, error: 'Missing SUPABASE_URL or SUPABASE keys. Ensure SERVICE_ROLE_KEY or SUPABASE_SERVICE_ROLE_KEY is set.' }), {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...requestCorsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
@@ -2206,7 +2232,7 @@ Deno.serve(async (req: Request) => {
       console.error('Refusing to run poller with anon key: writes will be rejected by RLS. Map a service role secret (SERVICE_ROLE_KEY) in the project.');
       return new Response(JSON.stringify({ success: false, error: 'Server requires a Supabase service role key (SERVICE_ROLE_KEY). Do not use anon key for writes.' }), {
         status: 403,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...requestCorsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
@@ -2457,14 +2483,14 @@ Deno.serve(async (req: Request) => {
       errors: errors.slice(0, 10),
       recentItems: recentItems.slice(0, 20)
     }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      headers: { ...requestCorsHeaders, 'Content-Type': 'application/json' }
     });
 
   } catch (error: any) {
     console.error('Poller lite error:', error);
     return new Response(JSON.stringify({ success: false, error: error.message }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      headers: { ...requestCorsHeaders, 'Content-Type': 'application/json' }
     });
   }
 });

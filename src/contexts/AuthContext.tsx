@@ -364,17 +364,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [fetchProfile]);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    // Create the auth user
-    const { data, error } = await supabase.auth.signUp({
+    const clientOrigin = typeof window !== 'undefined' ? window.location.origin : undefined;
+    const emailRedirectTo = import.meta.env.VITE_EMAIL_VERIFICATION_REDIRECT_URL ||
+      (clientOrigin ? `${clientOrigin}/verify-email` : undefined);
+
+    const buildOptions = (withRedirect: boolean) => {
+      const baseOptions = { data: { full_name: fullName } };
+      if (withRedirect && emailRedirectTo) {
+        return { ...baseOptions, emailRedirectTo };
+      }
+      return baseOptions;
+    };
+
+    const attemptSignUp = async (withRedirect: boolean) => supabase.auth.signUp({
       email,
       password,
-      options: { 
-        data: { full_name: fullName },
-        // Use the current origin for redirect
-        emailRedirectTo: `${window.location.origin}/verify-email`
-      }
+      options: buildOptions(withRedirect)
     });
-    
+
+    const looksLikeRedirectError = (err: any) => {
+      const message = (err?.message ?? '').toLowerCase();
+      return message.includes('redirect') || message.includes('emailredirectto');
+    };
+
+    const initialAttempt = await attemptSignUp(Boolean(emailRedirectTo));
+    let { data, error } = initialAttempt;
+
+    if (error && emailRedirectTo && looksLikeRedirectError(error)) {
+      console.warn('Supabase rejected emailRedirectTo, retrying without it');
+      const fallbackAttempt = await attemptSignUp(false);
+      data = fallbackAttempt.data;
+      error = fallbackAttempt.error;
+    }
+
     if (error) {
       return { data: null, error };
     }
