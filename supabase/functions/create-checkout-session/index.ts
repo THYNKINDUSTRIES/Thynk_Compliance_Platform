@@ -65,67 +65,102 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'Method not allowed' }, { status: 405 });
   }
 
-  if (!STRIPE_SECRET_KEY) {
-    return jsonResponse({ error: 'Stripe secret missing' }, { status: 500 });
-  }
-
-  const authHeader = req.headers.get('Authorization') || '';
-  const token = authHeader.replace(/Bearer\s+/i, '').trim();
-  if (!token) {
-    return jsonResponse({ error: 'Missing Authorization header' }, { status: 401 });
-  }
-
-  let user;
   try {
-    user = await getUserFromToken(token);
-  } catch (err) {
-    console.error('Auth error:', err);
-    return jsonResponse({ error: 'Unauthorized' }, { status: 401 });
-  }
+    if (!STRIPE_SECRET_KEY) {
+      return jsonResponse({ error: 'Stripe secret missing' }, { status: 500 });
+    }
 
-  let body: { success_url?: string; cancel_url?: string; price_id?: string };
-  try {
-    body = await req.json();
-  } catch (err) {
-    console.error('Invalid payload:', err);
-    return jsonResponse({ error: 'Invalid JSON body' }, { status: 400 });
-  }
+    const authHeader = req.headers.get('Authorization') || '';
+    const token = authHeader.replace(/Bearer\s+/i, '').trim();
+    if (!token) {
+      return jsonResponse({ error: 'Missing Authorization header' }, { status: 401 });
+    }
 
-  const priceId = body.price_id || Deno.env.get('STRIPE_PRO_PRICE_ID');
-  if (!priceId) {
-    return jsonResponse({ error: 'Missing price ID' }, { status: 500 });
-  }
+    let user;
+    try {
+      user = await getUserFromToken(token);
+    } catch (_err) {
+      return jsonResponse({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-  const successUrl = body.success_url || `${SITE_URL}/app?checkout=success`;
-  const cancelUrl = body.cancel_url || `${SITE_URL}/app?checkout=cancel`;
+    let reqBody: { success_url?: string; cancel_url?: string; price_id?: string };
+    try {
+      reqBody = await req.json();
+    } catch (_err) {
+      return jsonResponse({ error: 'Invalid JSON body' }, { status: 400 });
+    }
 
-  const { data: profile, error: profileError } = await supabase
-    .from('user_profiles')
-    .select('id, email, stripe_customer_id')
-    .eq('id', user.id)
-    .maybeSingle();
+    const priceId = reqBody.price_id || Deno.env.get('STRIPE_PRO_PRICE_ID');
+    if (!priceId) {
+      return jsonResponse({ error: 'Missing price ID' }, { status: 500 });
+    }
 
-  if (profileError || !profile) {
-    console.error('Profile lookup failed', profileError);
-    return jsonResponse({ error: 'Profile not found' }, { status: 404 });
-  }
+    const successUrl = reqBody.success_url || SITE_URL + '/app?checkout=success';
+    const cancelUrl = reqBody.cancel_url || SITE_URL + '/app?checkout=cancel';
 
-  let customerId = profile.stripe_customer_id;
-  if (!customerId) {
-    const customer = await fetchStripe('https://api.stripe.com/v1/customers', {
-      email: profile.email,
-      'metadata[user_id]': profile.id,
-    });
-    customerId = customer.id;
-    await supabase
+    // Look up the user's profile
+    const profileResult = await supabase
       .from('user_profiles')
-      .update({ stripe_customer_id: customerId })
-      .eq('id', profile.id);
-  }
+      .select('id, email, stripe_customer_id')
+      .eq('id', user.id)
+      .maybeSingle();
 
-  let session;
-  try {
-    session = await fetchStripe('https://api.stripe.com/v1/checkout/sessions', {
+    let profile = profileResult.data;
+
+    // Self-heal: if no profile row exists, create one from auth user data
+    if (!profile) {
+      console.log('No profile found for user', user.id, '- creating one');
+      const userEmail = user.email || '';
+      const userName = (user.user_metadata && user.user_metadata.full_name) ? user.user_metadata.full_name : '';
+
+      const { error: insertError } = await supabase
+        .from('user_profiles')
+        .upsert({
+          id: user.id,
+          email: userEmail,
+          full_name: userName,
+          subscription_status: 'trial',
+          trial_started_at: new Date().toISOString(),
+          trial_ends_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'id' });
+
+      if (insertError) {
+        console.error('Profile creation failed', insertError);
+        return jsonResponse({ error: 'Could not create user profile: ' + insertError.message }, { status: 500 });
+      }
+
+      // Re-fetch after creation
+      const refetchResult = await supabase
+        .from('user_profiles')
+        .select('id, email, stripe_customer_id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      profile = refetchResult.data;
+      if (!profile) {
+        return jsonResponse({ error: 'Profile created but could not be read back' }, { status: 500 });
+      }
+    }
+
+    // Use profile email, falling back to auth user email
+    const emailForStripe = profile.email || user.email || '';
+
+    let customerId = profile.stripe_customer_id;
+    if (!customerId) {
+      const customer = await fetchStripe('https://api.stripe.com/v1/customers', {
+        email: emailForStripe,
+        'metadata[user_id]': profile.id,
+      });
+      customerId = customer.id;
+      await supabase
+        .from('user_profiles')
+        .update({ stripe_customer_id: customerId })
+        .eq('id', profile.id);
+    }
+
+    const session = await fetchStripe('https://api.stripe.com/v1/checkout/sessions', {
       customer: customerId,
       mode: 'subscription',
       'line_items[0][price]': priceId,
@@ -136,10 +171,11 @@ Deno.serve(async (req: Request) => {
       client_reference_id: profile.id,
       'metadata[user_id]': profile.id,
     });
-  } catch (err) {
-    console.error('Stripe checkout error:', err);
-    return jsonResponse({ error: String(err) }, { status: 500 });
-  }
 
-  return jsonResponse({ sessionId: session.id, publishableKey: STRIPE_PUBLISHABLE_KEY || '' });
+    return jsonResponse({ sessionId: session.id, publishableKey: STRIPE_PUBLISHABLE_KEY || '' });
+
+  } catch (err) {
+    console.error('Unhandled checkout error:', err);
+    return jsonResponse({ error: 'Internal error: ' + String(err) }, { status: 500 });
+  }
 });
