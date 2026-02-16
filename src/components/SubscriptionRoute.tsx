@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Clock, CreditCard, Lock, Loader2 } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
+
+declare const Stripe: any;
 
 interface SubscriptionRouteProps {
   children: React.ReactNode;
@@ -17,8 +20,9 @@ export const SubscriptionRoute = ({
   children,
   requirePaid = false
 }: SubscriptionRouteProps) => {
-  const { user, profile, loading, isAdmin, isTrialActive, isPaidUser, trialDaysRemaining, refreshProfile } = useAuth();
+  const { user, profile, loading, session, isAdmin, isTrialActive, isPaidUser, trialDaysRemaining, refreshProfile } = useAuth();
   const [activating, setActivating] = useState(false);
+  const [checkingOut, setCheckingOut] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
   const navigate = useNavigate();
 
@@ -31,6 +35,41 @@ export const SubscriptionRoute = ({
     const timer = setTimeout(() => setTimedOut(true), 8000);
     return () => clearTimeout(timer);
   }, [loading]);
+
+  // Redirect to Stripe checkout
+  const redirectToStripeCheckout = async () => {
+    const accessToken = session?.access_token;
+    if (!accessToken) {
+      toast({ title: 'Session expired', description: 'Please sign out and sign back in.', variant: 'destructive' });
+      return;
+    }
+    setCheckingOut(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          success_url: `${window.location.origin}/app?checkout=success`,
+          cancel_url: `${window.location.origin}/app?checkout=cancel`,
+        }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || 'Unable to start checkout.');
+      const publishableKey = payload.publishableKey || import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+      if (!publishableKey || !payload.sessionId) throw new Error('Stripe configuration is missing.');
+      const stripeInstance = Stripe(publishableKey);
+      const { error } = await stripeInstance.redirectToCheckout({ sessionId: payload.sessionId });
+      if (error) throw error;
+    } catch (err) {
+      console.error('Checkout redirect failed:', err);
+      toast({ title: 'Checkout failed', description: err instanceof Error ? err.message : 'Unable to start Stripe checkout.', variant: 'destructive' });
+    } finally {
+      setCheckingOut(false);
+    }
+  };
 
   // Whether the user has already used their trial (prevent infinite restarts)
   const trialAlreadyUsed = profile?.trial_started_at != null;
@@ -113,9 +152,12 @@ export const SubscriptionRoute = ({
                 {trialDaysRemaining} days left in trial
               </Badge>
             </div>
-            <Button className="w-full" onClick={() => navigate('/profile')}>
-              <CreditCard className="h-4 w-4 mr-2" />
-              Upgrade to Pro
+            <Button className="w-full" onClick={redirectToStripeCheckout} disabled={checkingOut}>
+              {checkingOut ? (
+                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Redirecting to checkout...</>
+              ) : (
+                <><CreditCard className="h-4 w-4 mr-2" /> Upgrade to Pro</>
+              )}
             </Button>
             <Button variant="outline" className="w-full" onClick={() => navigate(-1)}>
               Go Back
@@ -151,8 +193,12 @@ export const SubscriptionRoute = ({
             </div>
           )}
           {trialAlreadyUsed ? (
-            <Button className="w-full" onClick={() => navigate('/profile')}>
-              <CreditCard className="h-4 w-4 mr-2" /> Upgrade Now
+            <Button className="w-full" onClick={redirectToStripeCheckout} disabled={checkingOut}>
+              {checkingOut ? (
+                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Redirecting to checkout...</>
+              ) : (
+                <><CreditCard className="h-4 w-4 mr-2" /> Upgrade Now</>
+              )}
             </Button>
           ) : (
             <Button 

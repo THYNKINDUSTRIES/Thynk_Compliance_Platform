@@ -17,9 +17,54 @@ declare const Stripe: any;
 function SubscriptionTab() {
   const { profile, session, isTrialActive, isPaidUser, trialDaysRemaining, refreshProfile } = useAuth();
 
+  // Whether this user has already had a trial before
+  const trialAlreadyUsed = profile?.trial_started_at != null;
+
+  const redirectToStripeCheckout = async () => {
+    const accessToken = session?.access_token;
+    if (!accessToken) {
+      toast({ title: 'Session expired', description: 'Please sign out and sign back in to continue.', variant: 'destructive' });
+      return;
+    }
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          success_url: `${window.location.origin}/app?checkout=success`,
+          cancel_url: `${window.location.origin}/app?checkout=cancel`,
+        }),
+      });
+
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload.error || 'Unable to start checkout.');
+      }
+
+      const publishableKey = payload.publishableKey || import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+      if (!publishableKey || !payload.sessionId) {
+        throw new Error('Stripe configuration is missing.');
+      }
+
+      const stripeInstance = Stripe(publishableKey);
+      const { error } = await stripeInstance.redirectToCheckout({ sessionId: payload.sessionId });
+      if (error) {
+        throw error;
+      }
+    } catch (err) {
+      console.error('Checkout redirect failed:', err);
+      toast({ title: 'Checkout failed', description: err instanceof Error ? err.message : 'Unable to start Stripe checkout.', variant: 'destructive' });
+    }
+  };
+
   const handleSubscriptionAction = async () => {
-    if (!isTrialActive && !isPaidUser && profile) {
-      // Trial expired or not started — activate a fresh 3-day trial
+    if (!isTrialActive && !isPaidUser && !trialAlreadyUsed && profile) {
+      // Never had a trial — activate a fresh 3-day trial
       try {
         const now = new Date();
         const trialEnd = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
@@ -41,46 +86,8 @@ function SubscriptionTab() {
         toast({ title: 'Error', description: 'Something went wrong. Please try again.', variant: 'destructive' });
       }
     } else {
-      // Already on trial — redirect to Stripe checkout
-      const accessToken = session?.access_token;
-      if (!accessToken) {
-        toast({ title: 'Session expired', description: 'Please sign out and sign back in to continue.', variant: 'destructive' });
-        return;
-      }
-
-      try {
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout-session`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            success_url: `${window.location.origin}/app?checkout=success`,
-            cancel_url: `${window.location.origin}/app?checkout=cancel`,
-          }),
-        });
-
-        const payload = await response.json();
-
-        if (!response.ok) {
-          throw new Error(payload.error || 'Unable to start checkout.');
-        }
-
-        const publishableKey = payload.publishableKey || import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-        if (!publishableKey || !payload.sessionId) {
-          throw new Error('Stripe configuration is missing.');
-        }
-
-        const stripeInstance = Stripe(publishableKey);
-        const { error } = await stripeInstance.redirectToCheckout({ sessionId: payload.sessionId });
-        if (error) {
-          throw error;
-        }
-      } catch (err) {
-        console.error('Checkout redirect failed:', err);
-        toast({ title: 'Checkout failed', description: err instanceof Error ? err.message : 'Unable to start Stripe checkout.', variant: 'destructive' });
-      }
+      // Trial expired or currently active — redirect to Stripe checkout
+      await redirectToStripeCheckout();
     }
   };
 
@@ -154,7 +161,7 @@ function SubscriptionTab() {
             <div className="flex gap-3">
               <Button className="bg-[#794108] hover:bg-[#E89C5C]" onClick={handleSubscriptionAction}>
                 <CreditCard className="w-4 h-4 mr-2" />
-                {isTrialActive ? 'Upgrade to Pro' : 'Start Free Trial'}
+                {isTrialActive ? 'Upgrade to Pro' : trialAlreadyUsed ? 'Upgrade to Pro' : 'Start Free Trial'}
               </Button>
             </div>
           )}
