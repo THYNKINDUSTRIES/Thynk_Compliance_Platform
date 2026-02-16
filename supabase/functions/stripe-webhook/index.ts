@@ -122,9 +122,9 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
   await supabase
     .from('user_profiles')
     .update({
-      subscription_status: status === 'active' ? 'paid' : status,
-      trial_active: false, // Trial ends when subscription starts
-      subscription_id: subscription.id
+      subscription_status: status === 'active' ? 'active' : status,
+      subscription_started_at: new Date().toISOString(),
+      stripe_subscription_id: subscription.id
     })
     .eq('id', profile.id);
 }
@@ -144,8 +144,8 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   await supabase
     .from('user_profiles')
     .update({
-      subscription_status: status === 'active' ? 'paid' : status,
-      subscription_id: subscription.id
+      subscription_status: status === 'active' ? 'active' : status,
+      stripe_subscription_id: subscription.id
     })
     .eq('id', profile.id);
 }
@@ -165,7 +165,8 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     .from('user_profiles')
     .update({
       subscription_status: 'cancelled',
-      subscription_id: null
+      subscription_ends_at: new Date().toISOString(),
+      stripe_subscription_id: null
     })
     .eq('id', profile.id);
 }
