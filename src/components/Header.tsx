@@ -2,26 +2,28 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NotificationCenter } from '@/components/NotificationCenter';
 import { UserMenu } from '@/components/UserMenu';
+import { useAuth } from '@/contexts/AuthContext';
 import { Mail, Phone, Menu, X } from 'lucide-react';
 
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isAdmin } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50">
+    <header className="sticky top-0 z-50" role="banner">
       {/* Black Top Banner */}
       <div className="bg-black text-white py-2">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-sm">
           <div className="flex items-center gap-6">
-            <a href="mailto:support@thynk.guru" className="flex items-center gap-2 hover:text-gray-300 transition-colors">
-              <Mail className="w-4 h-4" />
+            <a href="mailto:support@thynk.guru" className="flex items-center gap-2 hover:text-gray-300 transition-colors" aria-label="Email support at support@thynk.guru">
+              <Mail className="w-4 h-4" aria-hidden="true" />
               <span className="hidden sm:inline">support@thynk.guru</span>
 
 
             </a>
-            <a href="tel:+18009984965" className="flex items-center gap-2 hover:text-gray-300 transition-colors">
-              <Phone className="w-4 h-4" />
+            <a href="tel:+18009984965" className="flex items-center gap-2 hover:text-gray-300 transition-colors" aria-label="Call us at 1-800-99-THYNK">
+              <Phone className="w-4 h-4" aria-hidden="true" />
               <span className="hidden sm:inline">1 (800) 99-THYNK</span>
             </a>
 
@@ -38,9 +40,9 @@ export const Header: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Logo - Top Left */}
-            <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity" aria-label="Thynk Compliance - Home">
               <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg p-2">
-                <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -53,7 +55,7 @@ export const Header: React.FC = () => {
 
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-6">
+            <nav className="hidden lg:flex items-center gap-6" aria-label="Main navigation">
               <Link to="/" className="text-white hover:text-gray-300 transition-colors font-medium">Home</Link>
               <Link to="/app" className="text-white hover:text-gray-300 transition-colors font-medium">Platform</Link>
               <Link to="/dashboard" className="text-white hover:text-gray-300 transition-colors font-medium">Dashboard</Link>
@@ -61,10 +63,14 @@ export const Header: React.FC = () => {
               <Link to="/analytics" className="text-white hover:text-gray-300 transition-colors font-medium">Analytics</Link>
               <Link to="/forecasting" className="text-white hover:text-gray-300 transition-colors font-medium">AI Forecasting</Link>
               <Link to="/workflows" className="text-white hover:text-gray-300 transition-colors font-medium">Workflows</Link>
-              <Link to="/api-monitoring" className="text-white hover:text-gray-300 transition-colors font-medium">API</Link>
-              <Link to="/deployment" className="text-white hover:text-gray-300 transition-colors font-medium">Deploy</Link>
+              {isAdmin && (
+                <>
+                  <Link to="/api-monitoring" className="text-white hover:text-gray-300 transition-colors font-medium">API</Link>
+                  <Link to="/deployment" className="text-white hover:text-gray-300 transition-colors font-medium">Deploy</Link>
+                </>
+              )}
               <Link to="/checklists" className="text-white hover:text-gray-300 transition-colors font-medium">Checklists</Link>
-              <NotificationCenter />
+              {user && <NotificationCenter />}
               <UserMenu />
 
             </nav>
@@ -74,14 +80,16 @@ export const Header: React.FC = () => {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden text-white"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-6 h-6" aria-hidden="true" /> : <Menu className="w-6 h-6" aria-hidden="true" />}
             </button>
           </div>
 
           {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <nav className="lg:hidden mt-4 flex flex-col gap-3 pb-4 border-t border-gray-700 pt-4">
+            <nav className="lg:hidden mt-4 flex flex-col gap-3 pb-4 border-t border-gray-700 pt-4" aria-label="Mobile navigation">
               <Link to="/" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Home</Link>
               <Link to="/app" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Platform</Link>
               <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Dashboard</Link>
@@ -89,16 +97,21 @@ export const Header: React.FC = () => {
               <Link to="/analytics" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Analytics</Link>
               <Link to="/forecasting" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">AI Forecasting</Link>
               <Link to="/workflows" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Workflows</Link>
-              <Link to="/api-monitoring" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">API</Link>
-              <Link to="/deployment" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Deploy</Link>
-
+              {isAdmin && (
+                <>
+                  <Link to="/api-monitoring" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">API</Link>
+                  <Link to="/deployment" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Deploy</Link>
+                </>
+              )}
               <Link to="/templates" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Templates</Link>
               <Link to="/checklists" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Checklists</Link>
               <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Contact</Link>
               <Link to="/support" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Support</Link>
-              <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="bg-white text-black hover:bg-gray-200 px-6 py-2 rounded-lg transition-colors font-medium text-center block">
-                Sign In
-              </Link>
+              {!user && (
+                <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="bg-white text-black hover:bg-gray-200 px-6 py-2 rounded-lg transition-colors font-medium text-center block">
+                  Sign In
+                </Link>
+              )}
             </nav>
           )}
         </div>

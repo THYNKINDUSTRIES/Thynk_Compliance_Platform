@@ -236,6 +236,13 @@ export const useRegulations = (filters?: RegulationFilters) => {
       setError(null);
       setFromCache(false);
 
+      // Add a timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        console.warn('⚠️ Regulations fetch timed out after 30s');
+        setLoading(false);
+        setError('Request timed out. Please try refreshing.');
+      }, 30000);
+
       try {
         // Generate cache key based on filters that affect the API query
         // Include jurisdiction in cache key since it affects the server query
@@ -367,6 +374,7 @@ export const useRegulations = (filters?: RegulationFilters) => {
         setError(err.message || 'Failed to fetch regulations');
         setRegulations([]);
       } finally {
+        clearTimeout(timeoutId);
         setLoading(false);
       }
     };

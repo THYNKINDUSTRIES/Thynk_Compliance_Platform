@@ -10,6 +10,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { SubscriptionRoute } from "@/components/SubscriptionRoute";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { CookieConsent } from "@/components/CookieConsent";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Loader2 } from "lucide-react";
 
 // Lazy-loaded pages — each becomes its own chunk
@@ -55,9 +56,25 @@ const PageLoader = () => (
   </div>
 );
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 10000),
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 15 * 60 * 1000, // 15 minutes (formerly cacheTime)
+      refetchOnWindowFocus: false,
+      networkMode: 'online',
+    },
+    mutations: {
+      retry: 1,
+      networkMode: 'online',
+    },
+  },
+});
 
 const App = () => (
+  <ErrorBoundary>
   <ThemeProvider defaultTheme="light">
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -66,6 +83,11 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              {/* Skip navigation link for accessibility */}
+              <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:text-[#794108] focus:font-medium">
+                Skip to main content
+              </a>
+              <div id="main-content">
               <Suspense fallback={<PageLoader />}>
               <Routes>
                 {/* Public routes - no authentication required */}
@@ -111,6 +133,7 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </Suspense>
+              </div>
               {/* Cookie Consent Banner - shows for first-time visitors */}
               <CookieConsent />
             </BrowserRouter>
@@ -119,6 +142,7 @@ const App = () => (
       </TooltipProvider>
     </QueryClientProvider>
   </ThemeProvider>
+  </ErrorBoundary>
 );
 
 export default App;

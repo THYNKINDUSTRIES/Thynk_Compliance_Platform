@@ -130,7 +130,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Use a simpler query to avoid RLS recursion issues
       const { data, error } = await supabase
         .from('user_profiles')
-        .select('id, email, full_name, role, subscription_status, trial_started_at, trial_ends_at, trial_end_date, subscription_started_at, subscription_ends_at, created_at, updated_at')
+        .select('*')
         .eq('id', userId)
         .maybeSingle(); // Use maybeSingle to avoid errors on empty results
 
@@ -297,8 +297,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let isMounted = true;
 
-    // Get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    // Get initial session with timeout protection
+    const sessionPromise = supabase.auth.getSession();
+    const timeoutPromise = new Promise<never>((_, reject) => 
+      setTimeout(() => reject(new Error('Session fetch timed out')), 10000)
+    );
+    
+    Promise.race([sessionPromise, timeoutPromise]).then(async ({ data: { session } }: any) => {
       if (!isMounted) return;
       setSession(session);
       setUser(session?.user ?? null);
@@ -313,7 +318,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setOnboardingCompleted(true); // No user = no onboarding
       }
       if (isMounted) setLoading(false);
-    }).catch((err) => {
+    }).catch((err: any) => {
       // AbortError is expected when component unmounts/remounts (React StrictMode)
       if (err?.name === 'AbortError') return;
       console.error('Failed to get session:', err);

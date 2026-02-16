@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
@@ -14,9 +15,20 @@ export const ProtectedRoute = ({
   requireEmailVerification = false
 }: ProtectedRouteProps) => {
   const { user, profile, loading } = useAuth();
+  const [timedOut, setTimedOut] = useState(false);
 
-  // Show loading spinner while checking auth
-  if (loading) {
+  // Failsafe: if loading takes >8 seconds, stop spinning and redirect
+  useEffect(() => {
+    if (!loading) {
+      setTimedOut(false);
+      return;
+    }
+    const timer = setTimeout(() => setTimedOut(true), 8000);
+    return () => clearTimeout(timer);
+  }, [loading]);
+
+  // Show loading spinner while checking auth (with timeout)
+  if (loading && !timedOut) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="text-center">

@@ -11,7 +11,11 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = 'https://kruwbjaszdwzttblxqwr.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtydXdiamFzemR3enR0Ymx4cXdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExNjcwOTIsImV4cCI6MjA3Njc0MzA5Mn0.BOmy4m7qoukUVyG1j8kDyyuA__mp9BeYdiDXL_OW-ZQ';
 
-const supabaseKey = supabaseAnonKey;
+// Check for service role key (only used in admin/preview contexts)
+const useServiceRole = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY || '';
+const isPreviewMode = import.meta.env.VITE_PREVIEW_MODE === 'true' || import.meta.env.MODE === 'preview';
+
+const supabaseKey = (isPreviewMode && useServiceRole) ? useServiceRole : supabaseAnonKey;
 
 // Create Supabase client
 const supabase = createClient(supabaseUrl, supabaseKey, {

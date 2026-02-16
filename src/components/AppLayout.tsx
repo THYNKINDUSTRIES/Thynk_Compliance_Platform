@@ -88,38 +88,55 @@ const AppLayout: React.FC = () => {
 
       if (error) throw error;
 
-      // Get instrument counts for each jurisdiction
-      // Build a lookup of static state data for rich legal status info
+      // Get instrument counts for each jurisdiction in a single batched query
+      // instead of N+1 individual queries
       const staticLookup = new Map(US_STATES.map(s => [s.name, s]));
+      const jurisdictionIds = (jurisdictions || []).map(j => j.id);
       
-      const statesWithData = await Promise.all(
-        (jurisdictions || []).map(async (j) => {
-          const { count } = await supabase
-            .from('instrument')
-            .select('*', { count: 'exact', head: true })
-            .eq('jurisdiction_id', j.id);
-
-          // Get latest instrument - handle empty results gracefully
-          let lastUpdated = null;
-          try {
-            const { data: latestInstruments } = await supabase
-              .from('instrument')
-              .select('updated_at, created_at')
-              .eq('jurisdiction_id', j.id)
-              .order('created_at', { ascending: false })
-              .limit(1);
-            
-            if (latestInstruments && latestInstruments.length > 0) {
-              lastUpdated = latestInstruments[0]?.updated_at || latestInstruments[0]?.created_at || null;
-            }
-          } catch (e) {
-            // Ignore errors for individual state lookups
+      // Batch fetch: instrument counts grouped by jurisdiction_id
+      let countMap = new Map<string, number>();
+      let latestMap = new Map<string, string | null>();
+      
+      if (jurisdictionIds.length > 0) {
+        // Use RPC or a single aggregated query for counts
+        const { data: countData } = await supabase
+          .from('instrument')
+          .select('jurisdiction_id')
+          .in('jurisdiction_id', jurisdictionIds);
+        
+        // Count by jurisdiction_id locally
+        if (countData) {
+          for (const row of countData) {
+            const jid = row.jurisdiction_id;
+            countMap.set(jid, (countMap.get(jid) || 0) + 1);
           }
+        }
+
+        // Batch fetch latest updated_at for each jurisdiction
+        // Get the most recent instrument per jurisdiction
+        const { data: latestData } = await supabase
+          .from('instrument')
+          .select('jurisdiction_id, updated_at, created_at')
+          .in('jurisdiction_id', jurisdictionIds)
+          .order('created_at', { ascending: false })
+          .limit(500);
+        
+        if (latestData) {
+          for (const row of latestData) {
+            if (!latestMap.has(row.jurisdiction_id)) {
+              latestMap.set(row.jurisdiction_id, row.updated_at || row.created_at || null);
+            }
+          }
+        }
+      }
+      
+      const statesWithData = (jurisdictions || []).map((j) => {
+          const instrumentCount = countMap.get(j.id) || 0;
+          const lastUpdated = latestMap.get(j.id) || null;
 
           // Merge with static state data for rich legal status info
           const staticState = staticLookup.get(j.name);
           const stateAbbr = getStateAbbreviation(j.name);
-          const instrumentCount = count || 0;
           
           return {
             id: stateAbbr,
@@ -135,8 +152,7 @@ const AppLayout: React.FC = () => {
               kratom: 'Unknown', psychedelics: 'Unknown', nicotine: 'Unknown'
             }
           } as StateInfo & { lastUpdated?: string; totalInstruments?: number };
-        })
-      );
+      });
 
       console.log('✅ State data fetched:', statesWithData.length);
       setStateData(statesWithData);

@@ -109,16 +109,19 @@ export default function Contact() {
               </CardContent>
             </Card>
 
-            {/* Map Placeholder */}
+            {/* Map */}
             <Card className="lg:col-span-2">
-              <CardContent className="p-0 h-full min-h-[300px]">
-                <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <MapPin className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 font-medium">San Francisco, CA</p>
-                    <p className="text-sm text-gray-400 mt-2">Interactive map coming soon</p>
-                  </div>
-                </div>
+              <CardContent className="p-0 h-full min-h-[300px] overflow-hidden rounded-lg">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d50470.85753665892!2d-122.44793814174228!3d37.77492950735534!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80859a6d00690021%3A0x4a501367f076adff!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, minHeight: '300px' }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Thynk Industries office location in San Francisco, CA"
+                />
               </CardContent>
             </Card>
           </div>

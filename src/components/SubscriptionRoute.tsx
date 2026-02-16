@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { isAdminDomain } from '@/lib/betaAccess';
@@ -19,7 +19,18 @@ export const SubscriptionRoute = ({
 }: SubscriptionRouteProps) => {
   const { user, profile, loading, isAdmin, isTrialActive, isPaidUser, trialDaysRemaining, refreshProfile } = useAuth();
   const [activating, setActivating] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
   const navigate = useNavigate();
+
+  // Failsafe: if loading takes >8 seconds, stop spinning and redirect
+  useEffect(() => {
+    if (!loading) {
+      setTimedOut(false);
+      return;
+    }
+    const timer = setTimeout(() => setTimedOut(true), 8000);
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   // Whether the user has already used their trial (prevent infinite restarts)
   const trialAlreadyUsed = profile?.trial_started_at != null;
@@ -54,8 +65,8 @@ export const SubscriptionRoute = ({
     return <>{children}</>;
   }
 
-  // Show loading spinner while checking auth
-  if (loading) {
+  // Show loading spinner while checking auth (with timeout failsafe)
+  if (loading && !timedOut) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="text-center">
@@ -66,7 +77,7 @@ export const SubscriptionRoute = ({
     );
   }
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated (also handles timeout)
   if (!user) {
     return <Navigate to="/login" replace />;
   }

@@ -163,31 +163,27 @@ export default function Dashboard() {
         return;
       }
 
-      // Now fetch the instrument titles separately to avoid foreign key issues
-      // Now fetch the instrument titles separately to avoid foreign key issues
-      const formattedFavorites: Favorite[] = await Promise.all(
-        (data || []).map(async (item) => {
-          let title = `Regulation ${item.instrument_id}`;
-          
-          // Try to get the instrument title - use limit(1) instead of single()
-          const { data: instruments } = await supabase
-            .from('instrument')
-            .select('title')
-            .eq('id', item.instrument_id)
-            .limit(1);
-          
-          if (instruments && instruments.length > 0 && instruments[0].title) {
-            title = instruments[0].title;
-          }
-          
-          return {
-            id: item.id,
-            regulation_id: item.instrument_id,
-            title,
-            created_at: item.created_at
-          };
-        })
-      );
+      // Now fetch the instrument titles in a single batch query to avoid N+1
+      const instrumentIds = (data || []).map(item => item.instrument_id).filter(Boolean);
+      let titleMap = new Map<string, string>();
+      
+      if (instrumentIds.length > 0) {
+        const { data: instruments } = await supabase
+          .from('instrument')
+          .select('id, title')
+          .in('id', instrumentIds);
+        
+        if (instruments) {
+          titleMap = new Map(instruments.map(i => [i.id, i.title]));
+        }
+      }
+
+      const formattedFavorites: Favorite[] = (data || []).map(item => ({
+        id: item.id,
+        regulation_id: item.instrument_id,
+        title: titleMap.get(item.instrument_id) || `Regulation ${item.instrument_id}`,
+        created_at: item.created_at
+      }));
 
 
       setFavorites(formattedFavorites);

@@ -3,14 +3,17 @@ import { Link } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-[#794108] text-gray-100 py-12 px-4">
+    <footer className="bg-[#794108] text-gray-100 py-12 px-4" role="contentinfo">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
           {/* Thynk Head Logo */}
           <img 
             src="/thynk-head.png" 
-            alt="Thynk Industries" 
-            className="h-10 w-10 mb-4 rounded object-contain" 
+            alt="Thynk Industries logo" 
+            className="h-10 w-10 mb-4 rounded object-contain"
+            loading="lazy"
+            width="40"
+            height="40"
           />
           <p className="text-sm mb-4">
             Authoritative regulatory intelligence for the hemp, cannabinoid, kratom, psychedelics, and alternative wellness industries.
@@ -22,6 +25,7 @@ export const Footer: React.FC = () => {
 
         <div>
           <h4 className="text-white font-semibold mb-4">Products</h4>
+          <nav aria-label="Product links">
           <ul className="space-y-2 text-sm">
             <li><Link to="/app?product=hemp" className="hover:text-[#E89C5C] transition-colors">Hemp/CBD</Link></li>
             <li><Link to="/app?product=cannabinoids" className="hover:text-[#E89C5C] transition-colors">Cannabinoids</Link></li>
@@ -29,6 +33,7 @@ export const Footer: React.FC = () => {
             <li><Link to="/app?product=psychedelics" className="hover:text-[#E89C5C] transition-colors">Psychedelics</Link></li>
             <li><Link to="/app?product=nicotine" className="hover:text-[#E89C5C] transition-colors">Nicotine/Vapes</Link></li>
           </ul>
+          </nav>
         </div>
 
         <div>
