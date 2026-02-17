@@ -172,7 +172,7 @@ Deno.serve(async (req: Request) => {
       'metadata[user_id]': profile.id,
     });
 
-    return jsonResponse({ sessionId: session.id, publishableKey: STRIPE_PUBLISHABLE_KEY || '' });
+    return jsonResponse({ sessionId: session.id, url: session.url, publishableKey: STRIPE_PUBLISHABLE_KEY || '' });
 
   } catch (err) {
     console.error('Unhandled checkout error:', err);

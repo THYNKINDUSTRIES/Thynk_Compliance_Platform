@@ -58,6 +58,12 @@ export const SubscriptionRoute = ({
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || 'Unable to start checkout.');
+      // Use the direct checkout URL from Stripe (more reliable than redirectToCheckout)
+      if (payload.url) {
+        window.location.href = payload.url;
+        return;
+      }
+      // Fallback to Stripe.js redirectToCheckout if no URL returned
       const publishableKey = payload.publishableKey || import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
       if (!publishableKey || !payload.sessionId) throw new Error('Stripe configuration is missing.');
       const stripeInstance = Stripe(publishableKey);
