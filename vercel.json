@@ -79,6 +79,7 @@
   ],
   "env": {
     "VITE_BETA_MODE": "false",
+    "VITE_SUPABASE_URL": "https://kruwbjaszdwzttblxqwr.supabase.co",
     "VITE_STRIPE_PUBLISHABLE_KEY": "pk_live_51STVWvDHHGSPqPV6uBh0N7nusRYmGaEMeA3Ly7sBj8MY9EzPh5rFCtoYdqv0wEx1XM9oyCBfuVwVdxZiDyn0bnCZ00UxJvf5pR"
   },
   "crons": [
