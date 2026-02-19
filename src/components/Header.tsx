@@ -65,6 +65,7 @@ export const Header: React.FC = () => {
               <Link to="/workflows" className="text-white hover:text-gray-300 transition-colors font-medium">Workflows</Link>
               {isAdmin && (
                 <>
+                  <Link to="/source-management" className="text-white hover:text-gray-300 transition-colors font-medium">Sources</Link>
                   <Link to="/api-monitoring" className="text-white hover:text-gray-300 transition-colors font-medium">API</Link>
                   <Link to="/deployment" className="text-white hover:text-gray-300 transition-colors font-medium">Deploy</Link>
                 </>
@@ -99,6 +100,7 @@ export const Header: React.FC = () => {
               <Link to="/workflows" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Workflows</Link>
               {isAdmin && (
                 <>
+                  <Link to="/source-management" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Sources</Link>
                   <Link to="/api-monitoring" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">API</Link>
                   <Link to="/deployment" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Deploy</Link>
                 </>

@@ -13,7 +13,7 @@ import { CannabisHempPoller } from '@/components/CannabisHempPoller';
 import { KratomPoller } from '@/components/KratomPoller';
 import { KavaPoller } from '@/components/KavaPoller';
 import { PollerTestPanel } from '@/components/PollerTestPanel';
-import { Database, RefreshCw, CheckCircle, AlertCircle, Loader2, Trash2, MapPin, FlaskConical, Leaf } from 'lucide-react';
+import { Database, RefreshCw, CheckCircle, AlertCircle, Loader2, Trash2, MapPin, FlaskConical, Leaf, Sprout } from 'lucide-react';
 
 interface DatabaseStats {
   totalInstruments: number;
@@ -169,11 +169,15 @@ export default function SourceManagement() {
             </Card>
           </div>
 
-          <Tabs defaultValue="states" className="w-full">
-            <TabsList className="grid w-full grid-cols-7">
+          <Tabs defaultValue="comprehensive" className="w-full">
+            <TabsList className="grid w-full grid-cols-8">
+              <TabsTrigger value="comprehensive" className="flex items-center gap-2">
+                <Database className="w-4 h-4" />
+                All Pollers
+              </TabsTrigger>
               <TabsTrigger value="states" className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
-                State Regulations
+                State Data
               </TabsTrigger>
               <TabsTrigger value="kratom" className="flex items-center gap-2">
                 <Leaf className="w-4 h-4" />
@@ -187,10 +191,14 @@ export default function SourceManagement() {
                 <FlaskConical className="w-4 h-4" />
                 CA Poll Test
               </TabsTrigger>
-              <TabsTrigger value="overview">Database Overview</TabsTrigger>
+              <TabsTrigger value="overview">DB Overview</TabsTrigger>
               <TabsTrigger value="polling">Polling Health</TabsTrigger>
-              <TabsTrigger value="testing">Testing Tools</TabsTrigger>
+              <TabsTrigger value="testing">Testing</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="comprehensive" className="space-y-6">
+              <DataIngestionTester />
+            </TabsContent>
 
             <TabsContent value="states" className="space-y-6">
               <CannabisHempPoller />

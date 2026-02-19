@@ -347,6 +347,15 @@ export const useRegulations = (filters?: RegulationFilters) => {
           if (jurisdictionId) {
             query = query.eq('jurisdiction_id', jurisdictionId);
           }
+          
+          // Default to last 90 days if no date filter specified (prevents loading stale data)
+          if (safeFilters.dateFrom) {
+            query = query.gte('created_at', safeFilters.dateFrom);
+          } else {
+            const ninetyDaysAgo = new Date();
+            ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+            query = query.gte('created_at', ninetyDaysAgo.toISOString());
+          }
 
           const { data, error: queryError } = await query;
 
