@@ -69,7 +69,8 @@ export function useNotifications() {
       setNotifications(data || []);
       setUnreadCount(data?.filter(n => !n.is_read).length || 0);
     } catch (error: any) {
-      // Only log non-404 errors
+      // Only log non-expected errors (skip 404s and AbortErrors)
+      if (error?.name === 'AbortError') return;
       if (error?.code !== '42P01' && !error?.message?.includes('relation')) {
         console.error('Error fetching notifications:', error);
       }

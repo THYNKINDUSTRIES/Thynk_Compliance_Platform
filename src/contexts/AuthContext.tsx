@@ -102,6 +102,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const currentUserIdRef = useRef<string | null>(null);
   const selfHealAttemptedRef = useRef<string | null>(null);
   const suppressAuthChangeRef = useRef(false);
+  const initialSessionHandledRef = useRef(false);
 
   // Check beta access based on user email
   const userHasBetaAccess = hasBetaAccess(user?.email);
@@ -305,6 +306,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     
     Promise.race([sessionPromise, timeoutPromise]).then(async ({ data: { session } }: any) => {
       if (!isMounted) return;
+      initialSessionHandledRef.current = true;
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -312,7 +314,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           await fetchProfile(session.user.id);
           currentUserIdRef.current = session.user.id;
         } catch (err) {
-          console.error('Failed to fetch profile on init:', err);
+          if ((err as any)?.name !== 'AbortError') {
+            console.error('Failed to fetch profile on init:', err);
+          }
         }
       } else {
         setOnboardingCompleted(true); // No user = no onboarding
@@ -332,10 +336,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Skip if signUp is handling session setup itself
       if (suppressAuthChangeRef.current) return;
 
+      // Skip INITIAL_SESSION if getSession() already handled it — prevents
+      // the double-fetch race condition that causes AbortErrors everywhere
+      if (_event === 'INITIAL_SESSION' && initialSessionHandledRef.current) return;
+
       const newUserId = session?.user?.id ?? null;
 
-      // Skip if we already loaded this user's profile (prevents
-      // INITIAL_SESSION from re-triggering after getSession)
+      // Skip if we already loaded this user's profile
       if (newUserId && newUserId === currentUserIdRef.current && profile) return;
 
       setSession(session);
@@ -351,7 +358,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           await fetchProfile(session.user.id);
           currentUserIdRef.current = session.user.id;
         } catch (err) {
-          console.error('Failed to fetch profile on auth change:', err);
+          if ((err as any)?.name !== 'AbortError') {
+            console.error('Failed to fetch profile on auth change:', err);
+          }
         } finally {
           if (isMounted) setLoading(false);
         }

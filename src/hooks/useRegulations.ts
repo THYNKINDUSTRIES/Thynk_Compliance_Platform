@@ -351,7 +351,9 @@ export const useRegulations = (filters?: RegulationFilters) => {
           const { data, error: queryError } = await query;
 
           if (queryError) {
-            console.error('❌ Query error:', queryError);
+            if (queryError.message !== 'AbortError: signal is aborted without reason') {
+              console.error('❌ Query error:', queryError);
+            }
             throw queryError;
           }
           
@@ -370,7 +372,9 @@ export const useRegulations = (filters?: RegulationFilters) => {
 
         setRegulations(filteredData);
       } catch (err: any) {
-        console.error('❌ Error fetching regulations:', err);
+        if (err?.message !== 'AbortError: signal is aborted without reason' && err?.name !== 'AbortError') {
+          console.error('❌ Error fetching regulations:', err);
+        }
         setError(err.message || 'Failed to fetch regulations');
         setRegulations([]);
       } finally {

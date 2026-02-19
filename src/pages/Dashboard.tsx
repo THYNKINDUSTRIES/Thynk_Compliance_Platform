@@ -82,7 +82,7 @@ export default function Dashboard() {
         .from('instrument')
         .select('*', { count: 'exact', head: true });
       
-      if (regError) {
+      if (regError && regError.message !== 'AbortError: signal is aborted without reason') {
         console.error('[Dashboard] Error fetching regulation count:', regError);
       }
       
@@ -93,7 +93,7 @@ export default function Dashboard() {
         .select('*', { count: 'exact', head: true })
         .gte('created_at', today);
 
-      if (todayError) {
+      if (todayError && todayError.message !== 'AbortError: signal is aborted without reason') {
         console.error('[Dashboard] Error fetching today count:', todayError);
       }
 
@@ -157,7 +157,9 @@ export default function Dashboard() {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('[Dashboard] Error fetching favorites:', error);
+        if (error.message !== 'AbortError: signal is aborted without reason') {
+          console.error('[Dashboard] Error fetching favorites:', error);
+        }
         // Don't throw - just set empty favorites
         setFavorites([]);
         return;
