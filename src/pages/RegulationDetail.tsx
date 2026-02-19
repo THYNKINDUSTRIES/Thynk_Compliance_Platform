@@ -8,16 +8,49 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Printer, Download, Calendar, FileText, Building2, Tag } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Regulation } from '@/hooks/useRegulations';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+
+// Local detail interface matching actual DB columns
+interface RegulationDetailData {
+  id: string;
+  title: string;
+  summary: string;
+  jurisdiction: string;
+  authority: string;
+  status: string;
+  products: string[];
+  stages: string[];
+  instrumentType: string;
+  publishedAt: string;
+  effectiveAt?: string;
+  citation: string;
+  url: string;
+  impact: string;
+}
+
+const PRODUCT_KEYWORDS: Record<string, string[]> = {
+  'Hemp': ['hemp', 'cbd', 'cannabidiol', 'industrial hemp'],
+  'Cannabis': ['cannabis', 'marijuana', 'marihuana', 'weed'],
+  'Kratom': ['kratom', 'mitragynine'],
+  'Kava': ['kava', 'kavalactone'],
+  'Nicotine': ['nicotine', 'vape', 'tobacco', 'cigarette'],
+  'Psychedelics': ['psychedelic', 'psilocybin', 'ketamine', 'mdma'],
+};
+
+const inferProducts = (text: string): string[] => {
+  const lower = text.toLowerCase();
+  return Object.entries(PRODUCT_KEYWORDS)
+    .filter(([, kws]) => kws.some(kw => lower.includes(kw)))
+    .map(([product]) => product);
+};
 
 const RegulationDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [regulation, setRegulation] = useState<Regulation | null>(null);
+  const [regulation, setRegulation] = useState<RegulationDetailData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [relatedRegs, setRelatedRegs] = useState<Regulation[]>([]);
+  const [relatedRegs, setRelatedRegs] = useState<any[]>([]);
 
   useEffect(() => {
     fetchRegulation();
@@ -25,14 +58,14 @@ const RegulationDetail = () => {
 
   const fetchRegulation = async () => {
     try {
+      // Query actual instrument columns — no authority FK exists
       const { data, error } = await supabase
         .from('instrument')
         .select(`
-          id, title, summary, status, products, stages,
-          instrument_type, published_at, effective_at,
-          citation, url, impact,
-          jurisdiction:jurisdiction_id(name),
-          authority:authority_id(acronym, name)
+          id, title, description, status, source, metadata,
+          document_type, published_at, effective_date, effective_at,
+          external_id, url, impact, content, category,
+          jurisdiction:jurisdiction_id(name)
         `)
         .eq('id', id)
         .limit(1);
@@ -40,29 +73,51 @@ const RegulationDetail = () => {
       if (error) throw error;
       if (!data || data.length === 0) throw new Error('Not found');
 
-      const item = data[0];
-      const reg: Regulation = {
+      const item = data[0] as any;
+      const meta = item.metadata || {};
+      const desc = item.description || item.content || '';
+
+      // Derive products from metadata or infer from text
+      let products: string[] = [];
+      if (meta.products && Array.isArray(meta.products)) {
+        products = meta.products;
+      } else if (meta.category) {
+        products = [meta.category];
+      } else if (item.category) {
+        products = [item.category];
+      }
+      if (products.length === 0) {
+        products = inferProducts(`${item.title || ''} ${desc}`);
+      }
+
+      // Derive stages/tags
+      let stages: string[] = [];
+      if (meta.stages && Array.isArray(meta.stages)) {
+        stages = meta.stages;
+      } else if (meta.tags && Array.isArray(meta.tags)) {
+        stages = meta.tags;
+      }
+
+      const reg: RegulationDetailData = {
         id: item.id,
-        title: item.title,
-        summary: item.summary || '',
-        jurisdiction: item.jurisdiction?.name || 'Unknown',
-        authority: item.authority?.acronym || 'Unknown',
-        status: item.status || 'unknown',
-        products: item.products || [],
-        stages: item.stages || [],
-        instrumentType: item.instrument_type || 'Unknown',
-        publishedAt: item.published_at?.split('T')[0] || '',
-        effectiveAt: item.effective_at?.split('T')[0],
-        citation: item.citation,
+        title: item.title || 'Untitled',
+        summary: item.description || meta.abstract || meta.summary || desc || '',
+        jurisdiction: item.jurisdiction?.name || 'Federal',
+        authority: item.source || meta.agency_name || meta.agency || 'Unknown',
+        status: item.status || 'Active',
+        products,
+        stages,
+        instrumentType: item.document_type || meta.document_type || 'Rule',
+        publishedAt: (item.published_at || item.effective_date || '')?.split?.('T')?.[0] || '',
+        effectiveAt: (item.effective_at || item.effective_date || '')?.split?.('T')?.[0],
+        citation: item.external_id || meta.citation || meta.document_number || '',
         url: item.url || '#',
-        impact: item.impact || 'medium',
+        impact: item.impact || meta.impact || 'medium',
       };
 
       setRegulation(reg);
 
-
-
-      // Fetch related regulations
+      // Fetch related regulations (same jurisdiction)
       const { data: related } = await supabase
         .from('instrument')
         .select('id, title, jurisdiction:jurisdiction_id(name), published_at')
@@ -75,10 +130,10 @@ const RegulationDetail = () => {
           title: r.title,
           jurisdiction: r.jurisdiction?.name || 'Unknown',
           publishedAt: r.published_at?.split('T')[0] || '',
-        })) as any);
+        })));
       }
     } catch (err) {
-      console.error('Error:', err);
+      console.error('Error fetching regulation detail:', err);
     } finally {
       setLoading(false);
     }
