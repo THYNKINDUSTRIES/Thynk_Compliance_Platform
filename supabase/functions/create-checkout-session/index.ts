@@ -2,12 +2,23 @@
 // @ts-ignore - Deno import for Supabase Edge Functions
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://www.thynkflow.io',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Credentials': 'true',
-};
+const ALLOWED_ORIGINS = [
+  'https://thynkflow.io',
+  'https://www.thynkflow.io',
+  'https://thynk-compliance-platform-77nsei26a.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+function buildCors(req?: Request) {
+  const origin = req?.headers?.get('origin') || '';
+  return {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
+const corsHeaders = buildCors();
 
 // @ts-ignore - Deno global for Supabase Edge Functions
 const supabase = createClient(
@@ -17,7 +28,7 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 );
 
-const SITE_URL = Deno.env.get('SITE_URL') ?? 'https://www.thynkflow.io';
+const SITE_URL = Deno.env.get('SITE_URL') ?? 'https://thynkflow.io';
 const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY');
 const STRIPE_PUBLISHABLE_KEY = Deno.env.get('STRIPE_PUBLISHABLE_KEY') || Deno.env.get('VITE_STRIPE_PUBLISHABLE_KEY');
 

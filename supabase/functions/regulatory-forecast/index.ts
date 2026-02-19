@@ -15,7 +15,7 @@
 
 // Static export kept for any external references; actual CORS uses dynamic getCorsHeaders() below
 export const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://www.thynkflow.io',
+  'Access-Control-Allow-Origin': 'https://thynkflow.io',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Credentials': 'true',
@@ -25,7 +25,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const PRODUCTS = ['cannabis', 'hemp', 'kratom', 'kava', 'nicotine', 'psychedelics'] as const;
 
-const ALLOWED_ORIGINS = ['https://www.thynkflow.io', 'https://thynkflow.io', 'http://localhost:5173', 'http://localhost:3000'];
+const ALLOWED_ORIGINS = ['https://thynkflow.io', 'https://www.thynkflow.io', 'https://thynk-compliance-platform-77nsei26a.vercel.app', 'http://localhost:5173', 'http://localhost:3000'];
 
 function getCorsHeaders(req: Request) {
   const origin = req.headers.get('origin') || '';

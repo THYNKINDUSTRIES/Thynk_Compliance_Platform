@@ -6,10 +6,9 @@ const BASE_CORS_HEADERS = {
 };
 
 const STATIC_CORS_ORIGINS = [
-  'https://www.thynkflow.io',
   'https://thynkflow.io',
-  'https://app.thynkflow.io',
-  'https://preview.thynkflow.io',
+  'https://www.thynkflow.io',
+  'https://thynk-compliance-platform-77nsei26a.vercel.app',
   'http://localhost:3000',
   'http://localhost:5173',
   'http://localhost:5174'

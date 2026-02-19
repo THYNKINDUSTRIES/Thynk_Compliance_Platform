@@ -17,10 +17,20 @@ export function useWorkflows() {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        // Table may not exist yet — silently return empty
+        if (error.code === '42P01' || error.message?.includes('does not exist') || error.code === 'PGRST204') {
+          setWorkflows([]);
+          return;
+        }
+        throw error;
+      }
       setWorkflows(data || []);
-    } catch (error) {
-      console.error('Error fetching workflows:', error);
+    } catch (error: any) {
+      // Suppress 404/missing-table errors
+      if (error?.code !== '42P01') {
+        console.warn('Workflows not available:', error?.message || error);
+      }
     } finally {
       setLoading(false);
     }
@@ -53,10 +63,18 @@ export function useWorkflowTasks(workflowInstanceId: string) {
         .eq('workflow_instance_id', workflowInstanceId)
         .order('order_index', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42P01' || error.message?.includes('does not exist') || error.code === 'PGRST204') {
+          setTasks([]);
+          return;
+        }
+        throw error;
+      }
       setTasks(data || []);
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
+    } catch (error: any) {
+      if (error?.code !== '42P01') {
+        console.warn('Workflow tasks not available:', error?.message || error);
+      }
     } finally {
       setLoading(false);
     }

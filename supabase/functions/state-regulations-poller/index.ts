@@ -1,10 +1,21 @@
-export const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://www.thynkflow.io', // Production domain
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Credentials': 'true',
-  'Access-Control-Max-Age': '86400'
-};
+const ALLOWED_ORIGINS = [
+  'https://thynkflow.io',
+  'https://www.thynkflow.io',
+  'https://thynk-compliance-platform-77nsei26a.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+function buildCors(req?: Request) {
+  const origin = req?.headers?.get('origin') || '';
+  return {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Max-Age': '86400',
+  };
+}
+export const corsHeaders = buildCors();
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 

@@ -32,11 +32,18 @@ export default function DeploymentDashboard() {
   }, [selectedFunction]);
 
   const loadFunctions = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('edge_function_versions')
       .select('function_name')
       .order('function_name');
     
+    if (error) {
+      // Table doesn't exist yet — show hardcoded function list instead
+      const fallback = ['cannabis-hemp-poller','caselaw-poller','congress-poller','federal-register-poller','kava-poller','kratom-poller','regulatory-forecast','scheduled-poller-cron','state-legislature-poller','state-regulations-poller','stripe-webhook','trial-management'];
+      setFunctions(fallback);
+      if (fallback.length > 0) setSelectedFunction(fallback[0]);
+      return;
+    }
     if (data) {
       const unique = [...new Set(data.map(d => d.function_name))];
       setFunctions(unique);
@@ -45,13 +52,13 @@ export default function DeploymentDashboard() {
   };
 
   const loadVersions = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('edge_function_versions')
       .select('*')
       .eq('function_name', selectedFunction)
       .order('version', { ascending: false });
     
-    if (data) setVersions(data);
+    if (!error && data) setVersions(data);
   };
 
   const saveVersion = async () => {
