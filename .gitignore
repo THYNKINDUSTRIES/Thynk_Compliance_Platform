@@ -43,3 +43,5 @@ next-env.d.ts
 src/components/StateRegulationsPoller.tsx
 src/components/StateRegulationsPoller.tsx
 supabase/.temp/
+test-results/
+playwright-report/

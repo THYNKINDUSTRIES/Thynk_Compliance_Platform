@@ -1,0 +1,170 @@
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/lib/supabase';
+
+export interface HealthCheck {
+  id: string;
+  check_type: 'page' | 'edge_function' | 'database' | 'ssl';
+  check_name: string;
+  status: 'pass' | 'warn' | 'fail';
+  response_time_ms: number;
+  details: Record<string, unknown>;
+  checked_at: string;
+  created_at: string;
+}
+
+export interface HealthSummary {
+  overall: 'healthy' | 'warning' | 'degraded' | 'unknown';
+  score: number;
+  totalChecks: number;
+  passed: number;
+  warnings: number;
+  failures: number;
+  lastChecked: string | null;
+}
+
+export interface HealthChecksByType {
+  page: HealthCheck[];
+  edge_function: HealthCheck[];
+  database: HealthCheck[];
+  ssl: HealthCheck[];
+}
+
+export function useSiteHealth() {
+  const [latestChecks, setLatestChecks] = useState<HealthCheck[]>([]);
+  const [history, setHistory] = useState<HealthCheck[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [summary, setSummary] = useState<HealthSummary>({
+    overall: 'unknown',
+    score: 0,
+    totalChecks: 0,
+    passed: 0,
+    warnings: 0,
+    failures: 0,
+    lastChecked: null,
+  });
+
+  const fetchLatest = useCallback(async () => {
+    try {
+      // Get the most recent check run (all checks from the same timestamp)
+      const { data: recentCheck, error: rcErr } = await supabase
+        .from('site_health_checks')
+        .select('checked_at')
+        .order('checked_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (rcErr || !recentCheck) {
+        setLatestChecks([]);
+        return;
+      }
+
+      // Get all checks from that batch
+      const { data, error: fetchErr } = await supabase
+        .from('site_health_checks')
+        .select('*')
+        .eq('checked_at', recentCheck.checked_at)
+        .order('check_type', { ascending: true });
+
+      if (fetchErr) throw fetchErr;
+
+      const checks = (data || []) as HealthCheck[];
+      setLatestChecks(checks);
+
+      // Compute summary
+      const total = checks.length;
+      const passed = checks.filter(c => c.status === 'pass').length;
+      const warnings = checks.filter(c => c.status === 'warn').length;
+      const failures = checks.filter(c => c.status === 'fail').length;
+      const overall = failures > 0 ? 'degraded' : warnings > 0 ? 'warning' : total > 0 ? 'healthy' : 'unknown';
+
+      setSummary({
+        overall,
+        score: total > 0 ? Math.round((passed / total) * 100) : 0,
+        totalChecks: total,
+        passed,
+        warnings,
+        failures,
+        lastChecked: recentCheck.checked_at,
+      });
+    } catch (err: any) {
+      setError(err.message);
+    }
+  }, []);
+
+  const fetchHistory = useCallback(async (hours = 24) => {
+    try {
+      const since = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+      const { data, error: fetchErr } = await supabase
+        .from('site_health_checks')
+        .select('*')
+        .gte('checked_at', since)
+        .order('checked_at', { ascending: false })
+        .limit(500);
+
+      if (fetchErr) throw fetchErr;
+      setHistory((data || []) as HealthCheck[]);
+    } catch (err: any) {
+      setError(err.message);
+    }
+  }, []);
+
+  const triggerCheck = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `https://kruwbjaszdwzttblxqwr.supabase.co/functions/v1/site-monitor`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token || ''}`,
+          },
+        }
+      );
+      if (!res.ok) throw new Error(`Site monitor returned ${res.status}`);
+      const result = await res.json();
+      // Refresh data after trigger
+      await fetchLatest();
+      await fetchHistory();
+      return result;
+    } catch (err: any) {
+      setError(err.message);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchLatest, fetchHistory]);
+
+  useEffect(() => {
+    const init = async () => {
+      setLoading(true);
+      await fetchLatest();
+      await fetchHistory();
+      setLoading(false);
+    };
+    init();
+  }, [fetchLatest, fetchHistory]);
+
+  // Group latest checks by type
+  const checksByType: HealthChecksByType = {
+    page: latestChecks.filter(c => c.check_type === 'page'),
+    edge_function: latestChecks.filter(c => c.check_type === 'edge_function'),
+    database: latestChecks.filter(c => c.check_type === 'database'),
+    ssl: latestChecks.filter(c => c.check_type === 'ssl'),
+  };
+
+  return {
+    latestChecks,
+    checksByType,
+    history,
+    summary,
+    loading,
+    error,
+    triggerCheck,
+    refresh: async () => {
+      await fetchLatest();
+      await fetchHistory();
+    },
+  };
+}

@@ -1,0 +1,234 @@
+name: Site Health Monitor
+
+on:
+  # Run every 6 hours
+  schedule:
+    - cron: '0 */6 * * *'
+  # Manual trigger
+  workflow_dispatch:
+  # Run on PRs to main
+  pull_request:
+    branches: [main]
+
+env:
+  SUPABASE_URL: https://kruwbjaszdwzttblxqwr.supabase.co
+  SITE_URL: https://www.thynkflow.io
+
+jobs:
+  # ──────────────────────────────────────
+  # Job 1: Build Verification
+  # ──────────────────────────────────────
+  build-check:
+    name: Build Verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: dist/
+          retention-days: 1
+
+  # ──────────────────────────────────────
+  # Job 2: Frontend Page Health Checks
+  # ──────────────────────────────────────
+  page-health:
+    name: Page Health Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check critical pages
+        run: |
+          declare -A pages=(
+            ["Homepage"]="https://www.thynkflow.io/"
+            ["Platform"]="https://www.thynkflow.io/app"
+            ["Login"]="https://www.thynkflow.io/login"
+            ["Privacy"]="https://www.thynkflow.io/privacy"
+            ["Terms"]="https://www.thynkflow.io/terms"
+            ["Contact"]="https://www.thynkflow.io/contact"
+            ["Support"]="https://www.thynkflow.io/support"
+            ["Bills"]="https://www.thynkflow.io/legislature-bills"
+          )
+          
+          FAILED=0
+          echo "## Site Health Report" >> $GITHUB_STEP_SUMMARY
+          echo "| Page | Status | Response Time |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|---------------|" >> $GITHUB_STEP_SUMMARY
+          
+          for page in "${!pages[@]}"; do
+            URL="${pages[$page]}"
+            START=$(date +%s%N)
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -L --max-time 15 "$URL" 2>/dev/null)
+            END=$(date +%s%N)
+            ELAPSED=$(( (END - START) / 1000000 ))
+            
+            if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 400 ]; then
+              echo "| $page | ✅ $HTTP_STATUS | ${ELAPSED}ms |" >> $GITHUB_STEP_SUMMARY
+              echo "✅ $page: $HTTP_STATUS (${ELAPSED}ms)"
+            else
+              echo "| $page | ❌ $HTTP_STATUS | ${ELAPSED}ms |" >> $GITHUB_STEP_SUMMARY
+              echo "❌ $page: $HTTP_STATUS (${ELAPSED}ms)"
+              FAILED=1
+            fi
+          done
+          
+          if [ "$FAILED" -eq 1 ]; then
+            echo "::error::One or more pages returned errors"
+            exit 1
+          fi
+
+  # ──────────────────────────────────────
+  # Job 3: Edge Function Health Checks
+  # ──────────────────────────────────────
+  edge-function-health:
+    name: Edge Function Health
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check edge functions CORS
+        run: |
+          FUNCTIONS=(
+            cannabis-hemp-poller
+            caselaw-poller
+            congress-poller
+            federal-register-poller
+            kava-poller
+            kratom-poller
+            regulatory-forecast
+            state-legislature-poller
+            state-regulations-poller
+            create-checkout-session
+            stripe-webhook
+            trial-management
+          )
+          
+          FAILED=0
+          echo "## Edge Function Health" >> $GITHUB_STEP_SUMMARY
+          echo "| Function | CORS | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|------|--------|" >> $GITHUB_STEP_SUMMARY
+          
+          for fn in "${FUNCTIONS[@]}"; do
+            CORS=$(curl -sI -X OPTIONS \
+              -H "Origin: https://www.thynkflow.io" \
+              -H "Access-Control-Request-Method: POST" \
+              "$SUPABASE_URL/functions/v1/$fn" 2>&1 | grep -i "access-control-allow-origin" | awk '{print $2}' | tr -d '\r')
+            
+            if [ "$CORS" = "https://www.thynkflow.io" ]; then
+              echo "| $fn | ✅ | Healthy |" >> $GITHUB_STEP_SUMMARY
+              echo "✅ $fn: CORS OK"
+            else
+              echo "| $fn | ⚠️ $CORS | Check needed |" >> $GITHUB_STEP_SUMMARY
+              echo "⚠️ $fn: CORS returned '$CORS'"
+              FAILED=1
+            fi
+          done
+          
+          if [ "$FAILED" -eq 1 ]; then
+            echo "::warning::Some edge functions have CORS issues"
+          fi
+
+  # ──────────────────────────────────────
+  # Job 4: Database & API Health
+  # ──────────────────────────────────────
+  database-health:
+    name: Database Health
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Supabase REST API
+        env:
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          echo "## Database Health" >> $GITHUB_STEP_SUMMARY
+          
+          # Check jurisdiction table
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            "$SUPABASE_URL/rest/v1/jurisdiction?select=id&limit=1" 2>/dev/null)
+          
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "| Jurisdiction table | ✅ Accessible |" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Jurisdiction table: accessible"
+          else
+            echo "| Jurisdiction table | ❌ Status $HTTP_STATUS |" >> $GITHUB_STEP_SUMMARY
+            echo "❌ Jurisdiction table: $HTTP_STATUS"
+          fi
+          
+          # Check instrument table
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            "$SUPABASE_URL/rest/v1/instrument?select=id&limit=1" 2>/dev/null)
+          
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "| Instrument table | ✅ Accessible |" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Instrument table: accessible"
+          else
+            echo "| Instrument table | ❌ Status $HTTP_STATUS |" >> $GITHUB_STEP_SUMMARY
+            echo "❌ Instrument table: $HTTP_STATUS"
+          fi
+
+  # ──────────────────────────────────────
+  # Job 5: SSL & Security Headers
+  # ──────────────────────────────────────
+  security-check:
+    name: Security Headers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check security headers
+        run: |
+          echo "## Security Headers" >> $GITHUB_STEP_SUMMARY
+          echo "| Header | Present |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|---------|" >> $GITHUB_STEP_SUMMARY
+          
+          HEADERS=$(curl -sI "https://www.thynkflow.io/" 2>/dev/null)
+          
+          check_header() {
+            local name=$1
+            local display=$2
+            if echo "$HEADERS" | grep -qi "$name"; then
+              echo "| $display | ✅ |" >> $GITHUB_STEP_SUMMARY
+              echo "✅ $display present"
+            else
+              echo "| $display | ❌ Missing |" >> $GITHUB_STEP_SUMMARY
+              echo "❌ $display MISSING"
+            fi
+          }
+          
+          check_header "strict-transport-security" "HSTS"
+          check_header "x-content-type-options" "X-Content-Type-Options"
+          check_header "x-frame-options" "X-Frame-Options"
+          check_header "referrer-policy" "Referrer-Policy"
+          check_header "permissions-policy" "Permissions-Policy"
+
+  # ──────────────────────────────────────
+  # Job 6: Playwright E2E Tests
+  # ──────────────────────────────────────
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: build-check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Run E2E tests
+        run: npx playwright test --reporter=html
+        env:
+          PLAYWRIGHT_BASE_URL: https://www.thynkflow.io
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

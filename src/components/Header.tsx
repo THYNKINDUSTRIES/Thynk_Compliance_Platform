@@ -68,6 +68,7 @@ export const Header: React.FC = () => {
                   <Link to="/source-management" className="text-white hover:text-gray-300 transition-colors font-medium">Sources</Link>
                   <Link to="/api-monitoring" className="text-white hover:text-gray-300 transition-colors font-medium">API</Link>
                   <Link to="/deployment" className="text-white hover:text-gray-300 transition-colors font-medium">Deploy</Link>
+                  <Link to="/site-health" className="text-white hover:text-gray-300 transition-colors font-medium">Health</Link>
                 </>
               )}
               <Link to="/checklists" className="text-white hover:text-gray-300 transition-colors font-medium">Checklists</Link>
@@ -103,6 +104,7 @@ export const Header: React.FC = () => {
                   <Link to="/source-management" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Sources</Link>
                   <Link to="/api-monitoring" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">API</Link>
                   <Link to="/deployment" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Deploy</Link>
+                  <Link to="/site-health" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Health</Link>
                 </>
               )}
               <Link to="/templates" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-gray-300 transition-colors font-medium">Templates</Link>
