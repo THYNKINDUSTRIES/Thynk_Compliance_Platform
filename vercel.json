@@ -67,17 +67,6 @@
   ],
   "redirects": [
     {
-      "source": "/:path(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.thynkflow.io"
-        }
-      ],
-      "destination": "https://thynkflow.io/:path",
-      "permanent": true
-    },
-    {
       "source": "/",
       "has": [
         {
@@ -86,7 +75,7 @@
           "value": "http"
         }
       ],
-      "destination": "https://thynkflow.io/",
+      "destination": "https://www.thynkflow.io/",
       "permanent": true
     }
   ],
