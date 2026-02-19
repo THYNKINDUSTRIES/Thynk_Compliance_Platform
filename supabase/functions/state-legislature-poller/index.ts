@@ -101,6 +101,7 @@ async function fetchJSON(url: string, headers: HeadersInit = {}): Promise<any> {
 
 // @ts-ignore Deno global
 Deno.serve(async (req: Request) => {
+  const corsHeaders = buildCors(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
   }

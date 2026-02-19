@@ -1225,6 +1225,7 @@ async function fetchWithRetry(url: string, retries = 2): Promise<string | null> 
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = buildCors(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
   }

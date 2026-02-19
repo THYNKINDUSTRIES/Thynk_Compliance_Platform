@@ -41,6 +41,7 @@ const endpointSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
 // @ts-ignore - Deno global for Supabase Edge Functions
 Deno.serve(async (req: Request) => {
+  const corsHeaders = buildCors(req);
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });

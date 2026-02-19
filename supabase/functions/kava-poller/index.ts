@@ -495,6 +495,7 @@ Only respond with valid JSON, no other text.`;
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = buildCors(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
   }

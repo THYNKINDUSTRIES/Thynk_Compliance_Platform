@@ -161,6 +161,7 @@ async function fetchWithRetries(url: string, opts: RequestInit, attempts = 3, ba
 /* ---------- Edge Function handler ---------- */
 // @ts-ignore - Deno global for Supabase Edge Functions
 Deno.serve(async (req: Request) => {
+  const corsHeaders = buildCors(req);
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }

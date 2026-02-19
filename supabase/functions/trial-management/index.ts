@@ -18,7 +18,7 @@ function buildCors(req?: Request) {
     'Access-Control-Allow-Credentials': 'true',
   };
 }
-export const corsHeaders = buildCors();
+export let corsHeaders = buildCors();
 
 // Authorized domains that bypass all restrictions
 const AUTHORIZED_DOMAINS = ['thynk.guru', 'cultivalaw.com', 'discountpharms.com'];
@@ -111,6 +111,7 @@ async function handleTrialExtension(body: { user_id: string; extension_days: num
 
 // @ts-ignore - Deno global for Supabase Edge Functions
 Deno.serve(async (req: Request) => {
+  corsHeaders = buildCors(req);
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });

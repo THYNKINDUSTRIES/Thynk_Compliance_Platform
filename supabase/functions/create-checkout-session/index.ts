@@ -18,7 +18,7 @@ function buildCors(req?: Request) {
     'Access-Control-Allow-Credentials': 'true',
   };
 }
-const corsHeaders = buildCors();
+let corsHeaders = buildCors();
 
 // @ts-ignore - Deno global for Supabase Edge Functions
 const supabase = createClient(
@@ -68,6 +68,7 @@ async function fetchStripe(url: string, params: Record<string, string>) {
 }
 
 Deno.serve(async (req: Request) => {
+  corsHeaders = buildCors(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }

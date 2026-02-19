@@ -497,6 +497,7 @@ Only respond with valid JSON, no other text.`;
 
 // @ts-ignore - Deno global for Supabase Edge Functions
 Deno.serve(async (req: Request) => {
+  const corsHeaders = buildCors(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
