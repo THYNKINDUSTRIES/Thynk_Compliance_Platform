@@ -46,7 +46,7 @@ export function useSiteHealth() {
 
   const fetchLatest = useCallback(async () => {
     try {
-      // Get the most recent check run (all checks from the same timestamp)
+      // Get the most recent check run timestamp
       const { data: recentCheck, error: rcErr } = await supabase
         .from('site_health_checks')
         .select('checked_at')
@@ -59,11 +59,13 @@ export function useSiteHealth() {
         return;
       }
 
-      // Get all checks from that batch
+      // Get all checks within 10 seconds of the latest (same batch)
+      const batchStart = new Date(new Date(recentCheck.checked_at).getTime() - 10000).toISOString();
       const { data, error: fetchErr } = await supabase
         .from('site_health_checks')
         .select('*')
-        .eq('checked_at', recentCheck.checked_at)
+        .gte('checked_at', batchStart)
+        .lte('checked_at', recentCheck.checked_at)
         .order('check_type', { ascending: true });
 
       if (fetchErr) throw fetchErr;

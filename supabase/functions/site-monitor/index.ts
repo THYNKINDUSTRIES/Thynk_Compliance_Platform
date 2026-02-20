@@ -319,6 +319,12 @@ Deno.serve(async (req) => {
 
   allChecks.push(...pageResults, ...edgeFnResults, ...dbResults, sslResult);
 
+  // Stamp ALL checks with the same batch timestamp so the dashboard can group them
+  const batchTimestamp = new Date().toISOString();
+  for (const check of allChecks) {
+    check.checked_at = batchTimestamp;
+  }
+
   // Store results in DB
   await storeResults(allChecks);
 
