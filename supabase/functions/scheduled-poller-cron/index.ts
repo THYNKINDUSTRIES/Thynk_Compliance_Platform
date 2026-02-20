@@ -19,14 +19,16 @@ export const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
 };
 
-// Helper to invoke any Edge Function with standard auth
+// Helper to invoke any Edge Function with service-role auth (server-to-server)
 async function invokeFunction(name: string, body?: object): Promise<any> {
   const url = `${Deno.env.get('SUPABASE_URL')}/functions/v1/${name}`;
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_ANON_KEY');
   const resp = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`
+      'apikey': Deno.env.get('SUPABASE_ANON_KEY') || '',
+      'Authorization': `Bearer ${serviceKey}`
     },
     ...(body ? { body: JSON.stringify(body) } : {})
   });
@@ -103,7 +105,7 @@ Deno.serve(async (req) => {
     // ── EVERY 6 HRS: State Regulations Poller (2, 8, 14, 20 UTC) ──────────
     if (hour === 2 || hour === 8 || hour === 14 || hour === 20) {
       try {
-        const { ok, data } = await invokeFunction('state-regulations-poller');
+        const { ok, data } = await invokeFunction('state-regulations-poller', { fullScan: true });
         results.stateRegulations = {
           success: ok,
           message: data.message || 'Completed',

@@ -1303,11 +1303,13 @@ Deno.serve(async (req) => {
 
     const statesToProcess = stateCode
       ? Object.entries(STATE_CANNABIS_SOURCES).filter(([code]) => code === stateCode)
-      : Object.entries(STATE_CANNABIS_SOURCES).slice(0, 2); // Limit to first 2 states for full scan
+      : fullScan
+        ? Object.entries(STATE_CANNABIS_SOURCES)             // All 50 states when fullScan
+        : Object.entries(STATE_CANNABIS_SOURCES).slice(0, 5); // Default: first 5 states
 
-    // Add timeout protection - if no stateCode specified, limit processing time
+    // Add timeout protection — stay well under Supabase's 150 s hard limit
     const startTime = Date.now();
-    const maxProcessingTime = stateCode ? 30000 : 10000; // 30s for single state, 10s for multi-state
+    const maxProcessingTime = stateCode ? 30000 : (fullScan ? 120000 : 30000); // 120s full, 30s default
 
     const { data: existingItems, error: existingItemsErr } = await supabase
       .from('instrument')
@@ -1321,7 +1323,7 @@ Deno.serve(async (req) => {
     const existingIds = new Set((existingItems || []).map(i => i.external_id));
 
     // Processing limits
-    const maxItemsPerState = stateCode ? 50 : 10; // More items for single state requests
+    const maxItemsPerState = stateCode ? 50 : (fullScan ? 25 : 10);
     let totalItemsProcessed = 0;
 
     for (const [code, sources] of statesToProcess) {
