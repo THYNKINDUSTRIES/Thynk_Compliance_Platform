@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useSiteHealth, HealthCheck } from '@/hooks/useSiteHealth';
+import { useSiteHealth, HealthCheck, Remediation } from '@/hooks/useSiteHealth';
 import {
   Activity,
   Shield,
@@ -16,6 +16,8 @@ import {
   Clock,
   Server,
   Zap,
+  Wrench,
+  HeartPulse,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 
@@ -162,7 +164,7 @@ function HistoryTimeline({ history }: { history: HealthCheck[] }) {
 }
 
 export default function SiteHealth() {
-  const { checksByType, history, summary, loading, error, triggerCheck, refresh } = useSiteHealth();
+  const { checksByType, history, remediations, summary, loading, error, triggerCheck, refresh } = useSiteHealth();
   const [isRunning, setIsRunning] = useState(false);
 
   const handleRunCheck = async () => {
@@ -181,7 +183,7 @@ export default function SiteHealth() {
         <div>
           <h1 className="text-3xl font-bold">Site Health Monitor</h1>
           <p className="text-muted-foreground mt-1">
-            Automated health checks for pages, APIs, database, and security
+            Automated health checks with self-healing — detects issues and fixes them automatically
           </p>
         </div>
         <div className="flex gap-2">
@@ -207,7 +209,7 @@ export default function SiteHealth() {
       <OverallStatusBanner overall={summary.overall} score={summary.score} />
 
       {/* Summary cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-5">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
@@ -252,6 +254,17 @@ export default function SiteHealth() {
             </div>
           </CardContent>
         </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Auto-Healed</p>
+                <p className="text-2xl font-bold text-blue-600">{summary.healed}</p>
+              </div>
+              <HeartPulse className="w-8 h-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Last checked */}
@@ -269,6 +282,7 @@ export default function SiteHealth() {
           <TabsTrigger value="functions">Edge Functions ({checksByType.edge_function.length})</TabsTrigger>
           <TabsTrigger value="database">Database ({checksByType.database.length})</TabsTrigger>
           <TabsTrigger value="security">Security ({checksByType.ssl.length})</TabsTrigger>
+          <TabsTrigger value="remediations">Remediations ({remediations.length})</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
         </TabsList>
 
@@ -314,6 +328,51 @@ export default function SiteHealth() {
         <TabsContent value="history">
           <HistoryTimeline history={history} />
         </TabsContent>
+
+        <TabsContent value="remediations">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Wrench className="w-4 h-4" /> Self-Healing Actions (Last 72h)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {remediations.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-4 text-center">
+                  No remediation actions taken recently. The self-healing engine triggers automatically when issues are detected.
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {remediations.map((r) => (
+                    <div key={r.id} className="flex items-center justify-between p-3 rounded-md border bg-card hover:bg-accent/50 transition-colors">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <Badge className={r.status === 'success' || r.status === 'triggered'
+                          ? 'bg-green-500/15 text-green-600 border-green-200'
+                          : r.status === 'skipped'
+                          ? 'bg-gray-500/15 text-gray-600 border-gray-200'
+                          : 'bg-red-500/15 text-red-600 border-red-200'
+                        }>
+                          {r.status === 'success' ? <CheckCircle className="w-3 h-3 mr-1" /> :
+                           r.status === 'triggered' ? <Zap className="w-3 h-3 mr-1" /> :
+                           r.status === 'skipped' ? <Clock className="w-3 h-3 mr-1" /> :
+                           <XCircle className="w-3 h-3 mr-1" />}
+                          {r.status}
+                        </Badge>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium truncate">{r.action}</p>
+                          <p className="text-xs text-muted-foreground truncate">{r.issue}</p>
+                        </div>
+                      </div>
+                      <span className="text-xs text-muted-foreground shrink-0">
+                        {formatDistanceToNow(new Date(r.triggered_at), { addSuffix: true })}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       {/* CI/CD info card */}
@@ -326,7 +385,8 @@ export default function SiteHealth() {
         <CardContent className="text-sm text-muted-foreground space-y-2">
           <p>
             Health checks run automatically via GitHub Actions every 6 hours and on every PR to main.
-            The site-monitor edge function can also be triggered manually from this dashboard.
+            When issues are detected, the <strong>self-healing engine</strong> auto-triggers pollers for stale data,
+            retries failed edge functions, and can trigger Vercel redeploys for page failures.
           </p>
           <div className="flex gap-4 mt-3">
             <a

@@ -12,6 +12,16 @@ export interface HealthCheck {
   created_at: string;
 }
 
+export interface Remediation {
+  id: string;
+  issue: string;
+  action: string;
+  status: 'triggered' | 'success' | 'failed' | 'skipped';
+  details: Record<string, unknown>;
+  triggered_at: string;
+  created_at: string;
+}
+
 export interface HealthSummary {
   overall: 'healthy' | 'warning' | 'degraded' | 'unknown';
   score: number;
@@ -19,6 +29,7 @@ export interface HealthSummary {
   passed: number;
   warnings: number;
   failures: number;
+  healed: number;
   lastChecked: string | null;
 }
 
@@ -32,6 +43,7 @@ export interface HealthChecksByType {
 export function useSiteHealth() {
   const [latestChecks, setLatestChecks] = useState<HealthCheck[]>([]);
   const [history, setHistory] = useState<HealthCheck[]>([]);
+  const [remediations, setRemediations] = useState<Remediation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<HealthSummary>({
@@ -41,6 +53,7 @@ export function useSiteHealth() {
     passed: 0,
     warnings: 0,
     failures: 0,
+    healed: 0,
     lastChecked: null,
   });
 
@@ -78,6 +91,7 @@ export function useSiteHealth() {
       const passed = checks.filter(c => c.status === 'pass').length;
       const warnings = checks.filter(c => c.status === 'warn').length;
       const failures = checks.filter(c => c.status === 'fail').length;
+      const healed = checks.filter(c => c.details?.healed).length;
       const overall = failures > 0 ? 'degraded' : warnings > 0 ? 'warning' : total > 0 ? 'healthy' : 'unknown';
 
       setSummary({
@@ -87,6 +101,7 @@ export function useSiteHealth() {
         passed,
         warnings,
         failures,
+        healed,
         lastChecked: recentCheck.checked_at,
       });
     } catch (err: any) {
@@ -111,6 +126,27 @@ export function useSiteHealth() {
     }
   }, []);
 
+  const fetchRemediations = useCallback(async (hours = 72) => {
+    try {
+      const since = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+      const { data, error: fetchErr } = await supabase
+        .from('site_health_remediations')
+        .select('*')
+        .gte('triggered_at', since)
+        .order('triggered_at', { ascending: false })
+        .limit(100);
+
+      if (fetchErr) {
+        // Table may not exist yet — don't error out
+        console.warn('Remediations fetch:', fetchErr.message);
+        return;
+      }
+      setRemediations((data || []) as Remediation[]);
+    } catch (err: any) {
+      console.warn('Remediations fetch error:', err.message);
+    }
+  }, []);
+
   const triggerCheck = useCallback(async () => {
     setLoading(true);
     try {
@@ -129,6 +165,7 @@ export function useSiteHealth() {
       // Refresh data after trigger
       await fetchLatest();
       await fetchHistory();
+      await fetchRemediations();
       return result;
     } catch (err: any) {
       setError(err.message);
@@ -136,17 +173,18 @@ export function useSiteHealth() {
     } finally {
       setLoading(false);
     }
-  }, [fetchLatest, fetchHistory]);
+  }, [fetchLatest, fetchHistory, fetchRemediations]);
 
   useEffect(() => {
     const init = async () => {
       setLoading(true);
       await fetchLatest();
       await fetchHistory();
+      await fetchRemediations();
       setLoading(false);
     };
     init();
-  }, [fetchLatest, fetchHistory]);
+  }, [fetchLatest, fetchHistory, fetchRemediations]);
 
   // Group latest checks by type
   const checksByType: HealthChecksByType = {
@@ -160,6 +198,7 @@ export function useSiteHealth() {
     latestChecks,
     checksByType,
     history,
+    remediations,
     summary,
     loading,
     error,
@@ -167,6 +206,7 @@ export function useSiteHealth() {
     refresh: async () => {
       await fetchLatest();
       await fetchHistory();
+      await fetchRemediations();
     },
   };
 }
