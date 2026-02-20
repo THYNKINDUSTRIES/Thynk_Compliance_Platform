@@ -20,23 +20,7 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || 'https://kruwbjaszdwzttblxq
 const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const VERCEL_DEPLOY_HOOK = Deno.env.get('VERCEL_DEPLOY_HOOK') || ''; // Set in Supabase secrets
 
-const ALLOWED_ORIGINS = [
-  'https://thynkflow.io',
-  'https://www.thynkflow.io',
-  'https://thynk-compliance-platform-77nsei26a.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:3000',
-];
-
-function buildCors(req?: Request) {
-  const origin = req?.headers?.get('origin') || '';
-  const allowed = ALLOWED_ORIGINS.find(o => o === origin) || ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowed,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-  };
-}
+import { buildCors } from '../_shared/cors.ts';
 
 // Edge functions to check
 const EDGE_FUNCTIONS = [
@@ -108,43 +92,54 @@ async function checkPage(url: string, name: string): Promise<HealthCheck> {
   }
 }
 
-async function checkEdgeFunction(fnName: string): Promise<HealthCheck> {
-  const start = Date.now();
+async function checkEdgeFunction(fnName: string): Promise<HealthCheck[]> {
   const url = `${SUPABASE_URL}/functions/v1/${fnName}`;
-  try {
-    // OPTIONS preflight is the lightest check — doesn't trigger actual execution
-    const res = await fetch(url, {
-      method: 'OPTIONS',
-      headers: {
-        'Origin': 'https://www.thynkflow.io',
-        'Access-Control-Request-Method': 'POST',
-      },
-    });
-    const elapsed = Date.now() - start;
-    const corsHeader = res.headers.get('access-control-allow-origin');
-    const corsOk = corsHeader === 'https://www.thynkflow.io';
-    return {
-      check_type: 'edge_function',
-      check_name: fnName,
-      status: res.ok && corsOk ? 'pass' : 'warn',
-      response_time_ms: elapsed,
-      details: {
-        http_status: res.status,
-        cors_origin: corsHeader,
-        cors_valid: corsOk,
-      },
-      checked_at: new Date().toISOString(),
-    };
-  } catch (err: any) {
-    return {
-      check_type: 'edge_function',
-      check_name: fnName,
-      status: 'fail',
-      response_time_ms: Date.now() - start,
-      details: { error: err.message },
-      checked_at: new Date().toISOString(),
-    };
+  const checks: HealthCheck[] = [];
+
+  // Test both production AND preview origins to catch CORS misconfig
+  const origins = [
+    { origin: 'https://www.thynkflow.io', label: fnName },
+    { origin: 'https://thynk-compliance-platform-monitor-test.vercel.app', label: `${fnName}:preview-cors` },
+  ];
+
+  for (const { origin, label } of origins) {
+    const start = Date.now();
+    try {
+      const res = await fetch(url, {
+        method: 'OPTIONS',
+        headers: {
+          'Origin': origin,
+          'Access-Control-Request-Method': 'POST',
+        },
+      });
+      const elapsed = Date.now() - start;
+      const corsHeader = res.headers.get('access-control-allow-origin');
+      const corsOk = corsHeader === origin;
+      checks.push({
+        check_type: 'edge_function',
+        check_name: label,
+        status: res.ok && corsOk ? 'pass' : 'fail',
+        response_time_ms: elapsed,
+        details: {
+          http_status: res.status,
+          cors_origin: corsHeader,
+          cors_valid: corsOk,
+          tested_origin: origin,
+        },
+        checked_at: new Date().toISOString(),
+      });
+    } catch (err: any) {
+      checks.push({
+        check_type: 'edge_function',
+        check_name: label,
+        status: 'fail',
+        response_time_ms: Date.now() - start,
+        details: { error: err.message, tested_origin: origin },
+        checked_at: new Date().toISOString(),
+      });
+    }
   }
+  return checks;
 }
 
 async function checkDatabase(): Promise<HealthCheck[]> {
@@ -383,32 +378,38 @@ async function triggerVercelRedeploy(): Promise<Remediation> {
   }
 }
 
-async function retryEdgeFunction(fnName: string): Promise<Remediation> {
+async function retryEdgeFunction(checkName: string): Promise<Remediation> {
+  // checkName may be "cannabis-hemp-poller" or "cannabis-hemp-poller:preview-cors"
+  const actualFn = checkName.split(':')[0];
+  const isPreviewTest = checkName.includes(':preview-cors');
+  const testOrigin = isPreviewTest
+    ? 'https://thynk-compliance-platform-monitor-test.vercel.app'
+    : 'https://www.thynkflow.io';
   try {
-    // Retry the OPTIONS check — if it passes on retry, the failure was transient
-    const res = await fetch(`${SUPABASE_URL}/functions/v1/${fnName}`, {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/${actualFn}`, {
       method: 'OPTIONS',
       headers: {
-        'Origin': 'https://www.thynkflow.io',
+        'Origin': testOrigin,
         'Access-Control-Request-Method': 'POST',
       },
     });
-    const corsOk = res.headers.get('access-control-allow-origin') === 'https://www.thynkflow.io';
+    const corsOk = res.headers.get('access-control-allow-origin') === testOrigin;
     return {
-      issue: `Edge function ${fnName} failed/CORS broken`,
-      action: `retry_edge_function:${fnName}`,
+      issue: `Edge function ${checkName} failed/CORS broken`,
+      action: `retry_edge_function:${checkName}`,
       status: res.ok && corsOk ? 'success' : 'failed',
       details: {
         http_status: res.status,
         cors_valid: corsOk,
+        tested_origin: testOrigin,
         needs_redeploy: !(res.ok && corsOk),
       },
       triggered_at: new Date().toISOString(),
     };
   } catch (err: any) {
     return {
-      issue: `Edge function ${fnName} unreachable`,
-      action: `retry_edge_function:${fnName}`,
+      issue: `Edge function ${checkName} unreachable`,
+      action: `retry_edge_function:${checkName}`,
       status: 'failed',
       details: { error: err.message, needs_redeploy: true },
       triggered_at: new Date().toISOString(),
@@ -547,7 +548,7 @@ Deno.serve(async (req) => {
     checkSSL(),
   ]);
 
-  allChecks.push(...pageResults, ...edgeFnResults, ...dbResults, sslResult);
+  allChecks.push(...pageResults, ...edgeFnResults.flat(), ...dbResults, sslResult);
 
   // Stamp ALL checks with the same batch timestamp so the dashboard can group them
   const batchTimestamp = new Date().toISOString();

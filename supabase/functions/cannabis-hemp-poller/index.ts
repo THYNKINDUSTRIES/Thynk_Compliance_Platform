@@ -1,33 +1,9 @@
-const BASE_CORS_HEADERS = {
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Credentials': 'true',
-  'Access-Control-Max-Age': '86400'
+import { buildCors, corsHeaders } from '../_shared/cors.ts';
+const buildCorsHeaders = (origin?: string | null) => {
+  // Wrap shared buildCors to accept raw origin string
+  const fakeReq = origin ? new Request('http://localhost', { headers: { origin } }) : undefined;
+  return buildCors(fakeReq);
 };
-
-const STATIC_CORS_ORIGINS = [
-  'https://thynkflow.io',
-  'https://www.thynkflow.io',
-  'https://thynk-compliance-platform-77nsei26a.vercel.app',
-  'http://localhost:3000',
-  'http://localhost:5173',
-  'http://localhost:5174'
-];
-
-const envCorsOrigins = (Deno.env.get('ALLOWED_CORS_ORIGINS') || '')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
-const ALLOWED_CORS_ORIGINS = new Set([...STATIC_CORS_ORIGINS, ...envCorsOrigins]);
-const DEFAULT_CORS_ORIGIN = envCorsOrigins[0] || STATIC_CORS_ORIGINS[0];
-
-const buildCorsHeaders = (origin?: string | null) => ({
-  ...BASE_CORS_HEADERS,
-  'Access-Control-Allow-Origin': origin && ALLOWED_CORS_ORIGINS.has(origin)
-    ? origin
-    : DEFAULT_CORS_ORIGIN,
-});
 
 // @ts-ignore - Deno import for Supabase Edge Functions
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';

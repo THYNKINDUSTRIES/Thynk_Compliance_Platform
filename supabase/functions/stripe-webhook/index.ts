@@ -4,23 +4,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import Stripe from 'https://esm.sh/stripe@14.21.0?target=deno';
 
 // CORS headers for all responses
-const ALLOWED_ORIGINS = [
-  'https://thynkflow.io',
-  'https://www.thynkflow.io',
-  'https://thynk-compliance-platform-77nsei26a.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:3000',
-];
-function buildCors(req?: Request) {
-  const origin = req?.headers?.get('origin') || '';
-  return {
-    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-    'Access-Control-Allow-Credentials': 'true',
-  };
-}
-export const corsHeaders = buildCors();
+import { buildCors, corsHeaders } from '../_shared/cors.ts';
+export { corsHeaders };
 
 // @ts-ignore - Deno global for Supabase Edge Functions
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
