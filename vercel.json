@@ -82,16 +82,7 @@
   "env": {
     "VITE_BETA_MODE": "false",
     "VITE_SUPABASE_URL": "https://kruwbjaszdwzttblxqwr.supabase.co",
+    "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtydXdiamFzemR3enR0Ymx4cXdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExNjcwOTIsImV4cCI6MjA3Njc0MzA5Mn0.BOmy4m7qoukUVyG1j8kDyyuA__mp9BeYdiDXL_OW-ZQ",
     "VITE_STRIPE_PUBLISHABLE_KEY": "pk_live_51STVWvDHHGSPqPV6uBh0N7nusRYmGaEMeA3Ly7sBj8MY9EzPh5rFCtoYdqv0wEx1XM9oyCBfuVwVdxZiDyn0bnCZ00UxJvf5pR"
-  },
-  "crons": [
-    {
-      "path": "/api/scheduled-polling",
-      "schedule": "0 */6 * * *"
-    },
-    {
-      "path": "/api/digest-emails",
-      "schedule": "0 8 * * 1"
-    }
-  ]
+  }
 }

@@ -70,29 +70,19 @@ Deno.serve(async (req) => {
       results.federalRegister.message = `Error: ${error.message}`;
     }
 
-    // ── ALWAYS RUN: Regulations.gov Poller ─────────────────────────────────
-    try {
-      const { ok, data } = await invokeFunction('regulations-gov-poller');
-      results.regulationsGov = {
-        success: ok,
-        message: data.message || 'Completed',
-        recordsAdded: data.recordsAdded || 0
-      };
-    } catch (error) {
-      results.regulationsGov.message = `Error: ${error.message}`;
-    }
+    // ── SKIPPED: Regulations.gov Poller (function not deployed yet) ────────
+    results.regulationsGov = {
+      success: false,
+      message: 'Skipped - regulations-gov-poller edge function not yet deployed',
+      recordsAdded: 0
+    };
 
-    // ── ALWAYS RUN: RSS Feed Poller ────────────────────────────────────────
-    try {
-      const { ok, data } = await invokeFunction('rss-feed-poller');
-      results.rssFeed = {
-        success: ok,
-        message: data.message || 'Completed',
-        recordsAdded: data.recordsAdded || data.totalInserted || 0
-      };
-    } catch (error) {
-      results.rssFeed.message = `Error: ${error.message}`;
-    }
+    // ── SKIPPED: RSS Feed Poller (function not deployed yet) ───────────────
+    results.rssFeed = {
+      success: false,
+      message: 'Skipped - rss-feed-poller edge function not yet deployed',
+      recordsAdded: 0
+    };
 
     // ── EVERY 6 HRS: Cannabis/Hemp Poller (0, 6, 12, 18 UTC) ──────────────
     if (hour === 0 || hour === 6 || hour === 12 || hour === 18) {
@@ -207,20 +197,12 @@ Deno.serve(async (req) => {
     }
 
     // ── DAILY 9 AM UTC: Comment Deadline Reminders ─────────────────────────
-    if (hour === 9) {
-      try {
-        const { ok, data } = await invokeFunction('process-comment-deadline-reminders');
-        results.commentReminders = {
-          success: ok,
-          message: data.message || 'Completed',
-          remindersSent: data.remindersSent || 0
-        };
-      } catch (error) {
-        results.commentReminders.message = `Error: ${error.message}`;
-      }
-    } else {
-      results.commentReminders.message = `Skipped - daily at 9 AM UTC (current: ${hour})`;
-    }
+    // NOTE: process-comment-deadline-reminders edge function not yet deployed
+    results.commentReminders = {
+      success: false,
+      message: `Skipped - process-comment-deadline-reminders not yet deployed (hour: ${hour})`,
+      remindersSent: 0
+    };
 
     const duration = Date.now() - startTime;
 

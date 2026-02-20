@@ -3,7 +3,8 @@ import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://kruwbjaszdwzttblxqwr.supabase.co';
+const SUPABASE_URL = 'https://kruwbjaszdwzttblxqwr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtydXdiamFzemR3enR0Ymx4cXdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExNjcwOTIsImV4cCI6MjA3Njc0MzA5Mn0.BOmy4m7qoukUVyG1j8kDyyuA__mp9BeYdiDXL_OW-ZQ';
 
 export interface Forecast {
   id: string;
@@ -49,12 +50,12 @@ async function invokeForecastFunction(body: Record<string, unknown>) {
   let res: Response;
   try {
     const session = await supabase.auth.getSession();
-    const token = session.data.session?.access_token || import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+    const token = session.data.session?.access_token || SUPABASE_ANON_KEY;
     res = await fetch(`${SUPABASE_URL}/functions/v1/regulatory-forecast`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || '',
+        'apikey': SUPABASE_ANON_KEY,
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(body),
