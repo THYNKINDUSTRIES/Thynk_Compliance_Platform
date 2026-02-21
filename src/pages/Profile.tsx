@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -189,6 +190,7 @@ function SubscriptionTab() {
 }
 
 export default function Profile() {
+  const navigate = useNavigate();
   const { user, profile, updateProfile, updatePassword, onboardingCompleted, resetOnboarding } = useAuth();
   const [fullName, setFullName] = useState(profile?.full_name || '');
   const [saving, setSaving] = useState(false);
@@ -276,9 +278,10 @@ export default function Profile() {
 
   const handleReplayTour = () => {
     resetOnboarding();
+    navigate('/app');
     toast({
-      title: 'Tour Reset',
-      description: 'Visit your Dashboard to see the welcome tour again.'
+      title: 'Tour Restarted',
+      description: 'The platform tour will begin shortly.'
     });
   };
 
@@ -480,8 +483,8 @@ export default function Profile() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 mb-4">
-                  Want to see the welcome tour again? Click the button below to reset it, 
-                  then visit your Dashboard.
+                  Want to see the platform tour again? Click below and you'll be taken through 
+                  the full interactive walkthrough.
                 </p>
                 <Button 
                   onClick={handleReplayTour}
@@ -489,7 +492,7 @@ export default function Profile() {
                   className="gap-2"
                 >
                   <Play className="w-4 h-4" />
-                  Replay Welcome Tour
+                  Replay Platform Tour
                 </Button>
               </CardContent>
             </Card>

@@ -13,7 +13,6 @@ import { toast } from '@/hooks/use-toast';
 import { CommentTracker } from '@/components/CommentTracker';
 import { BulkCommentSubmission } from '@/components/BulkCommentSubmission';
 import { BatchSubmissionHistory } from '@/components/BatchSubmissionHistory';
-import OnboardingModal from '@/components/OnboardingModal';
 
 interface Favorite {
   id: string;
@@ -32,29 +31,17 @@ interface Alert {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user, profile, onboardingCompleted, completeOnboarding } = useAuth();
+  const { user, profile } = useAuth();
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [favoritesLoading, setFavoritesLoading] = useState(true);
   const [alertsLoading, setAlertsLoading] = useState(true);
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const [stats, setStats] = useState({
     totalRegulations: 0,
     recentUpdates: 0,
     activeAlerts: 0
   });
-
-  // Show onboarding modal if not completed
-  useEffect(() => {
-    if (user && !onboardingCompleted) {
-      // Small delay to ensure page is rendered first
-      const timer = setTimeout(() => {
-        setShowOnboarding(true);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [user, onboardingCompleted]);
 
   useEffect(() => {
     if (user) {
@@ -63,15 +50,6 @@ export default function Dashboard() {
       fetchAlerts();
     }
   }, [user]);
-
-  const handleOnboardingComplete = async () => {
-    setShowOnboarding(false);
-    await completeOnboarding();
-    toast({
-      title: 'Welcome!',
-      description: 'You\'re all set. Explore the dashboard to get started.'
-    });
-  };
 
   const fetchDashboardData = async () => {
     try {
@@ -312,9 +290,6 @@ export default function Dashboard() {
     }
   };
 
-  // Get user's name for onboarding
-  const userName = profile?.full_name || user?.user_metadata?.full_name || undefined;
-
   return (
     <div className="min-h-screen bg-[#FAF8F5]">
       <Header />
@@ -552,13 +527,6 @@ export default function Dashboard() {
         </Tabs>
       </div>
       <Footer />
-
-      {/* Onboarding Modal - only shown on Dashboard for new users */}
-      <OnboardingModal 
-        isOpen={showOnboarding}
-        onComplete={handleOnboardingComplete}
-        userName={userName}
-      />
     </div>
   );
 }

@@ -98,33 +98,33 @@ const AppLayout: React.FC = () => {
       let latestMap = new Map<string, string | null>();
       
       if (jurisdictionIds.length > 0) {
-        // Use RPC or a single aggregated query for counts
-        const { data: countData } = await supabase
-          .from('instrument')
-          .select('jurisdiction_id')
-          .in('jurisdiction_id', jurisdictionIds);
-        
-        // Count by jurisdiction_id locally
-        if (countData) {
-          for (const row of countData) {
-            const jid = row.jurisdiction_id;
-            countMap.set(jid, (countMap.get(jid) || 0) + 1);
-          }
+        // Fetch ALL instruments for state jurisdictions (select minimal columns)
+        // to build accurate counts and latest-update timestamps
+        let allRows: { jurisdiction_id: string; updated_at: string | null; created_at: string | null }[] = [];
+        let offset = 0;
+        const PAGE = 1000;
+        while (true) {
+          const { data: page } = await supabase
+            .from('instrument')
+            .select('jurisdiction_id, updated_at, created_at')
+            .in('jurisdiction_id', jurisdictionIds)
+            .order('created_at', { ascending: false })
+            .range(offset, offset + PAGE - 1);
+          if (!page || page.length === 0) break;
+          allRows = allRows.concat(page);
+          if (page.length < PAGE) break;
+          offset += PAGE;
         }
 
-        // Batch fetch latest updated_at for each jurisdiction
-        // Get the most recent instrument per jurisdiction
-        const { data: latestData } = await supabase
-          .from('instrument')
-          .select('jurisdiction_id, updated_at, created_at')
-          .in('jurisdiction_id', jurisdictionIds)
-          .order('created_at', { ascending: false })
-          .limit(500);
-        
-        if (latestData) {
-          for (const row of latestData) {
-            if (!latestMap.has(row.jurisdiction_id)) {
-              latestMap.set(row.jurisdiction_id, row.updated_at || row.created_at || null);
+        // Build count + latest maps in one pass
+        for (const row of allRows) {
+          const jid = row.jurisdiction_id;
+          countMap.set(jid, (countMap.get(jid) || 0) + 1);
+          const ts = row.updated_at || row.created_at || null;
+          if (ts) {
+            const existing = latestMap.get(jid);
+            if (!existing || ts > existing) {
+              latestMap.set(jid, ts);
             }
           }
         }
@@ -359,7 +359,7 @@ const AppLayout: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-[#FDF8F3] to-[#F5EDE3]">
       <LatestUpdates />
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8" data-tour="search">
         <SearchBar 
           onSearch={handleSearch} 
           placeholder="Search regulations by keyword, citation, or topic..."
@@ -380,10 +380,14 @@ const AppLayout: React.FC = () => {
         )}
       </div>
 
-      <ProductCategories onCategoryClick={handleCategoryClick} activeProducts={filters.products} />
-      <EnhancedStatsSection />
+      <div data-tour="product-categories">
+        <ProductCategories onCategoryClick={handleCategoryClick} activeProducts={filters.products} />
+      </div>
+      <div data-tour="stats">
+        <EnhancedStatsSection />
+      </div>
       
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8" data-tour="comment-periods">
         <OpenCommentPeriods />
       </div>
       
@@ -497,20 +501,22 @@ const AppLayout: React.FC = () => {
           </Button>
         </div>
         
-        {statesLoading ? (
-          <div className="text-center py-12">
-            <Loader2 className="inline-block animate-spin h-8 w-8 text-[#794108]" />
-            <p className="mt-2 text-gray-600">Loading state data...</p>
-          </div>
-        ) : (
-          <StateMap states={stateData} onStateClick={handleStateClick} />
-        )}
+        <div data-tour="state-map">
+          {statesLoading ? (
+            <div className="text-center py-12">
+              <Loader2 className="inline-block animate-spin h-8 w-8 text-[#794108]" />
+              <p className="mt-2 text-gray-600">Loading state data...</p>
+            </div>
+          ) : (
+            <StateMap states={stateData} onStateClick={handleStateClick} />
+          )}
+        </div>
       </div>
 
 
 
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8" data-tour="filters-feed">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-1">
             <FilterPanel />

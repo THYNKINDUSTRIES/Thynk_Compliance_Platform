@@ -11,6 +11,7 @@ import { SubscriptionRoute } from "@/components/SubscriptionRoute";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { CookieConsent } from "@/components/CookieConsent";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { OnboardingTour } from "@/components/OnboardingTour";
 import { Loader2 } from "lucide-react";
 
 // Lazy-loaded pages — each becomes its own chunk
@@ -138,6 +139,8 @@ const App = () => (
               </div>
               {/* Cookie Consent Banner - shows for first-time visitors */}
               <CookieConsent />
+              {/* Interactive onboarding tour for new users */}
+              <OnboardingTour />
             </BrowserRouter>
           </AppProvider>
         </AuthProvider>
