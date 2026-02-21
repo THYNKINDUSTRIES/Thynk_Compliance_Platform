@@ -110,6 +110,7 @@ export function SupportTicketForm({ onSuccess }: SupportTicketFormProps) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="technical">Technical Issue</SelectItem>
+              <SelectItem value="data_quality">Data Quality Issue</SelectItem>
               <SelectItem value="billing">Billing</SelectItem>
               <SelectItem value="feature_request">Feature Request</SelectItem>
               <SelectItem value="other">Other</SelectItem>

@@ -1046,7 +1046,12 @@ function parseNewsPage(html: string, baseUrl: string): Array<{title: string; lin
           title = headingMatch ? stripHTML(headingMatch[1]).trim() : '';
         }
         if (!title || title.length < 5) continue;
-        if (/^(home|about|contact|menu|nav|skip|search|login|sign)/i.test(title)) continue;
+        // Enhanced junk title filter - reject navigation, generic pages, social media links
+        if (/^(home|about|contact|menu|nav|skip|search|login|sign|directory|job|careers|employment|public.records|privacy|terms|conditions|accessibility|facebook|twitter|instagram|youtube|linkedin|social|media|contact.us|meet.the|priorities|newsletter|newsroom|commissioner|meet.the.commissioner|press.releases|proclamations|executive.orders|submit.a.request|request.an.award|attendance|employee.portal|farmland.preservation|board.of.agriculture|boards.and.commissions|website.feedback|disclaimer|open.budget|see.all|follow.us|visit.pa|visit|courts|treasurer|pennwatch|site.map|site.policies|pay.a.bill|statewide.search|internships|dental.health|heart.disease|obesity|emergency.preparedness|data.dashboards|accomplishments|budget|apra|executive.order|bluesky|rhode|govhub|a-z.index|death.records|laboratory|regional|continuing.education|grand.rounds|food.manager|conversion.tables|retailer|importer|distributor|beer|winery|craft.distillery|liquor|alcohol|keg.books|manifests|taxes.and.fees|rule.petition|email.notification|new.license|order.keg|adjust|canopy.report|resources|services|programs|divisions|staff|mission.statement|program.directory|health.topics|employee.resources|report.fraud|register.to.vote|borrowing|templates|forms|calendar|meetings|rulemaking|briefings|enforcement|career|speakers|cooperatives|recalls)/i.test(title)) continue;
+        // Filter out URL paths that indicate non-regulatory content
+        if (/\/(divisions|programs|services|departments|offices|about|contact|directory|jobs|careers|employment|public.records|privacy|terms|conditions|accessibility|social|media|newsroom|newsletter|priorities|meet|commissioner|press-releases|proclamations|executive-orders|request|submit|attendance|intranet|boards|departmentataglance|webform|disclaimer|open-budget|sitemap|site-policies|library|internships|dental|heart|obesity|preparedness|dashboards|accomplishments|budget|apra|executive-order|grand-rounds|food-manager|laboratory|regional|continuing-education|vote|fraud)\//i.test(link)) continue;
+        // Skip very short titles without a year (likely navigation links)
+        if (title.length < 10 && !/\d{4}/.test(title)) continue;
         const descMatch = match.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
         const description = descMatch ? stripHTML(descMatch[1]).trim().substring(0, 500) : '';
         const dateMatch = match.match(/(?:posted|published|date|updated)[:\s]*([A-Za-z]+\s+\d{1,2},?\s+\d{4}|\d{1,2}\/\d{1,2}\/\d{2,4}|\d{4}-\d{2}-\d{2})/i)
@@ -1420,6 +1425,12 @@ Deno.serve(async (req) => {
               if (!isNew && !fullScan) { recordsProcessed++; continue; }
 
               const analysis = await analyzeWithOpenAI(item.title, item.description || '', sources.agencyName, code);
+
+              // Skip items with low relevance - must match at least one regulatory keyword
+              if (analysis.relevanceScore < 0.55 && analysis.category === 'other' && !analysis.isComplianceRelated && !analysis.isLicensingRelated) {
+                console.log(`Skipping low-relevance item: "${item.title}" (score: ${analysis.relevanceScore})`);
+                continue;
+              }
 
               let effectiveDate = new Date().toISOString().split('T')[0];
               if (item.pubDate) {

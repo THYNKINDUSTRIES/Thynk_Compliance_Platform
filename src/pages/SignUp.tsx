@@ -223,7 +223,7 @@ export default function SignUp() {
 
       {/* Footer */}
       <div className="p-4 text-center text-sm text-gray-500">
-        <p>© 2025 Thynk Industries. All rights reserved.</p>
+        <p>© 2026 Thynk Industries. All rights reserved.</p>
       </div>
     </div>
   );

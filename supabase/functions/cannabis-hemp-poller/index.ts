@@ -2298,6 +2298,14 @@ Deno.serve(async (req: Request) => {
               if (!isNew && !fullScan) { recordsProcessed++; continue; }
 
               const analysis = await analyzeWithOpenAI(item.title, item.description || '', sources.agencyName, code);
+
+              // Skip low-relevance items that aren't cannabis/hemp related
+              if (analysis.relevanceScore < 0.55 && (analysis.category === 'other' || !analysis.category) && 
+                  !(/cannabis|marijuana|hemp|cbd|thc|delta|dispensar/i.test(item.title))) {
+                console.log(`[cannabis-hemp] Skipping low-relevance RSS item: "${item.title}" (score: ${analysis.relevanceScore})`);
+                continue;
+              }
+
               let effectiveDate = new Date().toISOString().split('T')[0];
               if (item.pubDate) {
                 try {
@@ -2365,6 +2373,13 @@ Deno.serve(async (req: Request) => {
               if (!isNew && !fullScan) { recordsProcessed++; continue; }
 
               const analysis = await analyzeWithOpenAI(item.title, item.description || '', sources.agencyName, code);
+
+              // Skip low-relevance items that aren't cannabis/hemp related
+              if (analysis.relevanceScore < 0.55 && (analysis.category === 'other' || !analysis.category) && 
+                  !(/cannabis|marijuana|hemp|cbd|thc|delta|dispensar/i.test(item.title))) {
+                console.log(`[cannabis-hemp] Skipping low-relevance news item: "${item.title}" (score: ${analysis.relevanceScore})`);
+                continue;
+              }
 
               let effectiveDate = new Date().toISOString().split('T')[0];
               if (item.pubDate) {

@@ -1,0 +1,27 @@
+{
+	"servers": {
+		"supabase": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"-y",
+				"@supabase/mcp-server-supabase@0.6.3",
+				"--project-ref",
+				"kruwbjaszdwzttblxqwr",
+				"--features",
+				"database,functions,storage,docs"
+			],
+			"env": {
+				"SUPABASE_ACCESS_TOKEN": "${input:supabase-token}"
+			}
+		}
+	},
+	"inputs": [
+		{
+			"id": "supabase-token",
+			"type": "promptString",
+			"description": "Supabase Personal Access Token (from https://supabase.com/dashboard/account/tokens)",
+			"password": true
+		}
+	]
+}

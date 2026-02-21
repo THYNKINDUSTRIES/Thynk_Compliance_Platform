@@ -134,6 +134,9 @@ Deno.serve(async (req: Request) => {
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   // @ts-ignore Deno global
   const courtListenerToken = Deno.env.get('COURTLISTENER_API_TOKEN') || '';
+  if (!courtListenerToken) {
+    console.warn('⚠️ COURTLISTENER_API_TOKEN not set — running as anonymous with stricter rate limits');
+  }
 
   const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -160,8 +163,11 @@ Deno.serve(async (req: Request) => {
       .maybeSingle();
 
     if (latest?.effective_date) {
-      sinceDate = latest.effective_date;
-      console.log(`📅 Incremental poll from: ${sinceDate}`);
+      // Add 30-day lookback to catch retroactively-indexed cases
+      const d = new Date(latest.effective_date);
+      d.setDate(d.getDate() - 30);
+      sinceDate = d.toISOString().split('T')[0];
+      console.log(`📅 Incremental poll from: ${sinceDate} (30-day lookback)`);
     } else {
       console.log(`📅 First run — fetching from: ${sinceDate}`);
     }
@@ -184,8 +190,9 @@ Deno.serve(async (req: Request) => {
   for (const { query, products } of SEARCH_QUERIES) {
     console.log(`🔍 Searching CourtListener: "${query}"`);
 
-    // Only fetch first 3 pages (20 results/page by default)
-    for (let page = 1; page <= 3; page++) {
+    // Fetch only 1 page per query (v4 API uses cursor-based pagination,
+    // the page=N param is silently ignored, so extra pages would be duplicates)
+    {
       const params = new URLSearchParams({
         q: query,
         type: 'o',                           // opinions
@@ -193,7 +200,6 @@ Deno.serve(async (req: Request) => {
         filed_after: sinceDate,
         highlight: 'on',
       });
-      if (page > 1) params.set('page', String(page));
 
       const url = `https://www.courtlistener.com/api/rest/v4/search/?${params}`;
 
@@ -249,6 +255,15 @@ Deno.serve(async (req: Request) => {
           ? `https://www.courtlistener.com${absoluteUrl}`
           : `https://www.courtlistener.com/?q=${encodeURIComponent(query)}&type=o`;
 
+        // Infer category from detected products
+        const primaryProduct = detectedProducts[0] || products[0] || 'cannabis';
+        const categoryMap: Record<string, string> = {
+          'cannabis': 'cannabis', 'hemp': 'hemp', 'delta-8': 'cannabis',
+          'kratom': 'kratom', 'kava': 'kava', 'nicotine': 'nicotine',
+          'psychedelics': 'psychedelics'
+        };
+        const category = categoryMap[primaryProduct] || 'cannabis';
+
         const externalId = `courtlistener-${clusterId || docketNumber || `${caseName}-${dateFiled}`}`;
         batch.set(externalId, {
           external_id: externalId,
@@ -258,6 +273,8 @@ Deno.serve(async (req: Request) => {
           jurisdiction_id: jurisdictionId,
           source: 'courtlistener',
           url: fullUrl,
+          category,
+          sub_category: 'caselaw',
           metadata: {
             document_type: 'caselaw',
             court,
@@ -270,8 +287,8 @@ Deno.serve(async (req: Request) => {
           },
         });
 
-        // Flush in batches of 50
-        if (batch.size >= 50) {
+        // Flush in batches of 15 (smaller batches to commit data before potential timeout)
+        if (batch.size >= 15) {
           const batchArray = Array.from(batch.values());
           try {
             const { error: upsertError } = await supabase
@@ -291,16 +308,29 @@ Deno.serve(async (req: Request) => {
           }
         }
       }
-
-      // Rate-limit courtesy: 1s between pages
-      await new Promise(r => setTimeout(r, 1000));
-
-      // Stop paging if no next page
-      if (!data.next) break;
     }
 
-    // Rate-limit courtesy: 2s between search queries
-    await new Promise(r => setTimeout(r, 2000));
+    // Flush after each query to ensure data is saved incrementally
+    if (batch.size > 0) {
+      const batchArray = Array.from(batch.values());
+      try {
+        const { error: upsertError } = await supabase
+          .from('instrument')
+          .upsert(batchArray, { onConflict: 'external_id' });
+        if (upsertError) {
+          errors.push(`Query batch error: ${upsertError.message}`);
+        } else {
+          totalInserted += batchArray.length;
+        }
+      } catch (err: any) {
+        errors.push(`Query batch exception: ${err.message}`);
+      } finally {
+        batch.clear();
+      }
+    }
+
+    // Rate-limit courtesy: 1s between search queries (reduced from 2s to stay within timeout)
+    await new Promise(r => setTimeout(r, 1000));
   }
 
   // Final flush
