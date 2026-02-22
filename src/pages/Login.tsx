@@ -171,7 +171,7 @@ export default function Login() {
 
       {/* Footer */}
       <div className="p-4 text-center text-sm text-gray-500">
-        <p>© 2026 Thynk Industries. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Thynk Industries. All rights reserved.</p>
       </div>
     </div>
   );

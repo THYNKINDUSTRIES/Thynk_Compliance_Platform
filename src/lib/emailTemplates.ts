@@ -73,7 +73,7 @@ export function generateDigestEmail(data: DigestEmailData): string {
           <tr style="background-color:#F9FAFB;">
             <td style="padding:20px;text-align:center;">
               <p style="font-size:12px;color:#999;margin:0 0 10px 0;">
-                © 2024 Thynk.guru. All rights reserved.
+                © ${new Date().getFullYear()} Thynk.guru. All rights reserved.
               </p>
               <p style="font-size:12px;color:#999;margin:0;">
                 <a href="${unsubscribeUrl}" style="color:#794108;text-decoration:none;">Unsubscribe</a>

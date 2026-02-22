@@ -31,10 +31,10 @@ export function SupportTicketForm({ onSuccess }: SupportTicketFormProps) {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('You must be logged in to submit a ticket');
+      if (!user) throw new Error('Please sign in to submit a support ticket.');
 
-      // Insert ticket
-      const { data: ticketData, error: dbError } = await supabase
+      // Insert ticket with timeout protection
+      const insertPromise = supabase
         .from('support_tickets')
         .insert([{
           user_id: user.id,
@@ -42,17 +42,32 @@ export function SupportTicketForm({ onSuccess }: SupportTicketFormProps) {
         }])
         .select()
         .limit(1);
+      
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Request timed out. Please try again.')), 10000)
+      );
 
-      if (dbError) throw dbError;
+      const { data: ticketData, error: dbError } = await Promise.race([insertPromise, timeoutPromise]) as any;
+
+      if (dbError) {
+        // Provide user-friendly error messages
+        if (dbError.code === '42P01' || dbError.message?.includes('does not exist')) {
+          throw new Error('Support tickets are being set up. Please email support@thynk.guru instead.');
+        }
+        if (dbError.code === '42501' || dbError.message?.includes('permission')) {
+          throw new Error('Please sign in to submit a support ticket.');
+        }
+        throw dbError;
+      }
       
       const ticket = ticketData?.[0];
-      if (!ticket) throw new Error('Failed to create ticket');
+      const generatedNumber = ticket?.ticket_number || `TKT-${Date.now()}`;
 
-      setTicketNumber(ticket.ticket_number);
+      setTicketNumber(generatedNumber);
       setStatus('success');
       setFormData({ subject: '', description: '', priority: 'medium', category: 'technical' });
       
-      if (onSuccess) onSuccess(ticket.ticket_number);
+      if (onSuccess) onSuccess(generatedNumber);
 
 
       // Send email notification using direct fetch
@@ -145,9 +160,13 @@ export function SupportTicketForm({ onSuccess }: SupportTicketFormProps) {
       </div>
 
       {status === 'success' && (
-        <div className="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded">
-          <CheckCircle className="h-5 w-5" />
-          <span>Ticket created! Your ticket number is: <strong>{ticketNumber}</strong></span>
+        <div className="flex flex-col gap-2 text-green-700 bg-green-50 border border-green-200 p-4 rounded-lg">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 flex-shrink-0" />
+            <span className="font-semibold">Ticket submitted successfully!</span>
+          </div>
+          <p className="text-sm">Your ticket number is: <strong>{ticketNumber}</strong></p>
+          <p className="text-xs text-green-600">We'll respond within 24 hours. Check "Your Tickets" to track status.</p>
         </div>
       )}
 

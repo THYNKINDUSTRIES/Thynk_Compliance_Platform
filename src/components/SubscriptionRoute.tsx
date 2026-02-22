@@ -26,13 +26,13 @@ export const SubscriptionRoute = ({
   const [timedOut, setTimedOut] = useState(false);
   const navigate = useNavigate();
 
-  // Failsafe: if loading takes >8 seconds, stop spinning and redirect
+  // Failsafe: if loading takes >5 seconds, stop spinning and show fallback
   useEffect(() => {
     if (!loading) {
       setTimedOut(false);
       return;
     }
-    const timer = setTimeout(() => setTimedOut(true), 8000);
+    const timer = setTimeout(() => setTimedOut(true), 5000);
     return () => clearTimeout(timer);
   }, [loading]);
 
@@ -117,8 +117,39 @@ export const SubscriptionRoute = ({
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="text-center">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent mx-auto" />
-          <p className="mt-4 text-slate-600">Loading...</p>
+          <p className="mt-4 text-slate-600">Checking your account...</p>
+          <p className="mt-1 text-xs text-slate-400">This should only take a moment</p>
         </div>
+      </div>
+    );
+  }
+
+  // If timed out but still loading, show a retry option instead of redirecting
+  if (timedOut && loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
+        <Card className="max-w-md w-full">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
+              <Clock className="h-8 w-8 text-yellow-600" />
+            </div>
+            <CardTitle className="text-xl">Taking longer than expected</CardTitle>
+            <CardDescription>
+              We're having trouble loading your account. This could be a temporary issue.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button className="w-full" onClick={() => window.location.reload()}>
+              Try Again
+            </Button>
+            <Button variant="outline" className="w-full" onClick={() => navigate('/app')}>
+              Go to Platform
+            </Button>
+            <Button variant="ghost" className="w-full" onClick={() => navigate('/login')}>
+              Sign In Again
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }

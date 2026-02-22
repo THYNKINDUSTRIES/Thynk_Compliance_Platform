@@ -127,6 +127,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   ) : 0;
 
   const fetchProfile = useCallback(async (userId: string) => {
+    // Wrap entire profile fetch in a 8-second timeout to prevent UI from hanging
+    const profileFetchPromise = (async () => {
     try {
       // Use a simpler query to avoid RLS recursion issues
       const { data, error } = await supabase
@@ -192,14 +194,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         };
 
         // Auto-upgrade comp accounts: if user is not yet active and their email is in comp_accounts, upgrade them
+        // Wrapped in a timeout to prevent hanging if the table doesn't exist or query stalls
         if (profileWithDefaults.subscription_status !== 'active' && profileWithDefaults.role !== 'admin' && profileWithDefaults.email) {
           try {
-            const { data: compData } = await supabase
+            const compPromise = supabase
               .from('comp_accounts')
               .select('expires_at, is_active')
               .eq('email', profileWithDefaults.email.toLowerCase())
               .eq('is_active', true)
               .maybeSingle();
+            const compTimeout = new Promise<{ data: null }>((resolve) => 
+              setTimeout(() => resolve({ data: null }), 3000)
+            );
+            const { data: compData } = await Promise.race([compPromise, compTimeout]) as any;
             if (compData && (!compData.expires_at || new Date(compData.expires_at) > new Date())) {
               const now = new Date();
               const neverExpires = new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000);
@@ -291,6 +298,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Fallback to localStorage
       setOnboardingCompleted(getOnboardingStatus(userId));
     }
+    })(); // end profileFetchPromise
+
+    const timeoutFallback = new Promise<void>((resolve) => {
+      setTimeout(() => {
+        console.warn('fetchProfile timed out after 8s, using fallback');
+        // Set a minimal fallback profile so the UI unblocks
+        setOnboardingCompleted(getOnboardingStatus(userId));
+        resolve();
+      }, 8000);
+    });
+
+    await Promise.race([profileFetchPromise, timeoutFallback]);
   }, []);
 
 
@@ -531,10 +550,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    // Clear local state immediately for a clean logout experience
+    setUser(null);
+    setSession(null);
     setProfile(null);
     setOnboardingCompleted(true);
+    currentUserIdRef.current = null;
+    selfHealAttemptedRef.current = null;
+    
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Sign out error:', error);
+        // Don't throw - local state is already cleared so UI is consistent
+      }
+    } catch (err) {
+      console.error('Sign out error:', err);
+    }
   };
 
   const resetPassword = async (email: string): Promise<{ success: boolean; error?: string }> => {

@@ -55,10 +55,15 @@ export default function Dashboard() {
     try {
       setLoading(true);
       
+      // Add timeout protection to prevent infinite loading
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      
       // Fetch total regulations count
       const { count: regCount, error: regError } = await supabase
         .from('instrument')
-        .select('*', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true })
+        .abortSignal(controller.signal);
       
       if (regError && regError.message !== 'AbortError: signal is aborted without reason') {
         console.error('[Dashboard] Error fetching regulation count:', regError);
@@ -69,7 +74,8 @@ export default function Dashboard() {
       const { count: todayCount, error: todayError } = await supabase
         .from('instrument')
         .select('*', { count: 'exact', head: true })
-        .gte('created_at', today);
+        .gte('created_at', today)
+        .abortSignal(controller.signal);
 
       if (todayError && todayError.message !== 'AbortError: signal is aborted without reason') {
         console.error('[Dashboard] Error fetching today count:', todayError);
@@ -97,6 +103,8 @@ export default function Dashboard() {
           console.log('[Dashboard] Could not fetch alerts count');
         }
       }
+
+      clearTimeout(timeoutId);
 
       setStats({
         totalRegulations: regCount || 0,

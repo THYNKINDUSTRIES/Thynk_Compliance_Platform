@@ -606,9 +606,23 @@ const LegislatureBills: React.FC = () => {
         query = query.eq('session_year', parseInt(yearFilter));
       }
       
-      const { data, error } = await query.limit(500);
+      // Add timeout protection to prevent infinite loading
+      const fetchPromise = query.limit(500);
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Request timed out. Please try again.')), 15000)
+      );
       
-      if (error) throw error;
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
+      
+      if (error) {
+        // Handle missing table gracefully
+        if (error.code === '42P01' || error.message?.includes('does not exist')) {
+          console.warn('legislature_bills table not found');
+          setBills([]);
+          return;
+        }
+        throw error;
+      }
       
       setBills(data || []);
       

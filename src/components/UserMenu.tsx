@@ -67,12 +67,12 @@ export const UserMenu = () => {
             ) : isTrialActive ? (
               <Badge variant="secondary" className="text-xs">
                 <Clock size={10} className="mr-1" />
-                Trial ({trialDaysRemaining}d)
+                Trial ({trialDaysRemaining}d left)
               </Badge>
             ) : (
-              <Badge variant="destructive" className="text-xs">
+              <Badge variant="outline" className="text-xs">
                 <Clock size={10} className="mr-1" />
-                Expired
+                Free Plan
               </Badge>
             )}
             {isAdmin && (

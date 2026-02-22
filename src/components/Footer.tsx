@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const Footer: React.FC = () => {
+  const { user } = useAuth();
+
   return (
     <footer className="bg-[#794108] text-gray-100 py-12 px-4" role="contentinfo">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -55,9 +58,14 @@ export const Footer: React.FC = () => {
             <li><Link to="/support" className="hover:text-[#E89C5C] transition-colors">Support</Link></li>
             <li><Link to="/privacy" className="hover:text-[#E89C5C] transition-colors">Privacy Policy</Link></li>
             <li><Link to="/terms" className="hover:text-[#E89C5C] transition-colors">Terms of Service</Link></li>
-            <li><Link to="/settings" className="hover:text-[#E89C5C] transition-colors">Settings</Link></li>
-            <li><Link to="/dashboard" className="hover:text-[#E89C5C] transition-colors">Dashboard</Link></li>
-            <li><Link to="/login" className="hover:text-[#E89C5C] transition-colors">Sign In</Link></li>
+            {user ? (
+              <>
+                <li><Link to="/settings" className="hover:text-[#E89C5C] transition-colors">Settings</Link></li>
+                <li><Link to="/dashboard" className="hover:text-[#E89C5C] transition-colors">Dashboard</Link></li>
+              </>
+            ) : (
+              <li><Link to="/login" className="hover:text-[#E89C5C] transition-colors">Sign In</Link></li>
+            )}
           </ul>
         </div>
 
