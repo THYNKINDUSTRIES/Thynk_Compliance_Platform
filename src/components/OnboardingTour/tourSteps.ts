@@ -1,7 +1,7 @@
 import {
   Sparkles, Search, Layers, BarChart3, MessageSquare, Map,
   SlidersHorizontal, LayoutDashboard, GitBranch, ClipboardCheck,
-  Zap, PartyPopper
+  Zap, PartyPopper, Bell, Shield
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -20,166 +20,232 @@ export interface TourStep {
   interactive?: string;
   /** Tailwind gradient classes for the step's color theme */
   color: string;
+  /** Category label for grouping */
+  category?: 'discover' | 'track' | 'act' | 'manage';
+  /** Keyboard shortcut hint for the feature */
+  shortcut?: string;
+  /** Estimated time to complete this section (displayed as a chip) */
+  estimatedTime?: string;
+  /** Fun stat or metric to build excitement */
+  metric?: { label: string; value: string };
 }
 
 export const tourSteps: TourStep[] = [
   {
     id: 'welcome',
-    title: 'Welcome to ThynkFlow!',
+    title: 'Welcome to ThynkFlow',
     description:
-      "Let's take a quick tour of the compliance platform. You can skip or come back to this tour anytime from your Profile settings.",
+      "Your AI-powered compliance command center. Let's take a 2-minute tour to get you up and running.",
     target: null,
     position: 'center',
     icon: Sparkles,
     color: 'from-blue-500 to-indigo-600',
+    estimatedTime: '~2 min',
     features: [
-      'Track regulations across 50 states and federal agencies',
-      'Monitor cannabis, hemp, kratom, kava, nicotine & psychedelics',
-      'AI-powered analysis and real-time alerts',
-      'Compliance workflows and checklists',
+      'Real-time tracking across 50 states & federal agencies',
+      'Cannabis, hemp, kratom, kava, nicotine & psychedelics coverage',
+      'AI-powered NLP analysis with confidence scoring',
+      'Compliance workflows, alerts & team collaboration',
     ],
+    metric: { label: 'Regulations tracked', value: '1,700+' },
   },
   {
     id: 'search',
-    title: 'Search Regulations',
+    title: 'Instant Search',
     description:
-      'Find any regulation by keyword, citation, agency name, or topic. Results update instantly as you type.',
+      'Find any regulation in milliseconds — by keyword, citation, agency, or topic. Results stream in as you type with AI-ranked relevance.',
     target: '[data-tour="search"]',
     position: 'bottom',
     icon: Search,
     color: 'from-emerald-500 to-teal-600',
-    interactive: 'Try typing a keyword like "cannabis" or "FDA"!',
+    category: 'discover',
+    interactive: 'Try typing "cannabis", "FDA", or a state name!',
+    shortcut: '⌘K',
   },
   {
     id: 'products',
-    title: 'Filter by Substance',
+    title: 'Substance Filters',
     description:
-      'Quickly filter the entire platform by substance type. Click any category to see only relevant regulations.',
+      'One-click category filters instantly narrow the entire platform. Mix and match substances to build your monitoring profile.',
     target: '[data-tour="product-categories"]',
     position: 'bottom',
     icon: Layers,
     color: 'from-purple-500 to-pink-600',
-    interactive: 'Click a category to filter regulations!',
+    category: 'discover',
+    interactive: 'Click any category to see its regulations!',
+    metric: { label: 'Substance categories', value: '6' },
   },
   {
     id: 'stats',
-    title: 'Compliance at a Glance',
+    title: 'Live Compliance Metrics',
     description:
-      'Get real-time metrics — total regulations tracked, recent updates, jurisdiction coverage, and active comment periods.',
+      'Real-time pulse of the regulatory landscape — total instruments tracked, recent updates, jurisdiction coverage, and active comment windows.',
     target: '[data-tour="stats"]',
     position: 'bottom',
     icon: BarChart3,
     color: 'from-amber-500 to-orange-600',
+    category: 'track',
   },
   {
     id: 'comments',
     title: 'Open Comment Periods',
     description:
-      'Track active federal comment periods with deadlines. Submit comments directly and never miss an opportunity to weigh in.',
+      'Never miss a deadline. Track active federal comment periods with countdown timers and submit comments directly from the platform.',
     target: '[data-tour="comment-periods"]',
     position: 'bottom',
     icon: MessageSquare,
     color: 'from-rose-500 to-red-600',
+    category: 'act',
+    metric: { label: 'Active comment periods', value: 'Live' },
   },
   {
     id: 'map',
     title: 'Interactive State Map',
     description:
-      'Explore regulations state by state. Click any state to view its regulatory landscape, active legislation, and agency contacts.',
+      'Visual regulatory intelligence — click any state to explore its laws, pending bills, agency contacts, and compliance status at a glance.',
     target: '[data-tour="state-map"]',
     position: 'top',
     icon: Map,
     color: 'from-cyan-500 to-blue-600',
-    interactive: 'Click any state to explore its regulations!',
+    category: 'discover',
+    interactive: 'Click any state to explore its regulatory landscape!',
+    metric: { label: 'States covered', value: '50' },
   },
   {
     id: 'filters',
-    title: 'Filter & Browse',
+    title: 'Advanced Filters & Feed',
     description:
-      'Narrow results by jurisdiction, date, agency, and more. The live regulation feed updates as you apply filters.',
+      'Drill down by jurisdiction, date range, agency, document type and more. The live regulation feed updates dynamically as you refine.',
     target: '[data-tour="filters-feed"]',
     position: 'top',
     icon: SlidersHorizontal,
     color: 'from-violet-500 to-purple-600',
+    category: 'discover',
+  },
+  {
+    id: 'alerts',
+    title: 'Smart Alerts & Notifications',
+    description:
+      'Set up personalized alerts by topic, jurisdiction, or agency. Get notified via email digest or in-app when regulations that matter to you change.',
+    target: null,
+    position: 'center',
+    icon: Bell,
+    color: 'from-sky-500 to-blue-600',
+    category: 'track',
+    features: [
+      'Keyword & jurisdiction-based alert rules',
+      'Daily or weekly email digests',
+      'In-app notification center with read tracking',
+      'Comment deadline reminders with countdown',
+    ],
   },
   {
     id: 'dashboard',
-    title: 'Your Personal Dashboard',
+    title: 'Personal Dashboard',
     description:
-      'Your command center for compliance. Track saved regulations, manage alerts, and monitor your compliance activity — all in one place.',
+      'Your compliance command center — saved regulations, active alerts, recent activity, and quick actions all in one unified view.',
     target: null,
     position: 'center',
     icon: LayoutDashboard,
     color: 'from-blue-600 to-indigo-700',
+    category: 'manage',
     features: [
-      'View saved regulations and favorites',
-      'Monitor active alerts and notifications',
-      'Track comment submissions and deadlines',
-      'Quick access from the navigation menu',
+      'Saved regulations & favorites at a glance',
+      'Active alert monitor with status indicators',
+      'Comment submissions & deadline tracker',
+      'Quick navigation to any platform section',
     ],
   },
   {
     id: 'workflows',
     title: 'Compliance Workflows',
     description:
-      'Build custom workflows to automate regulatory tracking, assign tasks to your team, and ensure nothing falls through the cracks.',
+      'Automate your regulatory process — build multi-step workflows, assign tasks, set deadlines, and track progress across your team.',
     target: null,
     position: 'center',
     icon: GitBranch,
     color: 'from-green-500 to-emerald-600',
+    category: 'act',
     features: [
-      'Create multi-step compliance workflows',
-      'Assign tasks to team members',
-      'Set deadlines and automated reminders',
-      'Track progress in real-time',
+      'Drag-and-drop workflow builder',
+      'Role-based task assignment',
+      'Automated deadline reminders',
+      'Progress tracking with team visibility',
     ],
   },
   {
     id: 'checklists',
     title: 'Compliance Checklists',
     description:
-      'Use pre-built templates or create custom checklists to manage compliance requirements systematically.',
+      'Pre-built industry templates or custom checklists to systematically manage compliance — share with your team and export for audits.',
     target: null,
     position: 'center',
     icon: ClipboardCheck,
     color: 'from-orange-500 to-amber-600',
+    category: 'act',
     features: [
       'Industry-specific compliance templates',
-      'Custom checklist creation',
-      'Progress tracking and team sharing',
-      'Export reports for audits',
+      'Custom checklist builder with drag-and-drop',
+      'Team sharing with role permissions',
+      'Export to PDF/CSV for audits & reporting',
+    ],
+  },
+  {
+    id: 'security',
+    title: 'Enterprise Security',
+    description:
+      'Your data is protected with row-level security, encrypted connections, and SOC 2 compliant infrastructure powered by Supabase.',
+    target: null,
+    position: 'center',
+    icon: Shield,
+    color: 'from-slate-600 to-gray-800',
+    category: 'manage',
+    features: [
+      'Row-level security on all compliance data',
+      'Encrypted connections & secure authentication',
+      'Role-based access control (RBAC)',
+      'Audit logging for compliance requirements',
     ],
   },
   {
     id: 'api-analytics',
-    title: 'Analytics & API',
+    title: 'Analytics & API Access',
     description:
-      'Unlock powerful analytics dashboards and API access to integrate compliance data into your existing systems.',
+      'Unlock trend analysis, forecasting, and a full REST API to integrate compliance intelligence into your existing tools and dashboards.',
     target: null,
     position: 'center',
     icon: Zap,
     color: 'from-pink-500 to-rose-600',
+    category: 'manage',
     features: [
-      'Regulatory trend analysis and forecasting',
-      'Custom compliance reports and CSV/PDF exports',
+      'Regulatory trend analysis & forecasting',
+      'Custom compliance reports (CSV, Excel, PDF)',
       'REST API for system integrations',
-      'Real-time data feeds',
+      'Real-time webhook data feeds',
     ],
   },
   {
     id: 'complete',
-    title: "You're All Set!",
+    title: "You're Ready to Go!",
     description:
-      "You now know the essentials of ThynkFlow. Dive in and start exploring — you can replay this tour anytime from Profile → Preferences.",
+      "You've seen the essentials — now make ThynkFlow your own. Replay this tour anytime from Profile → Preferences.",
     target: null,
     position: 'center',
     icon: PartyPopper,
     color: 'from-yellow-400 to-orange-500',
     features: [
-      'Browse the regulation feed on the main page',
+      'Explore the live regulation feed on the main page',
       'Set up your first alert from the Dashboard',
-      'Create a compliance workflow for your team',
+      'Try a compliance workflow for your team',
       'Visit Profile → Preferences to replay this tour',
     ],
   },
 ];
+
+/** Category metadata for grouping and labels */
+export const tourCategories = {
+  discover: { label: 'Discover', emoji: '🔍', color: 'text-emerald-600' },
+  track: { label: 'Track', emoji: '📡', color: 'text-amber-600' },
+  act: { label: 'Take Action', emoji: '⚡', color: 'text-rose-600' },
+  manage: { label: 'Manage', emoji: '🛠️', color: 'text-blue-600' },
+} as const;
