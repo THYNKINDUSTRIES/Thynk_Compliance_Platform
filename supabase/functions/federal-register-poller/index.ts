@@ -71,6 +71,26 @@ function isRelevantRegulation(title: string, abstract: string): boolean {
 }
 
 function getVerifiedAgencyUrl(doc: any): string {
+  // ALWAYS prefer the actual Federal Register document URL (html_url)
+  // This links directly to the specific regulation/notice, not a generic agency homepage
+  if (doc?.html_url && typeof doc.html_url === 'string' && doc.html_url.startsWith('https://')) {
+    return doc.html_url;
+  }
+
+  // Fallback: construct URL from document_number if html_url is missing
+  if (doc?.document_number) {
+    return `https://www.federalregister.gov/d/${doc.document_number}`;
+  }
+
+  // Last resort: Federal Register homepage
+  return 'https://www.federalregister.gov/';
+}
+
+/**
+ * Get agency-specific reference URL for metadata (not for the main url field).
+ * Used to store a relevant agency page alongside the actual document URL.
+ */
+function getAgencyReferenceUrl(doc: any): string | null {
   const agencies = Array.isArray(doc?.agencies) ? doc.agencies : [];
   const title = String(doc?.title || '').toLowerCase();
   for (const agency of agencies) {
@@ -82,24 +102,25 @@ function getVerifiedAgencyUrl(doc: any): string {
       const urls: any = urlsRaw ?? {};
       const lowerKey = String(key).toLowerCase();
       const lowerUrlsName = String(urls.name || '').toLowerCase();
-      if (lowerAgencyName.includes(lowerKey) || (lowerUrlsName && lowerAgencyName.includes(lowerUrlsName))) {
+      if (lowerAgencyName.includes(lowerKey) || lowerKey.includes(lowerAgencyName) ||
+          (lowerUrlsName && (lowerAgencyName.includes(lowerUrlsName) || lowerUrlsName.includes(lowerAgencyName)))) {
         if (title.includes('cannabis') || title.includes('marijuana') || title.includes('hemp')) {
-          return urls.cannabis || urls.hemp || urls.general || (doc?.html_url as string) || 'https://www.federalregister.gov/';
+          return urls.cannabis || urls.hemp || urls.general || null;
         }
         if (title.includes('tobacco') || title.includes('nicotine') || title.includes('vaping')) {
-          return urls.tobacco || urls.general || (doc?.html_url as string) || 'https://www.federalregister.gov/';
+          return urls.tobacco || urls.general || null;
         }
-        if (title.includes('psilocybin') || title.includes('mushrooms') || title.includes('research')) {
-          return urls.psilocybin || urls.psylocybin || urls.general || (doc?.html_url as string) || 'https://www.federalregister.gov/';
+        if (title.includes('psilocybin') || title.includes('mushrooms')) {
+          return urls.psilocybin || urls.general || null;
         }
         if (title.includes('kratom')) {
-          return urls.kratom || urls.general || (doc?.html_url as string) || 'https://www.federalregister.gov/';
+          return urls.kratom || urls.general || null;
         }
-        return urls.general || (doc?.html_url as string) || 'https://www.federalregister.gov/';
+        return urls.general || null;
       }
     }
   }
-  return (doc?.html_url as string) || 'https://www.federalregister.gov/';
+  return null;
 }
 
 /* ---------- Helper: fetchWithRetries ---------- */
@@ -336,7 +357,8 @@ Deno.serve(async (req: Request) => {
 
         for (const doc of data.results) {
           if (!isRelevantRegulation(doc.title || '', doc.abstract || '')) continue;
-          const verifiedUrl = getVerifiedAgencyUrl(doc);
+          const documentUrl = getVerifiedAgencyUrl(doc);
+          const agencyRefUrl = getAgencyReferenceUrl(doc);
           batch.push({
             external_id: doc.document_number,
             title: doc.title || 'Untitled',
@@ -344,11 +366,12 @@ Deno.serve(async (req: Request) => {
             effective_date: doc.publication_date,
             jurisdiction_id: federalJurisdictionId,
             source: 'federal_register',
-            url: verifiedUrl,
+            url: documentUrl,
             metadata: {
               agencies: doc.agencies || null,
               original_url: doc.html_url,
-              verified_url: verifiedUrl,
+              verified_url: documentUrl,
+              agency_reference_url: agencyRefUrl,
               document_type: doc.type === 'Proposed Rule' ? 'proposed_rule' : doc.type === 'Notice' ? 'notice' : doc.type === 'Rule' ? 'rule' : (doc.type || 'unknown'),
               comment_url: doc.comment_url || null,
               comment_end_date: doc.comments_close_on || null,

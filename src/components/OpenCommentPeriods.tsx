@@ -243,7 +243,12 @@ export function OpenCommentPeriods() {
                     </Button>
                     <Button
                       variant="outline"
-                      onClick={() => window.open(reg.url, '_blank')}
+                      onClick={() => {
+                        if (reg.url) {
+                          window.open(reg.url, '_blank');
+                        }
+                      }}
+                      disabled={!reg.url}
                       className="gap-2"
                     >
                       <ExternalLink className="h-4 w-4" />
