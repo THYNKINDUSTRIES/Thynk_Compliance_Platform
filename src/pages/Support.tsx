@@ -3,7 +3,7 @@ import { SupportTicketForm } from '@/components/SupportTicketForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/lib/supabase';
-import { Ticket, Clock, CheckCircle2, AlertCircle, MessageCircle, FileText, HelpCircle, Phone, Mail } from 'lucide-react';
+import { Ticket, Clock, CheckCircle2, AlertCircle, MessageCircle, FileText, HelpCircle, Phone, Mail, Bot, ChevronDown, ChevronUp } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,17 @@ interface SupportTicket {
   subject: string;
   status: string;
   priority: string;
+  agent_resolved?: boolean;
+  resolution?: string;
+  metadata?: any;
+  created_at: string;
+}
+
+interface TicketComment {
+  id: string;
+  comment: string;
+  user_id: string | null;
+  is_internal: boolean;
   created_at: string;
 }
 
@@ -48,6 +59,8 @@ const faqs = [
 export default function Support() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedTicket, setExpandedTicket] = useState<string | null>(null);
+  const [ticketComments, setTicketComments] = useState<TicketComment[]>([]);
 
   useEffect(() => {
     loadTickets();
@@ -66,6 +79,25 @@ export default function Support() {
       console.error('Error loading tickets:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadComments = async (ticketId: string) => {
+    const { data } = await supabase
+      .from('ticket_comments')
+      .select('*')
+      .eq('ticket_id', ticketId)
+      .eq('is_internal', false) // Users only see non-internal comments
+      .order('created_at', { ascending: true });
+    setTicketComments(data || []);
+  };
+
+  const toggleTicket = (ticketId: string) => {
+    if (expandedTicket === ticketId) {
+      setExpandedTicket(null);
+    } else {
+      setExpandedTicket(ticketId);
+      loadComments(ticketId);
     }
   };
 
@@ -209,33 +241,97 @@ export default function Support() {
                     <p className="text-sm text-gray-400">Submit one above to get started.</p>
                   </div>
                 ) : (
-                  <div className="space-y-4 max-h-96 overflow-y-auto">
+                  <div className="space-y-3 max-h-[500px] overflow-y-auto">
                     {tickets.map((ticket) => (
-                      <div key={ticket.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <p className="font-semibold">{ticket.subject}</p>
-                            <p className="text-sm text-muted-foreground">{ticket.ticket_number}</p>
+                      <div key={ticket.id} className="border rounded-lg hover:bg-gray-50 transition-colors">
+                        <div
+                          className="p-4 cursor-pointer"
+                          onClick={() => toggleTicket(ticket.id)}
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <p className="font-semibold">{ticket.subject}</p>
+                                {ticket.agent_resolved && (
+                                  <span className="flex items-center gap-1 text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded-full">
+                                    <Bot className="h-3 w-3" /> AI
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-sm text-muted-foreground">{ticket.ticket_number}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge className={getStatusColor(ticket.status)}>
+                                {getStatusIcon(ticket.status)}
+                                <span className="ml-1">{ticket.status.replace('_', ' ')}</span>
+                              </Badge>
+                              <Badge className={getPriorityColor(ticket.priority)}>
+                                {ticket.priority}
+                              </Badge>
+                              {expandedTicket === ticket.id ? (
+                                <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </div>
                           </div>
-                          <div className="flex gap-2">
-                            <Badge className={getStatusColor(ticket.status)}>
-                              {getStatusIcon(ticket.status)}
-                              <span className="ml-1">{ticket.status.replace('_', ' ')}</span>
-                            </Badge>
-                            <Badge className={getPriorityColor(ticket.priority)}>
-                              {ticket.priority}
-                            </Badge>
-                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Submitted: {new Date(ticket.created_at).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                          Submitted: {new Date(ticket.created_at).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </p>
+
+                        {/* Expanded: show comments & resolution */}
+                        {expandedTicket === ticket.id && (
+                          <div className="border-t px-4 pb-4 pt-3 bg-gray-50/50">
+                            {ticket.resolution && (
+                              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+                                <div className="flex items-center gap-1 mb-1">
+                                  <Bot className="h-3.5 w-3.5 text-green-600" />
+                                  <span className="text-xs font-semibold text-green-700">Resolution</span>
+                                </div>
+                                <p className="text-sm text-green-800">{ticket.resolution}</p>
+                              </div>
+                            )}
+                            <div className="space-y-2">
+                              <p className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+                                <MessageCircle className="h-3.5 w-3.5" /> Responses
+                              </p>
+                              {ticketComments.length === 0 ? (
+                                <p className="text-xs text-muted-foreground text-center py-3">No responses yet.</p>
+                              ) : (
+                                ticketComments.map((c) => (
+                                  <div
+                                    key={c.id}
+                                    className={`p-3 rounded-lg text-sm ${
+                                      c.user_id === null
+                                        ? 'bg-purple-50 border border-purple-100'
+                                        : 'bg-white border'
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-1 mb-1">
+                                      {c.user_id === null && <Bot className="h-3 w-3 text-purple-600" />}
+                                      <span className="text-xs font-semibold text-muted-foreground">
+                                        {c.user_id === null ? 'AI Agent' : 'Support Team'}
+                                      </span>
+                                      <span className="text-xs text-muted-foreground ml-auto">
+                                        {new Date(c.created_at).toLocaleString('en-US', {
+                                          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                                        })}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm whitespace-pre-wrap">{c.comment}</p>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

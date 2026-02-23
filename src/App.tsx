@@ -48,6 +48,7 @@ const BetaInvites = lazy(() => import("./pages/BetaInvites"));
 const LegislatureBills = lazy(() => import("./pages/LegislatureBills"));
 const Forecasting = lazy(() => import("./pages/Forecasting"));
 const SiteHealth = lazy(() => import("./pages/SiteHealth"));
+const AdminTickets = lazy(() => import("./pages/AdminTickets"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDF8F3] to-[#F5EDE3]">
@@ -132,6 +133,7 @@ const App = () => (
                 <Route path="/api-monitoring" element={<ProtectedRoute adminOnly><APIMonitoring /></ProtectedRoute>} />
                 <Route path="/deployment" element={<ProtectedRoute adminOnly><DeploymentDashboard /></ProtectedRoute>} />
                 <Route path="/site-health" element={<ProtectedRoute adminOnly><SiteHealth /></ProtectedRoute>} />
+                <Route path="/admin/tickets" element={<ProtectedRoute adminOnly><AdminTickets /></ProtectedRoute>} />
 
                 <Route path="*" element={<NotFound />} />
               </Routes>
