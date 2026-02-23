@@ -79,9 +79,8 @@ export const RegulationCard: React.FC<RegulationProps> = ({ regulation }) => {
         .from('user_favorites')
         .upsert({
           user_id: user.id,
-          regulation_id: regulation.id,
-          title: regulation.title
-        }, { onConflict: 'user_id,regulation_id' });
+          instrument_id: regulation.id,
+        }, { onConflict: 'user_id,instrument_id' });
 
       if (error) throw error;
 
