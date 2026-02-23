@@ -16,11 +16,23 @@ export interface WorkflowInstance {
   name: string;
   description?: string;
   status: 'active' | 'completed' | 'cancelled';
+  ai_analysis?: {
+    compliance_summary?: string;
+    key_requirements?: string[];
+    risk_level?: 'low' | 'medium' | 'high' | 'critical';
+    estimated_effort?: string;
+    generated_at?: string;
+  };
   started_at: string;
   completed_at?: string;
   created_by?: string;
   created_at: string;
   updated_at: string;
+  instrument?: {
+    id: string;
+    title: string;
+    jurisdiction?: { name: string };
+  };
 }
 
 export interface WorkflowTask {

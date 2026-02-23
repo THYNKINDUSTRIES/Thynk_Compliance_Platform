@@ -14,11 +14,13 @@ export function useWorkflows() {
     try {
       const { data, error } = await supabase
         .from('workflow_instances')
-        .select('*')
+        .select(`
+          *,
+          instrument:instrument_id(id, title, jurisdiction:jurisdiction_id(name))
+        `)
         .order('created_at', { ascending: false });
 
       if (error) {
-        // Table may not exist yet — silently return empty
         if (error.code === '42P01' || error.message?.includes('does not exist') || error.code === 'PGRST204') {
           setWorkflows([]);
           return;
@@ -27,7 +29,6 @@ export function useWorkflows() {
       }
       setWorkflows(data || []);
     } catch (error: any) {
-      // Suppress 404/missing-table errors
       if (error?.code !== '42P01') {
         console.warn('Workflows not available:', error?.message || error);
       }
@@ -37,6 +38,37 @@ export function useWorkflows() {
   };
 
   return { workflows, loading, refetch: fetchWorkflows };
+}
+
+export function useWorkflowDetail(workflowId: string) {
+  const [workflow, setWorkflow] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (workflowId) fetchDetail();
+  }, [workflowId]);
+
+  const fetchDetail = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('workflow_instances')
+        .select(`
+          *,
+          instrument:instrument_id(id, title, jurisdiction:jurisdiction_id(name))
+        `)
+        .eq('id', workflowId)
+        .single();
+
+      if (error) throw error;
+      setWorkflow(data);
+    } catch (error: any) {
+      console.warn('Workflow detail error:', error?.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { workflow, loading, refetch: fetchDetail };
 }
 
 export function useWorkflowTasks(workflowInstanceId: string) {

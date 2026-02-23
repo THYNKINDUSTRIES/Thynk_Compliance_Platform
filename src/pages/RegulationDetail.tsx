@@ -5,9 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Printer, Download, Calendar, FileText, Building2, Tag } from 'lucide-react';
+import { ArrowLeft, Printer, Download, Calendar, FileText, Building2, Tag, Workflow, Sparkles, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate as useNav } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -51,6 +54,48 @@ const RegulationDetail = () => {
   const [regulation, setRegulation] = useState<RegulationDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [relatedRegs, setRelatedRegs] = useState<any[]>([]);
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  // Workflow generation state
+  const [workflowLoading, setWorkflowLoading] = useState(false);
+  const [workflowResult, setWorkflowResult] = useState<any>(null);
+
+  const handleGenerateWorkflow = async () => {
+    if (!user || !id) return;
+    setWorkflowLoading(true);
+    setWorkflowResult(null);
+    try {
+      const { data, error } = await supabase.functions.invoke('workflow-agent', {
+        body: { instrumentId: id, userId: user.id },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      setWorkflowResult(data);
+
+      if (data.existing) {
+        toast({
+          title: 'Workflow Already Exists',
+          description: data.message,
+        });
+      } else {
+        toast({
+          title: 'Workflow Created!',
+          description: `${data.analysis?.name} — ${data.taskCount} tasks generated`,
+        });
+      }
+    } catch (err: any) {
+      console.error('Workflow generation error:', err);
+      toast({
+        title: 'Error',
+        description: err.message || 'Failed to generate workflow',
+        variant: 'destructive',
+      });
+    } finally {
+      setWorkflowLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchRegulation();
@@ -280,6 +325,20 @@ const RegulationDetail = () => {
             Back
           </Button>
           <div className="flex gap-2">
+            {user && (
+              <Button
+                onClick={handleGenerateWorkflow}
+                disabled={workflowLoading}
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+              >
+                {workflowLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="mr-2 h-4 w-4" />
+                )}
+                {workflowLoading ? 'Analyzing...' : 'Generate Compliance Workflow'}
+              </Button>
+            )}
             <Button variant="outline" onClick={handlePrint}>
               <Printer className="mr-2 h-4 w-4" />
               Print
@@ -290,6 +349,80 @@ const RegulationDetail = () => {
             </Button>
           </div>
         </div>
+
+        {/* AI Workflow Result */}
+        {workflowResult && (
+          <Card className="p-6 mb-6 border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Sparkles className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-purple-900">
+                    {workflowResult.existing ? 'Existing Workflow Found' : 'AI Compliance Workflow Generated'}
+                  </h2>
+                  <p className="text-sm text-purple-700">
+                    {workflowResult.existing
+                      ? workflowResult.message
+                      : `${workflowResult.taskCount} actionable tasks created`}
+                  </p>
+                </div>
+              </div>
+              {workflowResult.analysis?.risk_level && (
+                <Badge className={
+                  workflowResult.analysis.risk_level === 'critical' ? 'bg-red-500' :
+                  workflowResult.analysis.risk_level === 'high' ? 'bg-orange-500' :
+                  workflowResult.analysis.risk_level === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
+                }>
+                  <AlertTriangle className="mr-1 h-3 w-3" />
+                  {workflowResult.analysis.risk_level.toUpperCase()} RISK
+                </Badge>
+              )}
+            </div>
+
+            {workflowResult.analysis && !workflowResult.existing && (
+              <div className="space-y-4">
+                <p className="text-gray-700 leading-relaxed">
+                  {workflowResult.analysis.compliance_summary}
+                </p>
+
+                {workflowResult.analysis.key_requirements?.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold text-sm text-purple-800 mb-2">Key Requirements</h3>
+                    <ul className="space-y-1">
+                      {workflowResult.analysis.key_requirements.map((req: string, i: number) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                          <CheckCircle2 className="h-4 w-4 text-purple-500 mt-0.5 flex-shrink-0" />
+                          {req}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {workflowResult.analysis.estimated_effort && (
+                  <div className="flex items-center gap-4 text-sm text-purple-800">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      Estimated effort: <strong>{workflowResult.analysis.estimated_effort}</strong>
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="mt-4 pt-4 border-t border-purple-200">
+              <Button
+                onClick={() => navigate(`/workflows/${workflowResult.workflowId}`)}
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                <Workflow className="mr-2 h-4 w-4" />
+                View Workflow & Tasks
+              </Button>
+            </div>
+          </Card>
+        )}
 
         {/* Main Content */}
         <Card className="p-8 mb-6">
