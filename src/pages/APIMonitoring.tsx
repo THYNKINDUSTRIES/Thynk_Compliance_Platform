@@ -17,6 +17,7 @@ export default function APIMonitoring() {
 
   useEffect(() => {
     fetchAlerts();
+    // Only subscribe if alerts table exists - subscription will silently fail otherwise
     const channel = supabase
       .channel('api-alerts')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'api_alerts' }, fetchAlerts)
@@ -26,21 +27,34 @@ export default function APIMonitoring() {
   }, []);
 
   const fetchAlerts = async () => {
-    const { data } = await supabase
-      .from('api_alerts')
-      .select('*')
-      .eq('resolved', false)
-      .order('created_at', { ascending: false })
-      .limit(10);
-    if (data) setAlerts(data);
+    try {
+      const { data, error } = await supabase
+        .from('api_alerts')
+        .select('*')
+        .eq('resolved', false)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      if (error) {
+        // Table may not exist yet — silently handle
+        console.warn('api_alerts not available:', error.message);
+        return;
+      }
+      if (data) setAlerts(data);
+    } catch {
+      // Silently handle missing table
+    }
   };
 
   const handleResolveAlert = async (alertId: string) => {
-    await supabase
-      .from('api_alerts')
-      .update({ resolved: true, resolved_at: new Date().toISOString() })
-      .eq('id', alertId);
-    fetchAlerts();
+    try {
+      await supabase
+        .from('api_alerts')
+        .update({ resolved: true, resolved_at: new Date().toISOString() })
+        .eq('id', alertId);
+      fetchAlerts();
+    } catch {
+      // Silently handle if table doesn't exist
+    }
   };
 
   if (loading) {

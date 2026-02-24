@@ -42,39 +42,8 @@ export default function SchedulerMonitoring() {
     // Auto-refresh stats every 30 seconds
     const statsInterval = setInterval(fetchJobStats, 30000);
     
-    // Auto-trigger pollers every 6 hours
-    const pollingInterval = setInterval(() => {
-      triggerAllPollers();
-    }, 6 * 60 * 60 * 1000); // 6 hours in milliseconds
-    
-    // Trigger pollers on initial load if they haven't run recently
-    const checkAndTrigger = async () => {
-      const { data } = await supabase
-        .from('job_execution_log')
-        .select('completed_at, execution_time_ms')
-        .order('completed_at.desc')
-  ``````.limit(1)
-        .maybeSingle(); 
-      
-      if (!logs || logs.length === 0) {
-        // No logs exist, trigger initial polling
-        setTimeout(() => triggerAllPollers(), 2000);
-      } else {
-        const lastRun = new Date(logs[0].started_at);
-        const hoursSinceLastRun = (Date.now() - lastRun.getTime()) / (1000 * 60 * 60);
-        
-        if (hoursSinceLastRun > 6) {
-          // Last run was more than 6 hours ago, trigger polling
-          setTimeout(() => triggerAllPollers(), 2000);
-        }
-      }
-    };
-    
-    checkAndTrigger();
-    
     return () => {
       clearInterval(statsInterval);
-      clearInterval(pollingInterval);
     };
   }, []);
 
@@ -85,20 +54,14 @@ export default function SchedulerMonitoring() {
         .from('job_execution_log')
         .select('*')
         .order('started_at', { ascending: false })
-        .limit(100)
-        .maybeSingle;
+        .limit(100);
 
-        if (data) {
-  // Show normal stats
-     setLastRun(new Date(data.completed_at));
-     setDuration(data.execution_time_ms);
-} else {
-  // Table empty or no runs yet
-     setLastRun(null);
-     setMessage('No completed runs yet');
-}
-
-      if (error) throw error;
+      if (error) {
+        // Table might not exist yet — show empty state
+        console.error('Error fetching job stats:', error.message);
+        setLoading(false);
+        return;
+      }
 
       // Calculate stats per job
       const jobNames = ['federal-register-poller', 'regulations-gov-poller', 'rss-feed-poller'];
