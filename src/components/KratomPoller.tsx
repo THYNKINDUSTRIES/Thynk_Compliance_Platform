@@ -110,7 +110,7 @@ export const KratomPoller: React.FC = () => {
       const { data, error } = await supabase
         .from('instrument')
         .select('*')
-        .eq('product', 'kratom')
+        .eq('category', 'kratom')
         .order('created_at', { ascending: false })
         .limit(10);
 
@@ -127,7 +127,7 @@ export const KratomPoller: React.FC = () => {
       const { data, error } = await supabase
         .from('instrument')
         .select('document_type, created_at')
-        .eq('product', 'kratom');
+        .eq('category', 'kratom');
 
       if (error) throw error;
 
@@ -319,7 +319,7 @@ export const KratomPoller: React.FC = () => {
                               <Badge variant="secondary" className={docType!.color}>
                                 {docType!.label}
                               </Badge>
-                              <Badge variant="outline">{doc.jurisdiction}</Badge>
+                              <Badge variant="outline">{doc.metadata?.jurisdiction_code || 'FEDERAL'}</Badge>
                             </div>
                             <h4 className="font-medium mb-1">{doc.title}</h4>
                             <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
@@ -327,9 +327,9 @@ export const KratomPoller: React.FC = () => {
                             </p>
                             <div className="flex items-center gap-4 text-xs text-muted-foreground">
                               <span>{formatDate(doc.created_at)}</span>
-                              {doc.source_url && (
+                              {doc.url && (
                                 <a
-                                  href={doc.source_url}
+                                  href={doc.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="flex items-center gap-1 hover:text-blue-600"

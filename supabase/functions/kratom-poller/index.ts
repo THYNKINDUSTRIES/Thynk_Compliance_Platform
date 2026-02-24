@@ -479,175 +479,154 @@ Only respond with valid JSON, no other text.`;
   }
 }
 
+// Kratom relevance keywords
+const KRATOM_KEYWORDS = /kratom|mitragyn|speciosa|7-hydroxymitragynine/i;
+
+// ── Main handler ───────────────────────────────────────────────────────
 // @ts-ignore - Deno global for Supabase Edge Functions
 Deno.serve(async (req: Request) => {
-  const corsHeaders = buildCors(req);
+  const hdrs = buildCors(req);
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: corsHeaders });
+    return new Response(null, { status: 204, headers: hdrs });
   }
 
   try {
     const body = await req.json().catch(() => ({}));
-    const { stateCode, fullScan = false, sessionId, sourceName } = body;
-
-    // Ensure we have a valid UUID session id for DB operations
-    let session_id = sessionId;
-    try {
-      const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-      if (!session_id || !uuidRegex.test(session_id)) {
-        session_id = crypto.randomUUID();
-        console.log('Generated session_id:', session_id);
-      }
-    } catch (e) {
-      try {
-        session_id = crypto.randomUUID();
-      } catch (_) {
-        session_id = String(Date.now());
-      }
-      console.log('Fallback generated session_id:', session_id);
-    }
+    const { stateCode, fullScan = false } = body;
 
     // @ts-ignore - Deno global for Supabase Edge Functions
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     // @ts-ignore - Deno global for Supabase Edge Functions
-    const supabaseKey = Deno.env.get('SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('Supabase_API_Public') || Deno.env.get('SUPABASE_ANON_KEY');
-    // @ts-ignore - Deno global for Supabase Edge Functions
-    const keySource = Deno.env.get('SERVICE_ROLE_KEY')
+    const supabaseKey = Deno.env.get('SERVICE_ROLE_KEY')
       // @ts-ignore - Deno global for Supabase Edge Functions
-      ? 'service_role_alias_SERVICE_ROLE_KEY'
+      || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
       // @ts-ignore - Deno global for Supabase Edge Functions
-      : (Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ? 'service_role_SUPABASE_SERVICE_ROLE_KEY' : (Deno.env.get('Supabase_API_Public') ? 'alias_Supabase_API_Public' : (Deno.env.get('SUPABASE_ANON_KEY') ? 'anon' : 'none')));
+      || Deno.env.get('Supabase_API_Public');
 
     if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing SUPABASE_URL or SUPABASE keys. Ensure SERVICE_ROLE_KEY or SUPABASE_SERVICE_ROLE_KEY is set.');
-      return new Response(JSON.stringify({ success: false, error: 'Missing SUPABASE_URL or SUPABASE keys. Ensure SERVICE_ROLE_KEY or SUPABASE_SERVICE_ROLE_KEY is set.' }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    // If only an anon key is available, fail loudly — anon keys cannot perform writes under RLS.
-    if (keySource === 'anon') {
-      console.error('Refusing to run poller with anon key: writes will be rejected by RLS. Map a service role secret (SERVICE_ROLE_KEY) in the project.');
-      return new Response(JSON.stringify({ success: false, error: 'Server requires a Supabase service role key (SERVICE_ROLE_KEY). Do not use anon key for writes.' }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      return new Response(JSON.stringify({ success: false, error: 'Missing Supabase credentials (SERVICE_ROLE_KEY)' }), {
+        status: 500, headers: { ...hdrs, 'Content-Type': 'application/json' }
       });
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Process all kratom sources (federal + states)
-    const processedItems: any[] = [];
+    // Build jurisdiction lookup (code → uuid)
+    const { data: jurisdictions } = await supabase.from('jurisdiction').select('id, code, name');
+    const jMap: Record<string, string> = {};
+    for (const j of jurisdictions || []) {
+      if (j.code) jMap[j.code] = j.id;
+      if (j.name === 'Federal Government') jMap['FEDERAL'] = j.id;
+    }
 
-    for (const [sourceKey, source] of Object.entries(STATE_KRATOM_SOURCES)) {
-      console.log(`Processing kratom source: ${sourceKey} - ${source.agencyName}`);
+    // Gather existing external_ids so we can skip duplicates
+    const { data: existingData } = await supabase.from('instrument').select('external_id').eq('source', 'kratom_poller');
+    const existingIds = new Set((existingData || []).map((r: any) => r.external_id));
 
-      // Process RSS feeds
-      for (const rssUrl of source.rssFeeds) {
-        console.log(`Fetching RSS feed: ${rssUrl}`);
-        const xml = await fetchWithRetry(rssUrl);
-        if (!xml) {
-          console.log(`Failed to fetch RSS feed: ${rssUrl}`);
-          continue;
-        }
+    // Determine which sources to process
+    const sourcesToProcess = stateCode
+      ? [[stateCode, STATE_KRATOM_SOURCES[stateCode]]].filter(([, v]) => v)
+      : Object.entries(STATE_KRATOM_SOURCES);
 
-        const items = parseRSSFeed(xml, rssUrl);
-        console.log(`Parsed ${items.length} items from RSS feed`);
+    let recordsProcessed = 0;
+    let newItemsFound = 0;
+    const errors: string[] = [];
+    const recentItems: any[] = [];
+    const maxItemsPerSource = 10;
 
-        for (const item of items) {
-          // Check if we've already processed this item
-          const { data: existing } = await supabase
-            .from('ingestion_log')
-            .select('id')
-            .eq('source_url', item.link)
-            .eq('session_id', session_id)
-            .single();
+    for (const [code, sources] of sourcesToProcess as [string, typeof STATE_KRATOM_SOURCES[string]][]) {
+      if (!sources) continue;
+      console.log(`[kratom] Processing ${code} — ${sources.agencyName}`);
+      const jurisdictionId = jMap[code] || jMap['FEDERAL'];
+      let sourceItems = 0;
 
-          if (existing) {
-            console.log(`Skipping already processed item: ${item.title}`);
-            continue;
-          }
+      // --- RSS feeds ---
+      for (const rssUrl of sources.rssFeeds) {
+        if (sourceItems >= maxItemsPerSource) break;
+        try {
+          const xml = await fetchWithRetry(rssUrl);
+          if (!xml) continue;
+          const items = parseRSSFeed(xml, rssUrl);
+          console.log(`[kratom] Parsed ${items.length} items from ${rssUrl}`);
 
-          // Analyze content with AI
-          const analysis = await analyzeContentWithAI(item.title, item.description, item.link);
+          for (const item of items) {
+            if (sourceItems >= maxItemsPerSource) break;
+            const text = `${item.title} ${item.description}`.toLowerCase();
+            // Kratom relevance gate — only keep items that mention kratom
+            if (!KRATOM_KEYWORDS.test(text)) continue;
 
-          // Insert into instrument table
-          const { data: instrument, error: instrumentError } = await supabase
-            .from('instrument')
-            .insert({
-              title: item.title,
-              description: item.description,
-              source_url: item.link,
-              product: analysis.product,
-              jurisdiction: analysis.jurisdiction,
-              requirements: analysis.requirements,
-              document_type: analysis.documentType,
-              confidence_score: analysis.confidence,
-              published_date: item.pubDate ? new Date(item.pubDate).toISOString() : null,
-              source_name: source.agencyName,
-              session_id: session_id
-            })
-            .select()
-            .single();
+            const externalId = `kratom-${code}-rss-${btoa(item.guid || item.link).substring(0, 50)}`;
+            if (existingIds.has(externalId) && !fullScan) { recordsProcessed++; continue; }
 
-          if (instrumentError) {
-            console.error('Error inserting instrument:', instrumentError);
-            continue;
-          }
+            // AI analysis — results stored in metadata
+            const analysis = await analyzeContentWithAI(item.title, item.description, item.link);
 
-          // Log the ingestion
-          await supabase
-            .from('ingestion_log')
-            .insert({
-              instrument_id: instrument.id,
-              source_url: item.link,
-              session_id: session_id,
-              status: 'processed',
+            let effectiveDate = new Date().toISOString().split('T')[0];
+            if (item.pubDate) {
+              try { const d = new Date(item.pubDate); if (!isNaN(d.getTime())) effectiveDate = d.toISOString().split('T')[0]; } catch {}
+            }
+
+            const { error } = await supabase.from('instrument').upsert({
+              external_id: externalId,
+              title: item.title.substring(0, 500),
+              description: item.description?.substring(0, 2000),
+              effective_date: effectiveDate,
+              jurisdiction_id: jurisdictionId,
+              source: 'kratom_poller',
+              url: item.link,
+              category: 'kratom',
+              sub_category: analysis.documentType || 'regulation',
+              document_type: analysis.documentType || 'regulation',
               metadata: {
-                rss_feed: rssUrl,
-                pub_date: item.pubDate,
-                guid: item.guid,
-                source_key: sourceKey
+                product: analysis.product,
+                jurisdiction_code: analysis.jurisdiction,
+                requirements: analysis.requirements,
+                confidence: analysis.confidence,
+                agencyName: sources.agencyName,
+                sourceType: 'rss',
+                feedUrl: rssUrl,
+                analyzedAt: new Date().toISOString()
               }
-            });
+            }, { onConflict: 'external_id' });
 
-          processedItems.push({
-            id: instrument.id,
-            title: item.title,
-            link: item.link,
-            analysis: analysis,
-            source: sourceKey
-          });
-
-          console.log(`Processed item: ${item.title}`);
-        }
+            if (error) { errors.push(`${code} rss upsert: ${error.message}`); continue; }
+            recordsProcessed++;
+            if (!existingIds.has(externalId)) {
+              newItemsFound++;
+              existingIds.add(externalId);
+              recentItems.push({ state: code, title: item.title, type: analysis.documentType, isNew: true });
+            }
+            sourceItems++;
+            // Small delay to avoid rate limiting
+            await new Promise(r => setTimeout(r, 500));
+          }
+        } catch (e: any) { errors.push(`${code} RSS: ${e.message}`); }
       }
 
-      // Process news pages (basic scraping for now - could be enhanced)
-      for (const newsUrl of source.newsPages) {
+      // --- News pages (basic content check) ---
+      for (const newsUrl of sources.newsPages) {
+        if (sourceItems >= maxItemsPerSource) break;
         try {
-          console.log(`Checking news page: ${newsUrl}`);
           const content = await fetchWithRetry(newsUrl);
-          if (content && content.includes('kratom')) {
-            // Basic check - if page contains kratom, we could analyze it
-            // For now, just log that we found potential content
-            console.log(`Found kratom-related content on news page: ${newsUrl}`);
+          if (content && KRATOM_KEYWORDS.test(content)) {
+            console.log(`[kratom] Found kratom-related content on: ${newsUrl}`);
           }
-        } catch (e) {
-          console.log(`Error checking news page ${newsUrl}:`, e);
+        } catch (e: any) {
+          errors.push(`${code} news: ${e.message}`);
         }
       }
     }
 
     return new Response(JSON.stringify({
       success: true,
-      message: `Processed ${processedItems.length} kratom regulatory items`,
-      processedItems: processedItems.length,
-      sessionId: session_id
+      message: `Processed ${recordsProcessed} kratom regulatory items (${newItemsFound} new)`,
+      processedItems: recordsProcessed,
+      newItems: newItemsFound,
+      errors: errors.length > 0 ? errors.slice(0, 10) : undefined,
+      recentItems: recentItems.slice(0, 20)
     }), {
       status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      headers: { ...hdrs, 'Content-Type': 'application/json' }
     });
 
   } catch (error) {
@@ -657,7 +636,7 @@ Deno.serve(async (req: Request) => {
       error: (error as Error).message || 'Internal server error'
     }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      headers: { ...hdrs, 'Content-Type': 'application/json' }
     });
   }
 });

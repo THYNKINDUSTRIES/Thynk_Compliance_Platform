@@ -12,8 +12,9 @@ import { PollingHealthDashboard } from '@/components/PollingHealthDashboard';
 import { CannabisHempPoller } from '@/components/CannabisHempPoller';
 import { KratomPoller } from '@/components/KratomPoller';
 import { KavaPoller } from '@/components/KavaPoller';
-import { PollerTestPanel } from '@/components/PollerTestPanel';
-import { Database, RefreshCw, CheckCircle, AlertCircle, Loader2, Trash2, MapPin, FlaskConical, Leaf, Sprout } from 'lucide-react';
+import { PsychedelicPoller } from '@/components/PsychedelicPoller';
+import { NicotineVapePoller } from '@/components/NicotineVapePoller';
+import { Database, RefreshCw, CheckCircle, AlertCircle, Loader2, Trash2, MapPin, Leaf, Sprout, Brain, Wind } from 'lucide-react';
 
 interface DatabaseStats {
   totalInstruments: number;
@@ -170,7 +171,7 @@ export default function SourceManagement() {
           </div>
 
           <Tabs defaultValue="comprehensive" className="w-full">
-            <TabsList className="grid w-full grid-cols-8">
+            <TabsList className="grid w-full grid-cols-9">
               <TabsTrigger value="comprehensive" className="flex items-center gap-2">
                 <Database className="w-4 h-4" />
                 All Pollers
@@ -187,9 +188,13 @@ export default function SourceManagement() {
                 <Sprout className="w-4 h-4" />
                 Kava
               </TabsTrigger>
-              <TabsTrigger value="ca-test" className="flex items-center gap-2">
-                <FlaskConical className="w-4 h-4" />
-                CA Poll Test
+              <TabsTrigger value="psychedelic" className="flex items-center gap-2">
+                <Brain className="w-4 h-4" />
+                Psychedelic
+              </TabsTrigger>
+              <TabsTrigger value="nicotine" className="flex items-center gap-2">
+                <Wind className="w-4 h-4" />
+                Nicotine/Vape
               </TabsTrigger>
               <TabsTrigger value="overview">DB Overview</TabsTrigger>
               <TabsTrigger value="polling">Polling Health</TabsTrigger>
@@ -212,8 +217,12 @@ export default function SourceManagement() {
               <KavaPoller />
             </TabsContent>
 
-            <TabsContent value="ca-test" className="space-y-6">
-              <PollerTestPanel />
+            <TabsContent value="psychedelic" className="space-y-6">
+              <PsychedelicPoller />
+            </TabsContent>
+
+            <TabsContent value="nicotine" className="space-y-6">
+              <NicotineVapePoller />
             </TabsContent>
 
 
@@ -302,23 +311,22 @@ export default function SourceManagement() {
                 <CardContent>
                   <div className="space-y-4 text-sm text-gray-700">
                     <div>
-                      <h4 className="font-semibold text-[#794108] mb-2">Environment Variables Required:</h4>
+                      <h4 className="font-semibold text-[#794108] mb-2">Environment Variables:</h4>
                       <ul className="list-disc list-inside ml-4 space-y-1 font-mono text-xs">
                         <li>VITE_SUPABASE_URL - Supabase project URL</li>
-                        <li>VITE_SUPABASE_ANON_KEY - Public anon key (for client reads)</li>
-                        <li>VITE_SUPABASE_SERVICE_ROLE_KEY - Service role key (for preview mode)</li>
-                        <li>VITE_PREVIEW_MODE - Set to "true" for preview authentication</li>
+                        <li>VITE_SUPABASE_ANON_KEY - Public anon key (default, used for all client operations)</li>
                       </ul>
                     </div>
 
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                       <div className="flex items-start gap-2">
-                        <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
                         <div>
-                          <p className="text-yellow-900 font-semibold">Security Note</p>
-                          <p className="text-yellow-700 text-sm mt-1">
-                            The service_role key should only be used in preview/development environments. 
-                            In production, always use the anon key with proper RLS policies.
+                          <p className="text-green-900 font-semibold">Security: Production Mode Active</p>
+                          <p className="text-green-700 text-sm mt-1">
+                            This application uses the public anon key with Row Level Security (RLS) policies.
+                            All database access is governed by RLS — no service role key is exposed to the client.
+                            Edge functions use their own service role key server-side for write operations.
                           </p>
                         </div>
                       </div>
