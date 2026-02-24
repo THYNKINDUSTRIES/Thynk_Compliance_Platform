@@ -103,6 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const selfHealAttemptedRef = useRef<string | null>(null);
   const suppressAuthChangeRef = useRef(false);
   const initialSessionHandledRef = useRef(false);
+  const fetchingForUserRef = useRef<string | null>(null);
 
   // Check beta access based on user email
   const userHasBetaAccess = hasBetaAccess(user?.email);
@@ -126,8 +127,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       0
   ) : 0;
 
+  // Build a fallback profile from locally-cached session data (no network call)
+  const buildFallbackProfile = useCallback((userId: string, email?: string | null, metadata?: Record<string, any>, createdAt?: string): UserProfile => {
+    const autoAdmin = isAdminDomain(email);
+    const now = new Date();
+    return {
+      id: userId,
+      email: email || '',
+      full_name: metadata?.full_name || null,
+      role: autoAdmin ? 'admin' : 'user',
+      email_verified: true,
+      saved_searches: [],
+      onboarding_completed: getOnboardingStatus(userId),
+      onboarding_completed_at: null,
+      subscription_status: autoAdmin ? 'active' : 'trial',
+      trial_started_at: createdAt || now.toISOString(),
+      trial_ends_at: autoAdmin
+        ? new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000).toISOString()
+        : new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+      subscription_started_at: autoAdmin ? now.toISOString() : null,
+      subscription_ends_at: null,
+      stripe_customer_id: null,
+      stripe_subscription_id: null,
+      created_at: createdAt || now.toISOString(),
+      updated_at: now.toISOString(),
+    };
+  }, []);
+
   const fetchProfile = useCallback(async (userId: string) => {
-    // Wrap entire profile fetch in a 8-second timeout to prevent UI from hanging
+    // ── Guard: prevent concurrent fetches for the same user ──
+    if (fetchingForUserRef.current === userId) return;
+    fetchingForUserRef.current = userId;
+
+    try {
+    // Wrap entire profile fetch in an 8-second timeout to prevent UI from hanging
     const profileFetchPromise = (async () => {
     try {
       // Use a simpler query to avoid RLS recursion issues
@@ -144,25 +177,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           // Create a fallback profile from auth user data
           const { data: { user: authUser } } = await supabase.auth.getUser();
           if (authUser) {
-            setProfile({
-              id: authUser.id,
-              email: authUser.email || '',
-              full_name: authUser.user_metadata?.full_name || null,
-              role: 'user',
-              email_verified: authUser.email_confirmed_at !== null,
-              saved_searches: [],
-              onboarding_completed: getOnboardingStatus(userId),
-              onboarding_completed_at: null,
-              subscription_status: 'trial',
-              trial_started_at: authUser.created_at || new Date().toISOString(),
-              trial_ends_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
-              subscription_started_at: null,
-              subscription_ends_at: null,
-              stripe_customer_id: null,
-              stripe_subscription_id: null,
-              created_at: authUser.created_at || new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            } as UserProfile);
+            setProfile(buildFallbackProfile(authUser.id, authUser.email, authUser.user_metadata, authUser.created_at));
           }
           setOnboardingCompleted(getOnboardingStatus(userId));
           return;
@@ -193,55 +208,60 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           stripe_subscription_id: data.stripe_subscription_id ?? null
         };
 
-        // Auto-upgrade comp accounts: if user is not yet active and their email is in comp_accounts, upgrade them
-        // Wrapped in a timeout to prevent hanging if the table doesn't exist or query stalls
-        if (profileWithDefaults.subscription_status !== 'active' && profileWithDefaults.role !== 'admin' && profileWithDefaults.email) {
-          try {
-            const compPromise = supabase
-              .from('comp_accounts')
-              .select('expires_at, is_active')
-              .eq('email', profileWithDefaults.email.toLowerCase())
-              .eq('is_active', true)
-              .maybeSingle();
-            const compTimeout = new Promise<{ data: null }>((resolve) => 
-              setTimeout(() => resolve({ data: null }), 3000)
-            );
-            const { data: compData } = await Promise.race([compPromise, compTimeout]) as any;
-            if (compData && (!compData.expires_at || new Date(compData.expires_at) > new Date())) {
-              const now = new Date();
-              const neverExpires = new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000);
-              const accessExpiry = compData.expires_at || neverExpires.toISOString();
-              // Upgrade the profile in DB
-              await supabase.from('user_profiles').update({
-                subscription_status: 'active',
-                subscription_started_at: now.toISOString(),
-                subscription_ends_at: accessExpiry,
-              }).eq('id', userId);
-              // Update local profile
-              profileWithDefaults.subscription_status = 'active';
-              profileWithDefaults.subscription_started_at = now.toISOString();
-              profileWithDefaults.subscription_ends_at = typeof accessExpiry === 'string' ? accessExpiry : accessExpiry;
-            }
-          } catch (compErr) {
-            // Don't fail profile fetch if comp check fails (table might not exist yet)
-            console.warn('Comp account check failed:', compErr);
-          }
-        }
-
         setProfile(profileWithDefaults);
         
         // Check onboarding status from profile or localStorage
         const localOnboarding = getOnboardingStatus(userId);
         setOnboardingCompleted(profileWithDefaults.onboarding_completed || localOnboarding);
+
+        // ── Deferred: comp_accounts upgrade (runs in background, doesn't block UI) ──
+        if (profileWithDefaults.subscription_status !== 'active' && profileWithDefaults.role !== 'admin' && profileWithDefaults.email) {
+          (async () => {
+            try {
+              const compPromise = supabase
+                .from('comp_accounts')
+                .select('expires_at, is_active')
+                .eq('email', profileWithDefaults.email.toLowerCase())
+                .eq('is_active', true)
+                .maybeSingle();
+              const compTimeout = new Promise<{ data: null }>((resolve) => 
+                setTimeout(() => resolve({ data: null }), 3000)
+              );
+              const { data: compData } = await Promise.race([compPromise, compTimeout]) as any;
+              if (compData && (!compData.expires_at || new Date(compData.expires_at) > new Date())) {
+                const now = new Date();
+                const neverExpires = new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000);
+                const accessExpiry = compData.expires_at || neverExpires.toISOString();
+                // Upgrade the profile in DB (fire-and-forget)
+                supabase.from('user_profiles').update({
+                  subscription_status: 'active',
+                  subscription_started_at: now.toISOString(),
+                  subscription_ends_at: accessExpiry,
+                }).eq('id', userId).then(() => {
+                  // Update local profile
+                  setProfile(prev => prev ? {
+                    ...prev,
+                    subscription_status: 'active',
+                    subscription_started_at: now.toISOString(),
+                    subscription_ends_at: typeof accessExpiry === 'string' ? accessExpiry : accessExpiry,
+                  } : prev);
+                });
+              }
+            } catch (compErr) {
+              // Don't fail profile fetch if comp check fails
+              console.warn('Comp account check failed:', compErr);
+            }
+          })();
+        }
       } else if (selfHealAttemptedRef.current !== userId) {
         // No profile found - self-heal by creating one (once per user)
         selfHealAttemptedRef.current = userId;
         console.warn('No profile found for user', userId, '- attempting to create one');
         const { data: { user: authUser } } = await supabase.auth.getUser();
         if (authUser) {
+          const autoAdmin = isAdminDomain(authUser.email);
           const now = new Date();
           const trialEnd = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-          const autoAdmin = isAdminDomain(authUser.email);
           
           const newProfile: Record<string, any> = {
             id: authUser.id,
@@ -255,40 +275,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               : trialEnd.toISOString(),
           };
 
-          // Try to insert the profile into the DB (ignoreDuplicates avoids
-          // overwriting a row the handle_new_user trigger may have created)
-          const { error: insertError } = await supabase
-            .from('user_profiles')
-            .upsert(newProfile, { onConflict: 'id', ignoreDuplicates: true });
-          
-          if (insertError) {
-            console.error('Failed to self-heal profile:', insertError);
-          }
+          // Set the local profile state IMMEDIATELY so UI unblocks
+          setProfile(buildFallbackProfile(authUser.id, authUser.email, authUser.user_metadata, authUser.created_at));
+          setOnboardingCompleted(getOnboardingStatus(userId));
 
-          // Set the local profile state regardless so the UI works
-          setProfile({
-            id: authUser.id,
-            email: authUser.email || '',
-            full_name: authUser.user_metadata?.full_name || null,
-            role: autoAdmin ? 'admin' : 'user',
-            email_verified: authUser.email_confirmed_at !== null,
-            saved_searches: [],
-            onboarding_completed: false,
-            onboarding_completed_at: null,
-            subscription_status: autoAdmin ? 'active' : 'trial',
-            trial_started_at: authUser.created_at || now.toISOString(),
-            trial_ends_at: autoAdmin 
-              ? new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000).toISOString() 
-              : trialEnd.toISOString(),
-            subscription_started_at: autoAdmin ? now.toISOString() : null,
-            subscription_ends_at: null,
-            stripe_customer_id: null,
-            stripe_subscription_id: null,
-            created_at: authUser.created_at || now.toISOString(),
-            updated_at: now.toISOString()
-          } as UserProfile);
+          // Then insert into DB in the background (don't await)
+          supabase
+            .from('user_profiles')
+            .upsert(newProfile, { onConflict: 'id', ignoreDuplicates: true })
+            .then(({ error: insertError }) => {
+              if (insertError) {
+                console.error('Failed to self-heal profile:', insertError);
+              }
+            });
+        } else {
+          setOnboardingCompleted(getOnboardingStatus(userId));
         }
-        setOnboardingCompleted(getOnboardingStatus(userId));
       } else {
         // Self-heal already attempted for this user — don't retry
         setOnboardingCompleted(getOnboardingStatus(userId));
@@ -303,14 +305,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const timeoutFallback = new Promise<void>((resolve) => {
       setTimeout(() => {
         console.warn('fetchProfile timed out after 8s, using fallback');
-        // Set a minimal fallback profile so the UI unblocks
+        // ── CRITICAL: set a real profile on timeout so auth-change handler doesn't re-trigger ──
+        setProfile(prev => {
+          if (prev) return prev; // inner promise may have already set it
+          // Build fallback from the session user (already in memory, no network call)
+          return buildFallbackProfile(userId, user?.email, user?.user_metadata, user?.created_at);
+        });
         setOnboardingCompleted(getOnboardingStatus(userId));
         resolve();
       }, 8000);
     });
 
     await Promise.race([profileFetchPromise, timeoutFallback]);
-  }, []);
+    } finally {
+      fetchingForUserRef.current = null;
+    }
+  }, [buildFallbackProfile, user]);
 
 
 
@@ -361,8 +371,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const newUserId = session?.user?.id ?? null;
 
-      // Skip if we already loaded this user's profile
+      // Skip if we already loaded this user's profile, or if a fetch is already in progress
       if (newUserId && newUserId === currentUserIdRef.current && profile) return;
+      if (newUserId && fetchingForUserRef.current === newUserId) return;
 
       setSession(session);
       setUser(session?.user ?? null);
