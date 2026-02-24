@@ -44,7 +44,7 @@ async function handleTrialSignup(body: TrialSignupRequest): Promise<Response> {
   if (isAuthorizedDomain(domain)) {
     // For testing: return success without database operations
     const trialEndDate = new Date();
-    trialEndDate.setDate(trialEndDate.getDate() + 3);
+    trialEndDate.setDate(trialEndDate.getDate() + 7);
 
     return new Response(JSON.stringify({
       success: true,
@@ -60,7 +60,7 @@ async function handleTrialSignup(body: TrialSignupRequest): Promise<Response> {
 
   // For testing: return success without database operations
   const trialEndDate = new Date();
-  trialEndDate.setDate(trialEndDate.getDate() + 3);
+  trialEndDate.setDate(trialEndDate.getDate() + 7);
 
   return new Response(JSON.stringify({
     success: true,
@@ -77,11 +77,11 @@ async function handleTrialStatus(req: Request): Promise<Response> {
   // Mock response for testing
   return new Response(JSON.stringify({
     is_trial_active: true,
-    trial_end_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+    trial_end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     selected_jurisdiction: 'CA',
     subscription_status: 'trial',
     is_authorized_domain: false,
-    days_remaining: 3
+    days_remaining: 7
   }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' }
   });

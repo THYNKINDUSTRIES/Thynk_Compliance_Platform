@@ -106,6 +106,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchingForUserRef = useRef<string | null>(null);
   const profileFetchCooldownRef = useRef<number>(0); // timestamp of last failure, 0 = no cooldown
   const userRef = useRef<User | null>(null); // stable ref so fetchProfile doesn't depend on user state
+  const profileRef = useRef<UserProfile | null>(null);
+  const fetchAttemptCountRef = useRef<number>(0); // hard limit: max 5 attempts per page load
+
+  // Set profile in both state AND ref atomically (accepts value or updater fn)
+  const setProfileAndRef = useCallback(
+    (update: UserProfile | null | ((prev: UserProfile | null) => UserProfile | null)) => {
+      if (typeof update === 'function') {
+        setProfile(prev => {
+          const next = update(prev);
+          profileRef.current = next;
+          return next;
+        });
+      } else {
+        profileRef.current = update;
+        setProfile(update);
+      }
+    },
+    [],
+  );
 
   // Check beta access based on user email
   const userHasBetaAccess = hasBetaAccess(user?.email);
@@ -146,7 +165,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       trial_started_at: createdAt || now.toISOString(),
       trial_ends_at: autoAdmin
         ? new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000).toISOString()
-        : new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+        : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       subscription_started_at: autoAdmin ? now.toISOString() : null,
       subscription_ends_at: null,
       stripe_customer_id: null,
@@ -157,6 +176,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const fetchProfile = useCallback(async (userId: string) => {
+    // ── Guard 0: hard limit — never attempt more than 5 fetches per page load ──
+    if (fetchAttemptCountRef.current >= 5) {
+      const u = userRef.current;
+      setProfileAndRef((prev: UserProfile | null) => prev || buildFallbackProfile(userId, u?.email, u?.user_metadata, u?.created_at));
+      setOnboardingCompleted(getOnboardingStatus(userId));
+      currentUserIdRef.current = userId;
+      return;
+    }
+    fetchAttemptCountRef.current++;
+
     // ── Guard 1: prevent concurrent fetches for the same user ──
     if (fetchingForUserRef.current === userId) return;
 
@@ -164,7 +193,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const cooldownMs = 30_000;
     if (profileFetchCooldownRef.current > 0 && (Date.now() - profileFetchCooldownRef.current < cooldownMs)) {
       const u = userRef.current;
-      setProfile(prev => prev || buildFallbackProfile(userId, u?.email, u?.user_metadata, u?.created_at));
+      setProfileAndRef((prev: UserProfile | null) => prev || buildFallbackProfile(userId, u?.email, u?.user_metadata, u?.created_at));
       setOnboardingCompleted(getOnboardingStatus(userId));
       currentUserIdRef.current = userId;
       return;
@@ -175,7 +204,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Helper: ensure a fallback profile exists (used by ALL failure paths)
     const ensureFallbackProfile = () => {
       const u = userRef.current;
-      setProfile(prev => prev || buildFallbackProfile(userId, u?.email, u?.user_metadata, u?.created_at));
+      setProfileAndRef((prev: UserProfile | null) => prev || buildFallbackProfile(userId, u?.email, u?.user_metadata, u?.created_at));
       setOnboardingCompleted(getOnboardingStatus(userId));
       currentUserIdRef.current = userId;
     };
@@ -213,16 +242,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           onboarding_completed_at: data.onboarding_completed_at ?? null,
           subscription_status: data.subscription_status ?? 'trial',
           trial_started_at: data.trial_started_at ?? data.created_at,
-          trial_ends_at: data.trial_ends_at ?? data.trial_end_date ?? new Date(new Date(data.created_at).getTime() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+          trial_ends_at: data.trial_ends_at ?? data.trial_end_date ?? new Date(new Date(data.created_at).getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
           subscription_started_at: data.subscription_started_at ?? null,
           subscription_ends_at: data.subscription_ends_at ?? null,
           stripe_customer_id: data.stripe_customer_id ?? null,
           stripe_subscription_id: data.stripe_subscription_id ?? null
         };
 
-        setProfile(profileWithDefaults);
+        setProfileAndRef(profileWithDefaults);
         currentUserIdRef.current = userId;
         profileFetchCooldownRef.current = 0; // clear cooldown on success
+        fetchAttemptCountRef.current = 0; // reset attempt counter on success
         
         // Check onboarding status from profile or localStorage
         const localOnboarding = getOnboardingStatus(userId);
@@ -253,9 +283,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                   subscription_ends_at: accessExpiry,
                 }).eq('id', userId).then(() => {
                   // Update local profile
-                  setProfile(prev => prev ? {
+                  setProfileAndRef((prev: UserProfile | null) => prev ? {
                     ...prev,
-                    subscription_status: 'active',
+                    subscription_status: 'active' as const,
                     subscription_started_at: now.toISOString(),
                     subscription_ends_at: typeof accessExpiry === 'string' ? accessExpiry : accessExpiry,
                   } : prev);
@@ -277,7 +307,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Background DB upsert (fire-and-forget)
         const u = userRef.current;
         if (u) {
-          const TRIAL_DAYS = 60;
+          const TRIAL_DAYS = 7;
           const autoAdmin = isAdminDomain(u.email);
           const now = new Date();
           supabase.from('user_profiles').upsert({
@@ -318,7 +348,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       fetchingForUserRef.current = null;
     }
-  }, [buildFallbackProfile]); // NO user dependency — uses userRef instead
+  }, [buildFallbackProfile, setProfileAndRef]); // NO user dependency — uses userRef instead
 
   // Keep userRef in sync with user state (avoids fetchProfile depending on user)
   useEffect(() => { userRef.current = user; }, [user]);
@@ -337,6 +367,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       initialSessionHandledRef.current = true;
       setSession(session);
       setUser(session?.user ?? null);
+      userRef.current = session?.user ?? null; // sync immediately so fetchProfile fallback has user data
       if (session?.user) {
         try {
           await fetchProfile(session.user.id);
@@ -377,6 +408,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       setSession(session);
       setUser(session?.user ?? null);
+      userRef.current = session?.user ?? null; // sync immediately so fetchProfile fallback has user data
 
       if (session?.user) {
         // Reset self-heal ref when user changes
@@ -396,7 +428,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       } else {
         currentUserIdRef.current = null;
-        setProfile(null);
+        setProfileAndRef(null);
         setOnboardingCompleted(true); // No user = no onboarding
       }
     });
@@ -483,7 +515,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         const grantFullAccess = autoAdmin || isCompAccount;
         const now = new Date();
-        const trialEnd = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000); // 60-day trial
+        const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7-day trial
         const neverExpires = new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000); // 100 years
         const accessExpiry = compExpiresAt ? compExpiresAt : neverExpires.toISOString();
         
@@ -564,10 +596,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Clear local state immediately for a clean logout experience
     setUser(null);
     setSession(null);
-    setProfile(null);
+    setProfileAndRef(null);
     setOnboardingCompleted(true);
     currentUserIdRef.current = null;
     selfHealAttemptedRef.current = null;
+    profileFetchCooldownRef.current = 0;
+    fetchAttemptCountRef.current = 0;
     
     try {
       const { error } = await supabase.auth.signOut();
@@ -628,7 +662,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (error.code === '42P17' || error.message?.includes('infinite recursion')) {
           console.warn('RLS recursion detected during profile update');
           // Update local profile state even if DB update fails
-          setProfile(prev => prev ? { ...prev, ...updates } : null);
+          setProfileAndRef((prev: UserProfile | null) => prev ? { ...prev, ...updates } : null);
           return;
         }
         throw error;

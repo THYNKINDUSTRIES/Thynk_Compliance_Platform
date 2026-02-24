@@ -81,13 +81,13 @@ export const SubscriptionRoute = ({
   // Whether the user has already used their trial (prevent infinite restarts)
   const trialAlreadyUsed = profile?.trial_started_at != null;
 
-  // Activate a 3-day trial (only if never had one before)
+  // Activate a 7-day trial (only if never had one before)
   const handleActivateTrial = async () => {
     if (!user || !profile || trialAlreadyUsed) return;
     setActivating(true);
     try {
       const now = new Date();
-      const trialEnd = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+      const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
       const { error } = await supabase.from('user_profiles').update({
         subscription_status: 'trial',
         trial_started_at: now.toISOString(),
@@ -217,8 +217,8 @@ export const SubscriptionRoute = ({
           <CardTitle className="text-xl">Subscription Required</CardTitle>
           <CardDescription>
             {trialAlreadyUsed
-              ? 'Your trial has ended. Upgrade to continue accessing premium features.'
-              : 'Start your free 3-day trial to access this feature.'
+              ? 'Your trial has ended. Subscribe to continue, or use coupon code COMPLIANCE4ALL at checkout for 3 months free.'
+              : 'Start your free 7-day trial for full access to all features.'
             }
           </CardDescription>
         </CardHeader>
@@ -226,7 +226,14 @@ export const SubscriptionRoute = ({
           {!trialAlreadyUsed && (
             <div className="text-center">
               <Badge variant="outline" className="mb-2">
-                3-day free trial available
+                7-day free trial — full access
+              </Badge>
+            </div>
+          )}
+          {trialAlreadyUsed && (
+            <div className="text-center">
+              <Badge variant="outline" className="mb-2">
+                Use code COMPLIANCE4ALL for 3 months free
               </Badge>
             </div>
           )}

@@ -66,7 +66,7 @@ export const TrialSignupForm = () => {
           </div>
           <CardTitle className="text-xl text-green-800">Trial Activated!</CardTitle>
           <CardDescription>
-            Welcome to THYNKFLOW. Your 3-day trial has started.
+            Welcome to THYNKFLOW. Your 7-day trial has started with full access to all features.
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center space-y-4">
@@ -91,7 +91,7 @@ export const TrialSignupForm = () => {
         </p>
         <Badge variant="outline" className="mt-2">
           <Clock className="h-3 w-3 mr-1" />
-          3-day free trial
+          7-day free trial — full access
         </Badge>
       </div>
 

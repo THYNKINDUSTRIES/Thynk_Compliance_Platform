@@ -118,7 +118,7 @@ Deno.serve(async (req: Request) => {
           full_name: userName,
           subscription_status: 'trial',
           trial_started_at: new Date().toISOString(),
-          trial_ends_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         }, { onConflict: 'id' });

@@ -72,10 +72,10 @@ function SubscriptionTab() {
 
   const handleSubscriptionAction = async () => {
     if (!isTrialActive && !isPaidUser && !trialAlreadyUsed && profile) {
-      // Never had a trial — activate a fresh 3-day trial
+      // Never had a trial — activate a fresh 7-day trial
       try {
         const now = new Date();
-        const trialEnd = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+        const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
         const { error } = await supabase.from('user_profiles').update({
           subscription_status: 'trial',
           trial_started_at: now.toISOString(),
@@ -86,7 +86,7 @@ function SubscriptionTab() {
           toast({ title: 'Error', description: 'Failed to activate trial. Please try again.', variant: 'destructive' });
           console.error('Trial activation error:', error);
         } else {
-          toast({ title: 'Trial Activated!', description: 'Your 3-day free trial has started.' });
+          toast({ title: 'Trial Activated!', description: 'Your 7-day free trial has started. Full access to all features!' });
           await refreshProfile();
         }
       } catch (err) {
@@ -131,23 +131,31 @@ function SubscriptionTab() {
               ) : isTrialActive ? (
                 <span className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
-                  {trialDaysRemaining} days remaining in trial
+                  {trialDaysRemaining} days remaining in trial — full access to all features
                 </span>
               ) : (
-                'Your trial has expired. Upgrade to continue using premium features.'
+                <span>
+                  Your trial has expired. Subscribe to continue, or use coupon code <strong>COMPLIANCE4ALL</strong> at checkout for 3 months free.
+                </span>
               )}
             </div>
           </div>
 
           {isTrialActive && (
             <div className="p-4 border rounded-lg">
-              <h3 className="font-medium mb-2">Trial Features</h3>
+              <h3 className="font-medium mb-2">Trial Features (Full Access)</h3>
               <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Access to platform and dashboard</li>
-                <li>• Basic compliance monitoring</li>
-                <li>• State regulation tracking</li>
+                <li>• Complete platform and dashboard access</li>
+                <li>• Real-time compliance monitoring</li>
+                <li>• All state regulation tracking</li>
+                <li>• Advanced analytics and reporting</li>
+                <li>• Compliance checklists and templates</li>
+                <li>• Workflow automation</li>
                 <li>• Email notifications</li>
               </ul>
+              <p className="text-xs text-gray-500 mt-3">
+                After trial, use code <strong>COMPLIANCE4ALL</strong> at checkout for 3 additional months free.
+              </p>
             </div>
           )}
 
@@ -169,7 +177,7 @@ function SubscriptionTab() {
             <div className="flex gap-3">
               <Button className="bg-[#794108] hover:bg-[#E89C5C]" onClick={handleSubscriptionAction}>
                 <CreditCard className="w-4 h-4 mr-2" />
-                {isTrialActive ? 'Upgrade to Pro' : trialAlreadyUsed ? 'Upgrade to Pro' : 'Start Free Trial'}
+                {isTrialActive ? 'Upgrade to Pro' : trialAlreadyUsed ? 'Subscribe Now' : 'Start Free Trial'}
               </Button>
             </div>
           )}
