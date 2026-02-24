@@ -63,8 +63,19 @@ export default function SchedulerMonitoring() {
         return;
       }
 
-      // Calculate stats per job
-      const jobNames = ['federal-register-poller', 'regulations-gov-poller', 'rss-feed-poller'];
+      // Calculate stats per job — all pollers
+      const jobNames = [
+        'federal-register-poller',
+        'congress-poller',
+        'caselaw-poller',
+        'state-legislature-poller',
+        'state-regulations-poller',
+        'cannabis-hemp-poller',
+        'kratom-poller',
+        'kava-poller',
+        'psychedelic-poller',
+        'nicotine-vape-poller',
+      ];
       const stats = jobNames.map(name => {
         const jobLogs = logs?.filter(l => l.job_name === name) || [];
         const successCount = jobLogs.filter(l => l.status === 'success').length;

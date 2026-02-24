@@ -15,6 +15,8 @@ const POLLERS = [
   { name: 'cannabis-hemp-poller', label: 'Cannabis/Hemp (All States)', category: 'State' },
   { name: 'kratom-poller', label: 'Kratom', category: 'Substance' },
   { name: 'kava-poller', label: 'Kava', category: 'Substance' },
+  { name: 'psychedelic-poller', label: 'Psychedelic', category: 'Substance' },
+  { name: 'nicotine-vape-poller', label: 'Nicotine/Vape', category: 'Substance' },
 ];
 
 export function DataIngestionTester() {
