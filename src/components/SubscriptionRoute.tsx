@@ -6,19 +6,17 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, CreditCard, Lock, Loader2 } from 'lucide-react';
+import { Clock, CreditCard, Loader2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 declare const Stripe: any;
 
 interface SubscriptionRouteProps {
   children: React.ReactNode;
-  requirePaid?: boolean; // If true, requires paid subscription, trial not enough
 }
 
 export const SubscriptionRoute = ({
   children,
-  requirePaid = false
 }: SubscriptionRouteProps) => {
   const { user, profile, loading, session, isAdmin, isTrialActive, isPaidUser, trialDaysRemaining, refreshProfile } = useAuth();
   const [activating, setActivating] = useState(false);
@@ -159,51 +157,9 @@ export const SubscriptionRoute = ({
     return <Navigate to="/login" replace />;
   }
 
-  // If requiring paid subscription and user is paid, allow access
-  if (requirePaid && isPaidUser) {
+  // Trial users AND paid users both get full Pro access
+  if (isTrialActive || isPaidUser) {
     return <>{children}</>;
-  }
-
-  // If not requiring paid but user has trial or paid access, allow access
-  if (!requirePaid && (isTrialActive || isPaidUser)) {
-    return <>{children}</>;
-  }
-
-  // Show upgrade prompt for trial users trying to access paid features
-  if (isTrialActive && requirePaid) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
-        <Card className="max-w-md w-full">
-          <CardHeader className="text-center">
-            <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-              <Lock className="h-8 w-8 text-blue-600" />
-            </div>
-            <CardTitle className="text-xl">Premium Feature</CardTitle>
-            <CardDescription>
-              This feature requires a paid subscription. Upgrade now to unlock all features.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="text-center">
-              <Badge variant="secondary" className="mb-2">
-                <Clock className="h-3 w-3 mr-1" />
-                {trialDaysRemaining} days left in trial
-              </Badge>
-            </div>
-            <Button className="w-full" onClick={redirectToStripeCheckout} disabled={checkingOut}>
-              {checkingOut ? (
-                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Redirecting to checkout...</>
-              ) : (
-                <><CreditCard className="h-4 w-4 mr-2" /> Upgrade to Pro</>
-              )}
-            </Button>
-            <Button variant="outline" className="w-full" onClick={() => navigate(-1)}>
-              Go Back
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
   }
 
   // Show upgrade / trial prompt

@@ -116,16 +116,16 @@ const App = () => (
                 {/* Trial/Paid routes - require authentication and trial/paid access */}
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/dashboard" element={<SubscriptionRoute><Dashboard /></SubscriptionRoute>} />
-                <Route path="/analytics" element={<SubscriptionRoute requirePaid><Analytics /></SubscriptionRoute>} />
-                <Route path="/forecasting" element={<SubscriptionRoute requirePaid><Forecasting /></SubscriptionRoute>} />
+                <Route path="/analytics" element={<SubscriptionRoute><Analytics /></SubscriptionRoute>} />
+                <Route path="/forecasting" element={<SubscriptionRoute><Forecasting /></SubscriptionRoute>} />
                 <Route path="/alerts" element={<SubscriptionRoute><AlertPreferences /></SubscriptionRoute>} />
                 <Route path="/workflows" element={<SubscriptionRoute><Workflows /></SubscriptionRoute>} />
                 <Route path="/workflows/:id" element={<SubscriptionRoute><Workflows /></SubscriptionRoute>} />
                 <Route path="/notification-preferences" element={<SubscriptionRoute><NotificationPreferences /></SubscriptionRoute>} />
                 <Route path="/settings" element={<SubscriptionRoute><Settings /></SubscriptionRoute>} />
-                <Route path="/checklists" element={<SubscriptionRoute requirePaid><ComplianceChecklists /></SubscriptionRoute>} />
-                <Route path="/templates" element={<SubscriptionRoute requirePaid><TemplateLibrary /></SubscriptionRoute>} />
-                <Route path="/beta-invites" element={<SubscriptionRoute requirePaid><BetaInvites /></SubscriptionRoute>} />
+                <Route path="/checklists" element={<SubscriptionRoute><ComplianceChecklists /></SubscriptionRoute>} />
+                <Route path="/templates" element={<SubscriptionRoute><TemplateLibrary /></SubscriptionRoute>} />
+                <Route path="/beta-invites" element={<SubscriptionRoute><BetaInvites /></SubscriptionRoute>} />
 
                 {/* Admin routes - require admin role */}
                 <Route path="/source-management" element={<ProtectedRoute adminOnly><SourceManagement /></ProtectedRoute>} />
