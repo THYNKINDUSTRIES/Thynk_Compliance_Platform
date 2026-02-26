@@ -520,8 +520,12 @@ Deno.serve(async (req: Request) => {
     }
 
     // Gather existing external_ids so we can skip duplicates
-    const { data: existingData } = await supabase.from('instrument').select('external_id').eq('source', 'kratom_poller');
+    const { data: existingData } = await supabase.from('instrument').select('external_id, title').eq('source', 'kratom_poller');
     const existingIds = new Set((existingData || []).map((r: any) => r.external_id));
+    // Title-based dedup: normalize titles and track them to prevent near-duplicate articles
+    const normalizeTitle = (t: string) => t.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 80);
+    const existingTitles = new Set((existingData || []).map((r: any) => normalizeTitle(r.title || '')));
+    const seenTitlesThisRun = new Set<string>();
 
     // Determine which sources to process
     const sourcesToProcess = stateCode
@@ -558,12 +562,28 @@ Deno.serve(async (req: Request) => {
             const externalId = `kratom-${code}-rss-${btoa(item.guid || item.link).substring(0, 50)}`;
             if (existingIds.has(externalId) && !fullScan) { recordsProcessed++; continue; }
 
+            // Title-based dedup: skip if we've seen a near-identical title
+            const normTitle = normalizeTitle(item.title);
+            if (existingTitles.has(normTitle) || seenTitlesThisRun.has(normTitle)) {
+              console.log(`[kratom] Title dedup skip: "${item.title}"`);
+              recordsProcessed++;
+              continue;
+            }
+            seenTitlesThisRun.add(normTitle);
+
             // AI analysis — results stored in metadata
             const analysis = await analyzeContentWithAI(item.title, item.description, item.link);
 
             let effectiveDate = new Date().toISOString().split('T')[0];
+            let kratomPublishedAt: string | null = null;
             if (item.pubDate) {
-              try { const d = new Date(item.pubDate); if (!isNaN(d.getTime())) effectiveDate = d.toISOString().split('T')[0]; } catch {}
+              try {
+                const d = new Date(item.pubDate);
+                if (!isNaN(d.getTime())) {
+                  effectiveDate = d.toISOString().split('T')[0];
+                  kratomPublishedAt = d.toISOString();
+                }
+              } catch {}
             }
 
             const { error } = await supabase.from('instrument').upsert({
@@ -571,6 +591,7 @@ Deno.serve(async (req: Request) => {
               title: item.title.substring(0, 500),
               description: item.description?.substring(0, 2000),
               effective_date: effectiveDate,
+              published_at: kratomPublishedAt || new Date().toISOString(),
               jurisdiction_id: jurisdictionId,
               source: 'kratom_poller',
               url: item.link,

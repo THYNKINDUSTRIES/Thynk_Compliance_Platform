@@ -23,17 +23,24 @@ export const corsHeaders = {
 async function invokeFunction(name: string, body?: object): Promise<any> {
   const url = `${Deno.env.get('SUPABASE_URL')}/functions/v1/${name}`;
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_ANON_KEY');
-  const resp = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': Deno.env.get('SUPABASE_ANON_KEY') || '',
-      'Authorization': `Bearer ${serviceKey}`
-    },
-    ...(body ? { body: JSON.stringify(body) } : {})
-  });
-  const data = await resp.json();
-  return { ok: resp.ok, data };
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 240000); // 4-minute timeout per function
+  try {
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': Deno.env.get('SUPABASE_ANON_KEY') || '',
+        'Authorization': `Bearer ${serviceKey}`
+      },
+      signal: controller.signal,
+      ...(body ? { body: JSON.stringify(body) } : {})
+    });
+    const data = await resp.json();
+    return { ok: resp.ok, data };
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 Deno.serve(async (req) => {

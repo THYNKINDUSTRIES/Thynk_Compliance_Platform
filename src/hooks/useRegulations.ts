@@ -111,8 +111,8 @@ const transformData = (data: any[]): Regulation[] => {
     // Get effective date - handle both effective_date and effective_at
     const effectiveDate = item.effective_date || item.effective_at || item.publication_date || new Date().toISOString().split('T')[0];
     
-    // Get published date
-    const publishedDate = item.published_date || item.publication_date || item.created_at || new Date().toISOString().split('T')[0];
+    // Get published date - check published_at (DB column), published_date, publication_date, then created_at
+    const publishedDate = item.published_at || item.published_date || item.publication_date || item.created_at || new Date().toISOString().split('T')[0];
 
     return {
       id: item.id || item.document_number || item.external_id || String(Math.random()),

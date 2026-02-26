@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, CheckCircle2, AlertTriangle, ArrowLeft, UserPlus, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, CheckCircle2, AlertTriangle, ArrowLeft, UserPlus, Loader2, Mail, RefreshCw } from 'lucide-react';
 
 export default function SignUp() {
   const [fullName, setFullName] = useState('');
@@ -17,15 +17,17 @@ export default function SignUp() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signUp, user } = useAuth();
+  const [resending, setResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
+  const { signUp, user, isEmailVerified, resendVerificationEmail } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if already logged in
+  // Redirect if already logged in AND email is verified
   useEffect(() => {
-    if (user) {
+    if (user && isEmailVerified && !success) {
       navigate('/app');
     }
-  }, [user, navigate]);
+  }, [user, isEmailVerified, success, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,10 +75,7 @@ export default function SignUp() {
 
       setSuccess(true);
       
-      // Redirect to app — profile and trial are already set up
-      setTimeout(() => {
-        navigate('/app');
-      }, 1500);
+      // Do NOT redirect — user must verify email first
     } catch (err: any) {
       console.error('Signup error:', err);
       setError(err.message || 'Failed to create account. Please try again.');
@@ -85,6 +84,83 @@ export default function SignUp() {
     }
   };
 
+
+  const handleResendEmail = async () => {
+    setResending(true);
+    setResendSuccess(false);
+    const result = await resendVerificationEmail();
+    if (result.success) {
+      setResendSuccess(true);
+      setTimeout(() => setResendSuccess(false), 5000);
+    }
+    setResending(false);
+  };
+
+  // Show "Check your email" screen after successful signup
+  if (success) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="p-4">
+          <Link 
+            to="/" 
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Home</span>
+          </Link>
+        </div>
+        <div className="flex-1 flex items-center justify-center p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center space-y-4">
+              <div className="mx-auto w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
+                <Mail className="h-10 w-10 text-blue-600" />
+              </div>
+              <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
+              <CardDescription className="text-base">
+                We've sent a verification link to
+              </CardDescription>
+              <p className="font-semibold text-gray-900">{email}</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+                <p className="font-medium mb-1">Please verify your email to access the platform.</p>
+                <p>Click the link in the email we just sent you. If you don't see it, check your spam or junk folder.</p>
+              </div>
+              
+              {resendSuccess && (
+                <Alert className="bg-green-50 text-green-900 border-green-200">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <AlertDescription>Verification email resent! Check your inbox.</AlertDescription>
+                </Alert>
+              )}
+
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={handleResendEmail}
+                disabled={resending}
+              >
+                {resending ? (
+                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Resending...</>
+                ) : (
+                  <><RefreshCw className="w-4 h-4 mr-2" /> Resend Verification Email</>
+                )}
+              </Button>
+
+              <div className="text-center text-sm text-gray-500 pt-2">
+                <p>Already verified?{' '}
+                  <Link to="/login" className="text-blue-600 hover:underline font-medium">Sign in</Link>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="p-4 text-center text-sm text-gray-500">
+          <p>&copy; {new Date().getFullYear()} Thynk Industries. All rights reserved.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -120,12 +196,6 @@ export default function SignUp() {
                 <Alert variant="destructive">
                   <AlertTriangle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              {success && (
-                <Alert className="bg-green-50 text-green-900 border-green-200">
-                  <CheckCircle2 className="h-4 w-4" />
-                  <AlertDescription>Account created successfully! Redirecting...</AlertDescription>
                 </Alert>
               )}
 

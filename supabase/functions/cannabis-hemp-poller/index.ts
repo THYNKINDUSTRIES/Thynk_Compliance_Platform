@@ -2307,10 +2307,14 @@ Deno.serve(async (req: Request) => {
               }
 
               let effectiveDate = new Date().toISOString().split('T')[0];
+              let rssPublishedAt: string | null = null;
               if (item.pubDate) {
                 try {
                   const d = new Date(item.pubDate);
-                  if (!isNaN(d.getTime())) effectiveDate = d.toISOString().split('T')[0];
+                  if (!isNaN(d.getTime())) {
+                    effectiveDate = d.toISOString().split('T')[0];
+                    rssPublishedAt = d.toISOString();
+                  }
                 } catch {}
               }
 
@@ -2319,6 +2323,7 @@ Deno.serve(async (req: Request) => {
                 title: item.title.substring(0, 500),
                 description: analysis.summary || item.description?.substring(0, 2000),
                 effective_date: effectiveDate,
+                published_at: rssPublishedAt || new Date().toISOString(),
                 jurisdiction_id: jurisdiction.id,
                 source: 'state_rss',
                 url: item.link,
@@ -2372,20 +2377,31 @@ Deno.serve(async (req: Request) => {
               const isNew = !existingIds.has(externalId);
               if (!isNew && !fullScan) { recordsProcessed++; continue; }
 
+              // Hard blocklist: skip clearly irrelevant state agency content
+              const IRRELEVANT_PATTERN = /\b(lottery|lotto|powerball|mega millions|scratch[- ]?off|jackpot|dmv|driver.?s? licen|vehicle registration|motor vehicle|horse racing|equine|thoroughbred|harness racing|jockey|pari-mutuel|fish (?:and|&) (?:game|wildlife)|hunting season|fishing license|boat registration|unemployment insurance|child support|food stamp|snap benefit|weather alert|road closure|highway construction|traffic advisory|school lunch|school bus)\b/i;
+              if (IRRELEVANT_PATTERN.test(item.title) && !(/cannabis|marijuana|hemp|cbd|thc|delta|dispensar|kratom|kava|nicotine|psychedelic|psilocybin/i.test(item.title))) {
+                console.log(`[cannabis-hemp] Blocklist skip: "${item.title}"`);
+                continue;
+              }
+
               const analysis = await analyzeWithOpenAI(item.title, item.description || '', sources.agencyName, code);
 
               // Skip low-relevance items that aren't cannabis/hemp related
               if (analysis.relevanceScore < 0.55 && (analysis.category === 'other' || !analysis.category) && 
-                  !(/cannabis|marijuana|hemp|cbd|thc|delta|dispensar/i.test(item.title))) {
+                  !(/cannabis|marijuana|hemp|cbd|thc|delta|dispensar|kratom|kava|nicotine|psychedelic|psilocybin/i.test(item.title))) {
                 console.log(`[cannabis-hemp] Skipping low-relevance news item: "${item.title}" (score: ${analysis.relevanceScore})`);
                 continue;
               }
 
               let effectiveDate = new Date().toISOString().split('T')[0];
+              let publishedAt: string | null = null;
               if (item.pubDate) {
                 try {
                   const d = new Date(item.pubDate);
-                  if (!isNaN(d.getTime())) effectiveDate = d.toISOString().split('T')[0];
+                  if (!isNaN(d.getTime())) {
+                    effectiveDate = d.toISOString().split('T')[0];
+                    publishedAt = d.toISOString();
+                  }
                 } catch {}
               }
 
@@ -2394,6 +2410,7 @@ Deno.serve(async (req: Request) => {
                 title: item.title.substring(0, 500),
                 description: analysis.summary || item.description?.substring(0, 2000),
                 effective_date: effectiveDate,
+                published_at: publishedAt || new Date().toISOString(),
                 jurisdiction_id: jurisdiction.id,
                 source: 'state_news',
                 url: item.link,

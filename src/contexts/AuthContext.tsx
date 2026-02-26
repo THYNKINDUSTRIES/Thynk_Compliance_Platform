@@ -33,9 +33,11 @@ interface AuthContextType {
   onboardingCompleted: boolean;
   isTrialActive: boolean;
   isPaidUser: boolean;
+  isEmailVerified: boolean;
   trialDaysRemaining: number;
   signUp: (email: string, password: string, fullName: string) => Promise<{ data: any; error: AuthError | null }>;
   signIn: (email: string, password: string) => Promise<void>;
+  resendVerificationEmail: () => Promise<{ success: boolean; error?: string }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
   updatePassword: (newPassword: string) => Promise<{ success: boolean; error?: string }>;
@@ -716,6 +718,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setOnboardingCompleted(false);
   };
 
+  const isEmailVerified = profile?.email_verified === true || profile?.role === 'admin' || (user?.email ? isAdminDomain(user.email) : false);
+
+  const resendVerificationEmail = async (): Promise<{ success: boolean; error?: string }> => {
+    if (!user?.email) return { success: false, error: 'No email address found' };
+    try {
+      const { error } = await supabase.auth.resend({ type: 'signup', email: user.email });
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Failed to resend verification email' };
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user, profile, session, loading,
@@ -724,8 +739,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       onboardingCompleted,
       isTrialActive,
       isPaidUser,
+      isEmailVerified,
       trialDaysRemaining,
-      signUp, signIn, signOut, resetPassword, updatePassword, updateProfile, refreshProfile, completeOnboarding, resetOnboarding
+      signUp, signIn, signOut, resetPassword, updatePassword, updateProfile, refreshProfile, completeOnboarding, resetOnboarding, resendVerificationEmail
     }}>
       {children}
     </AuthContext.Provider>

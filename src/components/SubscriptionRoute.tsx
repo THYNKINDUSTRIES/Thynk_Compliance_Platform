@@ -6,7 +6,8 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, CreditCard, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Clock, CreditCard, Loader2, Mail, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 declare const Stripe: any;
@@ -18,10 +19,12 @@ interface SubscriptionRouteProps {
 export const SubscriptionRoute = ({
   children,
 }: SubscriptionRouteProps) => {
-  const { user, profile, loading, session, isAdmin, isTrialActive, isPaidUser, trialDaysRemaining, refreshProfile } = useAuth();
+  const { user, profile, loading, session, isAdmin, isTrialActive, isPaidUser, isEmailVerified, trialDaysRemaining, refreshProfile, resendVerificationEmail } = useAuth();
   const [activating, setActivating] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
   const navigate = useNavigate();
 
   // Failsafe: if loading takes >5 seconds, stop spinning and show fallback
@@ -155,6 +158,59 @@ export const SubscriptionRoute = ({
   // Redirect to login if not authenticated (also handles timeout)
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Require email verification before granting subscription access
+  if (!isEmailVerified) {
+    const handleResend = async () => {
+      setResending(true);
+      setResendSuccess(false);
+      const result = await resendVerificationEmail();
+      if (result.success) {
+        setResendSuccess(true);
+        setTimeout(() => setResendSuccess(false), 5000);
+      }
+      setResending(false);
+    };
+
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-50 p-4">
+        <Card className="max-w-md w-full">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
+              <Mail className="h-10 w-10 text-yellow-600" />
+            </div>
+            <CardTitle className="text-xl">Email Verification Required</CardTitle>
+            <CardDescription className="text-base">
+              Please verify your email address to access premium features. Check your inbox for the verification link.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {resendSuccess && (
+              <Alert className="bg-green-50 text-green-900 border-green-200">
+                <CheckCircle2 className="h-4 w-4" />
+                <AlertDescription>Verification email resent! Check your inbox.</AlertDescription>
+              </Alert>
+            )}
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={handleResend}
+              disabled={resending}
+            >
+              {resending ? (
+                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Resending...</>
+              ) : (
+                <><RefreshCw className="h-4 w-4 mr-2" /> Resend Verification Email</>
+              )}
+            </Button>
+            <Button variant="ghost" className="w-full" onClick={() => navigate('/app')}>
+              Back to Home
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   // Trial users AND paid users both get full Pro access
