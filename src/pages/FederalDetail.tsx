@@ -64,8 +64,13 @@ export default function FederalDetail() {
         if (instruments && instruments.length > 0) {
           // Map DB records to FederalRegulationCard format
           const mapped = instruments.map((inst: any) => {
-            const agencies = inst.metadata?.agencies?.map((a: any) => a.name || a).join(', ') || '';
-            const agency = agencies || inst.metadata?.agency || inst.source || 'Federal Agency';
+            const agencies = inst.metadata?.agencies?.map((a: any) => {
+              if (typeof a === 'string') return a;
+              return a?.name || a?.raw_name || a?.short_name || (typeof a === 'object' ? JSON.stringify(a) : String(a));
+            }).join(', ') || '';
+            const rawAgency = inst.metadata?.agency;
+            const agencyStr = typeof rawAgency === 'string' ? rawAgency : rawAgency?.name || '';
+            const agency = agencies || agencyStr || inst.source || 'Federal Agency';
             
             // Map category to display category
             let displayCategory = 'compliance';

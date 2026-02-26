@@ -34,18 +34,18 @@ export const EnhancedStatsSection: React.FC = () => {
           .from('jurisdiction')
           .select('id');
         
-        // Open comments - count instruments with regulations_gov source (have comment periods)
+        // Open comments - count federal_register instruments (have comment periods)
         const { count: openCount } = await supabase
           .from('instrument')
           .select('*', { count: 'exact', head: true })
-          .eq('source', 'regulations_gov');
+          .eq('source', 'federal_register');
         
         // Upcoming deadlines - count instruments with future effective dates
         const { count: deadlineCount } = await supabase
           .from('instrument')
           .select('*', { count: 'exact', head: true })
-          .not('effective_at', 'is', null)
-          .gte('effective_at', new Date().toISOString());
+          .not('effective_date', 'is', null)
+          .gte('effective_date', new Date().toISOString());
 
         // Federal vs State breakdown
         const { count: federalCount } = await supabase

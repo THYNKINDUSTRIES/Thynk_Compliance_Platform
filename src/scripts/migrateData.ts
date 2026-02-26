@@ -62,21 +62,23 @@ export async function migrateRegulations() {
         authority = newAuthData?.[0];
       }
 
-      // Insert regulation
+      // Insert regulation into instrument table
       const { error: regError } = await supabase.from('instrument').insert({
         title: reg.title,
-        summary: reg.summary,
+        description: reg.summary || null,
         jurisdiction_id: jurisdiction?.id,
-        authority_id: authority?.id,
+        document_type: reg.instrumentType || null,
         status: reg.status,
-        products: reg.products,
-        stages: reg.stages,
-        instrument_type: reg.instrumentType,
         published_at: reg.publishedAt,
         effective_at: reg.effectiveAt || null,
-        citation: reg.citation,
         url: reg.url,
         impact: reg.impact,
+        metadata: {
+          authority_id: authority?.id,
+          products: reg.products,
+          stages: reg.stages,
+          citation: reg.citation,
+        },
       });
 
       if (regError) throw regError;

@@ -30,17 +30,18 @@ export const StatsSection: React.FC = () => {
           .from('jurisdiction')
           .select('id');
         
-        // Get open comment periods
+        // Get open comment periods (federal_register instruments have comment opportunities)
         const { count: openCount } = await supabase
           .from('instrument')
           .select('*', { count: 'exact', head: true })
-          .eq('status', 'open');
+          .eq('source', 'federal_register');
         
-        // Get upcoming deadlines (effective_at in future)
+        // Get upcoming deadlines (effective_date in future)
         const { count: deadlineCount } = await supabase
           .from('instrument')
           .select('*', { count: 'exact', head: true })
-          .gte('effective_at', new Date().toISOString());
+          .not('effective_date', 'is', null)
+          .gte('effective_date', new Date().toISOString());
 
         // Get today's updates
         const today = new Date().toISOString().split('T')[0];

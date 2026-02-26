@@ -151,7 +151,7 @@ export const pollingAdmin = {
    * Update URL validation results
    */
   async updateURLValidation(
-    regulationId: string,
+    instrumentId: string,
     validationResult: {
       is_valid: boolean;
       http_status?: number;
@@ -163,7 +163,7 @@ export const pollingAdmin = {
       const { error } = await client
         .from('url_validation_log')
         .insert({
-          regulation_id: regulationId,
+          instrument_id: instrumentId,
           ...validationResult,
         });
 
